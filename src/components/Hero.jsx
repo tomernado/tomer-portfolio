@@ -4,20 +4,20 @@ import { personalInfo } from '../data/content'
 import { MessageCircle, Linkedin, Github, Terminal, ChevronDown, FileText } from 'lucide-react'
 import CvModal from './CvModal'
 
-/* ─── Variants ──────────────────────────────────────────────────────── */
+/* ─── Variants — only opacity & y, no filter (filter is slow on mobile) ── */
 const heroContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
 }
 const fadeUp = {
-  hidden:  { opacity: 0, y: 28, filter: 'blur(6px)' },
-  visible: { opacity: 1, y: 0,  filter: 'blur(0px)',
+  hidden:  { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0,
               transition: { duration: 0.65, ease: [0.25, 0.1, 0.25, 1] } },
 }
 const wordReveal = {
-  hidden:  { opacity: 0, y: 22, filter: 'blur(5px)' },
+  hidden:  { opacity: 0, y: 22 },
   visible: (i) => ({
-    opacity: 1, y: 0, filter: 'blur(0px)',
+    opacity: 1, y: 0,
     transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1], delay: i * 0.13 },
   }),
 }
@@ -29,7 +29,6 @@ const socialBtns = [
     label: 'LinkedIn',
     sublabel: 'Professional Profile',
     icon: <Linkedin size={15} />,
-    // Teal gradient
     bg: 'linear-gradient(160deg, #2dd4bf 0%, #0d9488 55%, #0f766e 100%)',
     shadow: '0 6px 22px rgba(13,148,136,0.55), 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -2px 0 rgba(0,0,0,0.22)',
     shadowHover: '0 10px 32px rgba(13,148,136,0.7), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.22)',
@@ -40,7 +39,6 @@ const socialBtns = [
     label: 'WhatsApp',
     sublabel: 'Send a Message',
     icon: <MessageCircle size={15} />,
-    // Green gradient
     bg: 'linear-gradient(160deg, #4ade80 0%, #16a34a 55%, #15803d 100%)',
     shadow: '0 6px 22px rgba(22,163,74,0.55), 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -2px 0 rgba(0,0,0,0.22)',
     shadowHover: '0 10px 32px rgba(22,163,74,0.7), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.22)',
@@ -51,7 +49,6 @@ const socialBtns = [
     label: 'GitHub',
     sublabel: 'Open Source',
     icon: <Github size={15} />,
-    // White/silver glass
     bg: 'linear-gradient(160deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)',
     shadow: '0 6px 22px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -2px 0 rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.12)',
     shadowHover: '0 10px 32px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -2px 0 rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.18)',
@@ -59,7 +56,7 @@ const socialBtns = [
   },
 ]
 
-/* ─── Contact info row (display only, no link) ───────────────────── */
+/* ─── Contact info row ───────────────────────────────────────────── */
 function ContactRow({ icon, label, value, accentColor }) {
   return (
     <div
@@ -70,7 +67,6 @@ function ContactRow({ icon, label, value, accentColor }) {
         boxShadow: `inset 0 0 30px rgba(0,0,0,0.15), 0 1px 0 rgba(255,255,255,0.04)`,
       }}
     >
-      {/* Icon badge */}
       <div
         className="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center"
         style={{
@@ -81,16 +77,11 @@ function ContactRow({ icon, label, value, accentColor }) {
       >
         {icon}
       </div>
-
-      {/* Text */}
-      <div className="flex flex-col min-w-0">
+      <div className="flex flex-col flex-1 min-w-0 items-center sm:items-start text-center sm:text-left">
         <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-slate-500 leading-none mb-1">
           {label}
         </span>
-        <span
-          className="font-mono text-sm tracking-wide truncate"
-          style={{ color: 'rgba(226,232,240,0.9)' }}
-        >
+        <span className="font-mono text-sm tracking-wide truncate" style={{ color: 'rgba(226,232,240,0.9)' }}>
           {value}
         </span>
       </div>
@@ -110,13 +101,9 @@ function SocialBtn({ btn, variants }) {
       animate="visible"
       whileHover={{ scale: 1.05, y: -3, boxShadow: btn.shadowHover }}
       whileTap={{ scale: 0.97, y: 1, boxShadow: btn.shadowTap }}
-      style={{
-        background: btn.bg,
-        boxShadow: btn.shadow,
-      }}
-      className="relative overflow-hidden flex items-center gap-2.5 pl-3.5 pr-4 py-2.5 rounded-xl cursor-pointer select-none"
+      style={{ background: btn.bg, boxShadow: btn.shadow }}
+      className="relative overflow-hidden flex items-center gap-2.5 pl-3.5 pr-4 py-2.5 rounded-xl cursor-pointer select-none will-change-transform"
     >
-      {/* Shine sweep on hover */}
       <span
         className="pointer-events-none absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500"
         style={{
@@ -124,11 +111,7 @@ function SocialBtn({ btn, variants }) {
           backgroundSize: '200% 100%',
         }}
       />
-
-      {/* Icon */}
       <span className="text-white drop-shadow-sm flex-shrink-0">{btn.icon}</span>
-
-      {/* Label only */}
       <span className="text-white font-semibold font-body text-[13px] drop-shadow-sm">
         {btn.label}
       </span>
@@ -163,13 +146,14 @@ export default function Hero() {
 
           {/* LEFT — floating avatar */}
           <motion.div
-            className="flex-shrink-0 relative"
+            className="flex-shrink-0 relative will-change-transform"
             variants={fadeUp}
             animate={{ y: [0, -14, 0] }}
             transition={{ y: { repeat: Infinity, duration: 5, ease: 'easeInOut' } }}
           >
+            {/* Glow blob — desktop only (blur-3xl is expensive on mobile) */}
             <motion.div
-              className="absolute inset-0 rounded-full bg-teal-500/25 blur-3xl scale-[1.6]"
+              className="hidden md:block absolute inset-0 rounded-full bg-teal-500/25 blur-3xl scale-[1.6]"
               animate={{ opacity: [0.4, 0.85, 0.4], scale: [1.6, 1.9, 1.6] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             />
@@ -190,7 +174,7 @@ export default function Hero() {
                 <motion.span
                   key={i} custom={i}
                   variants={wordReveal} initial="hidden" animate="visible"
-                  className="inline-block font-body font-extrabold text-5xl sm:text-6xl leading-tight text-shimmer"
+                  className="inline-block font-body font-extrabold text-5xl sm:text-6xl leading-tight text-shimmer will-change-transform"
                 >
                   {word}
                 </motion.span>
@@ -205,7 +189,7 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            {/* ── Contact display (no links, no navigation) ── */}
+            {/* ── Contact display ── */}
             <motion.div variants={fadeUp} className="w-full mb-7 space-y-2.5" dir="ltr">
               <ContactRow
                 icon={
@@ -261,7 +245,7 @@ export default function Hero() {
                   scale: 0.97, y: 1,
                   boxShadow: '0 2px 8px rgba(20,184,166,0.25), inset 0 2px 4px rgba(0,0,0,0.25)',
                 }}
-                className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl font-body font-semibold text-sm text-white border border-teal-500/35 w-auto"
+                className="flex items-center gap-2.5 px-6 py-2.5 rounded-xl font-body font-semibold text-sm text-white border border-teal-500/35 w-auto will-change-transform"
                 style={{
                   background: 'linear-gradient(135deg, rgba(45,212,191,0.12) 0%, rgba(15,118,110,0.18) 100%)',
                   boxShadow: '0 4px 16px rgba(20,184,166,0.2), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.15)',
@@ -284,6 +268,7 @@ export default function Hero() {
           <motion.div
             animate={{ y: [0, 5, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="will-change-transform"
           >
             <ChevronDown size={14} />
           </motion.div>
