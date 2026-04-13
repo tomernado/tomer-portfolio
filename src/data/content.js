@@ -85,7 +85,7 @@ export const projects = [
     mediaType: "image",
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_java-backend-oop-activity-7440003959379070977-4D6h",
-    githubLink: "https://github.com/tomernado",
+    githubLink: "https://github.com/tomernado/four-in-row-server",
   },
   {
     id: 4,
