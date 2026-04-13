@@ -117,7 +117,7 @@ export const projects = [
     media: `${base}img/SlotGame.png`,
     mediaType: "image",
     linkedinPost: "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
-    githubLink: "https://github.com/tomernado",
+    githubLink: "https://github.com/tomernado/san-quentin-xways",
     siteLink: "https://tomernado.github.io/san-quentin-xways/",
   },
   {
@@ -128,6 +128,6 @@ export const projects = [
     media: `${base}img/SHOP.png`,
     mediaType: "image",
     linkedinPost: "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
-    githubLink: "https://github.com/tomernado",
+    githubLink: "https://github.com/tomernado/DevStore",
   },
 ];
