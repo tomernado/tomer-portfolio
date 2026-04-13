@@ -43,37 +43,37 @@ export default function Web4YouSection() {
       <div ref={containerRef} style={{ minHeight: `${steps.length * 100}vh` }}>
 
         {/* Sticky panel — fills exactly one viewport */}
-        <div className="sticky top-0 h-screen flex flex-col items-center justify-between pt-20 pb-6 px-4 sm:px-10 gap-3 sm:gap-4">
+        <div className="sticky top-0 h-screen flex flex-col items-center justify-center pt-14 sm:pt-20 pb-4 px-4 sm:px-10 gap-2 sm:gap-3">
 
           {/* ── Heading ── */}
           <div dir="rtl" className="w-full max-w-2xl flex-shrink-0">
-            <p className="font-display text-indigo-400 text-[10px] tracking-[0.3em] uppercase mb-1 font-semibold text-center">
+            <p className="font-display text-indigo-400 text-[10px] tracking-[0.3em] uppercase mb-0.5 font-semibold text-center">
               העסק שלי
             </p>
-            <h2 className="font-body font-extrabold text-3xl sm:text-4xl text-white text-center">
+            <h2 className="font-body font-extrabold text-2xl sm:text-4xl text-white text-center leading-tight">
               Web4You
             </h2>
           </div>
 
           {/* ── Step text (animated) ── */}
-          <div className="w-full max-w-xl flex-1 min-h-0 flex items-center">
+          <div className="w-full max-w-xl flex-shrink-0">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeIndex}
                 dir="rtl"
                 className="text-center w-full"
-                initial={{ opacity: 0, y: 14 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -14 }}
+                exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.35, ease: 'easeInOut' }}
               >
-                <p className="font-display font-bold text-indigo-400 text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-1">
+                <p className="font-display font-bold text-indigo-400 text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-0.5">
                   {steps[activeIndex].number}
                 </p>
-                <h3 className="font-body font-bold text-white text-base sm:text-xl leading-snug mb-2">
+                <h3 className="font-body font-bold text-white text-sm sm:text-xl leading-snug mb-1.5">
                   {steps[activeIndex].title}
                 </h3>
-                <p className="font-body text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
+                <p className="font-body text-slate-400 text-[11px] sm:text-sm leading-relaxed max-w-md mx-auto">
                   {steps[activeIndex].description}
                 </p>
               </motion.div>

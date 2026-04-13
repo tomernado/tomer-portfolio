@@ -6,7 +6,7 @@ const navLinks = [
   { label: 'About',   href: '#about',    id: 'about' },
   { label: 'Skills',  href: '#skills',   id: 'skills' },
   { label: 'Projects',href: '#projects', id: 'projects' },
-  { label: 'Web4You', href: '#web4you',  id: 'web4you', accent: true },
+  { label: 'Web4You', href: '#web4you',  id: 'web4you' },
 ]
 
 export default function Navbar() {
@@ -21,7 +21,7 @@ export default function Navbar() {
 
   /* Track which section is in the viewport */
   useEffect(() => {
-    const sectionIds = navLinks.map((l) => l.id).filter(id => id !== 'web4you')
+    const sectionIds = navLinks.map((l) => l.id)
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -70,21 +70,6 @@ export default function Navbar() {
         <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
           {navLinks.map((link) => {
             const isActive = activeSection === link.id
-
-            /* Web4You — styled differently */
-            if (link.accent) {
-              return (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="relative flex-shrink-0 whitespace-nowrap px-3 py-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/[0.07] hover:bg-indigo-500/[0.14] hover:border-indigo-400/50 transition-all duration-200 ml-1"
-                >
-                  <span className="relative font-display font-semibold text-[11px] sm:text-[13px] tracking-widest uppercase text-indigo-300 hover:text-indigo-200 transition-colors duration-200">
-                    {link.label}
-                  </span>
-                </a>
-              )
-            }
 
             return (
               <a
