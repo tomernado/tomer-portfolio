@@ -73,7 +73,7 @@ export const projects = [
     media: `${base}img/OpenWOrldGame.mp4`,
     mediaType: "video",
     linkedinPost:
-      "https://www.linkedin.com/posts/tomer-cohen-486457346_softwareengineering-csharp-react-activity-7436389412193804288-uL7j",
+      "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
     githubLink: "https://github.com/tomernado",
   },
   {
@@ -116,8 +116,18 @@ export const projects = [
       "משחק מכונת מזל אינטראקטיבי שפותח עם לוגיקה מורכבת בצד הלקוח. ממשק משתמש עשיר עם אנימציות, מערכת ניקוד, וחוויית משחק מלאה — הכל בדפדפן ללא שרת.",
     media: `${base}img/SlotGame.png`,
     mediaType: "image",
-    linkedinPost: "https://www.linkedin.com/in/tomer-cohen-486457346",
+    linkedinPost: "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
     githubLink: "https://github.com/tomernado",
     siteLink: "https://tomernado.github.io/san-quentin-xways/",
+  },
+  {
+    id: 7,
+    title: "DevStore — E-Commerce Website",
+    description:
+      "בניית חנות אונליין מלאה עם ממשק RTL בעברית. קטלוג מוצרים, עגלת קניות, מועדפים וחיפוש — עם עיצוב רספונסיבי ודגש על חוויית משתמש. פותח תוך שילוב כלי AI להאצת הפיתוח.",
+    media: `${base}img/SHOP.png`,
+    mediaType: "image",
+    linkedinPost: "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
+    githubLink: "https://github.com/tomernado",
   },
 ];
