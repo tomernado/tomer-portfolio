@@ -129,6 +129,7 @@ export const projects = [
     mediaType: "image",
     linkedinPost: "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
     githubLink: "https://github.com/tomernado/DevStore",
+    siteLink: "https://tomernado.github.io/DevStore/",
   },
 ];
 

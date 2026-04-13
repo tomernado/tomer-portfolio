@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, useMotionValue, useAnimationFrame } from 'framer-motion'
 import { personalInfo, projects } from '../data/content'
 import {
-  MessageCircle, Linkedin, Github, Terminal, ChevronDown,
-  FileText, Layers, ChevronRight, ArrowRight,
+  Linkedin, Github, Terminal, ChevronDown,
+  FileText, Layers, ArrowRight,
   Mail, Phone,
 } from 'lucide-react'
 import CvModal from './CvModal'
@@ -342,7 +342,24 @@ export default function Hero() {
               {socialBtns.map((btn, i) => (
                 <SocialBtn key={btn.label} btn={btn} delay={0.45 + i * 0.08} />
               ))}
-              {/* CV button */}
+              {/* CV button — mobile: direct PDF link, desktop: modal */}
+              <motion.a
+                href={personalInfo.cvPdf}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 16, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.69 }}
+                whileTap={{ scale: 0.96, y: 1 }}
+                className="sm:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border border-teal-500/30 will-change-transform"
+                style={{
+                  background: 'linear-gradient(135deg,rgba(45,212,191,0.1) 0%,rgba(15,118,110,0.16) 100%)',
+                  boxShadow: '0 4px 16px rgba(20,184,166,0.18),inset 0 1px 0 rgba(255,255,255,0.08)',
+                }}
+              >
+                <FileText size={14} className="text-teal-400" />
+                <span className="text-teal-100 font-semibold font-body text-[13px]">Resume</span>
+              </motion.a>
               <motion.button
                 onClick={() => setCvOpen(true)}
                 initial={{ opacity: 0, y: 16, scale: 0.9 }}
@@ -350,7 +367,7 @@ export default function Hero() {
                 transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.69 }}
                 whileHover={{ scale: 1.07, y: -3, boxShadow: '0 8px 28px rgba(20,184,166,0.35)' }}
                 whileTap={{ scale: 0.96, y: 1 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-teal-500/30 will-change-transform"
+                className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl border border-teal-500/30 will-change-transform"
                 style={{
                   background: 'linear-gradient(135deg,rgba(45,212,191,0.1) 0%,rgba(15,118,110,0.16) 100%)',
                   boxShadow: '0 4px 16px rgba(20,184,166,0.18),inset 0 1px 0 rgba(255,255,255,0.08)',
@@ -359,7 +376,7 @@ export default function Hero() {
                 <FileText size={14} className="text-teal-400" />
                 <div className="flex flex-col leading-none">
                   <span className="text-teal-100 font-semibold font-body text-[13px]">Resume</span>
-                  <span className="text-white/50 font-body text-[9px] tracking-wide hidden sm:block mt-0.5">View / Download</span>
+                  <span className="text-white/50 font-body text-[9px] tracking-wide mt-0.5">View / Download</span>
                 </div>
               </motion.button>
             </motion.div>
