@@ -63,7 +63,7 @@ export const projects = [
     mediaType: "video",
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_cybersecurity-fullstack-reactjs-activity-7438883240985157632-4CzR",
-    githubLink: "https://github.com/tomernado",
+    githubLink: "https://github.com/tomernado/CompterSecurity-Server",
   },
   {
     id: 2,
