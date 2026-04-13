@@ -3,8 +3,8 @@ import { motion, useMotionValue, useAnimationFrame } from 'framer-motion'
 import { personalInfo, projects } from '../data/content'
 import {
   MessageCircle, Linkedin, Github, Terminal, ChevronDown,
-  FileText, Zap, Shield, Layers, ChevronRight, ArrowRight,
-  Mail, Phone,
+  FileText, Layers, ChevronRight, ArrowRight,
+  Mail, Phone, Globe,
 } from 'lucide-react'
 import CvModal from './CvModal'
 
@@ -111,47 +111,56 @@ function SocialBtn({ btn, delay }) {
   )
 }
 
-/* ── Nav links ──────────────────────────────────────────────────── */
-const NAV_ITEMS = [
-  { label: 'About',    href: '#about'    },
-  { label: 'Skills',   href: '#skills'   },
-  { label: 'Projects', href: '#projects' },
+/* ── Stack chips + Web4You ──────────────────────────────────────── */
+const STACK_CHIPS = [
+  'React', 'Java', 'C#', 'Node.js', 'Python', 'SQL', 'OOP', 'S-SDLC',
 ]
 
-function NavLinks({ onOpenCv }) {
-  const go = (e, href) => {
-    e.preventDefault()
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
-  }
+function StackAndBusiness() {
+  const goSkills = () => document.querySelector('#skills')?.scrollIntoView({ behavior: 'smooth' })
+  const goWeb4You = () => document.querySelector('#web4you')?.scrollIntoView({ behavior: 'smooth' })
 
   return (
-    <motion.div variants={fadeUp} dir="ltr" className="flex flex-wrap gap-x-1 gap-y-1.5 justify-center sm:justify-start items-center">
-      {NAV_ITEMS.map((item, i) => (
-        <>
-          <motion.a
-            key={item.label}
-            href={item.href}
-            onClick={(e) => go(e, item.href)}
-            whileHover={{ color: '#5eead4' }}
-            className="group flex items-center gap-1 font-mono text-[11px] text-slate-500 hover:text-teal-300 transition-colors duration-150 cursor-pointer"
+    <motion.div variants={fadeUp} dir="ltr" className="w-full space-y-2.5">
+      {/* Label */}
+      <p className="font-mono text-[9px] tracking-[0.28em] uppercase text-slate-600 text-center sm:text-left">
+        // tech stack
+      </p>
+
+      {/* Chips row — all scroll to #skills */}
+      <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start">
+        {STACK_CHIPS.map((chip, i) => (
+          <motion.button
+            key={chip}
+            onClick={goSkills}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 + i * 0.05, duration: 0.35 }}
+            whileHover={{ y: -2, borderColor: 'rgba(45,212,191,0.45)', color: '#5eead4' }}
+            whileTap={{ scale: 0.95 }}
+            className="font-mono text-[10px] tracking-wide text-slate-500 border border-white/10 bg-white/[0.03] hover:bg-teal-500/[0.06] px-2.5 py-1 rounded-lg transition-colors duration-200 cursor-pointer will-change-transform"
           >
-            {item.label}
-            <ChevronRight size={10} className="text-slate-700 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all duration-150" />
-          </motion.a>
-          {i < NAV_ITEMS.length - 1 && (
-            <span key={`sep-${i}`} className="text-slate-800 font-mono text-[10px] select-none">·</span>
-          )}
-        </>
-      ))}
-      <span className="text-slate-800 font-mono text-[10px] select-none">·</span>
-      <motion.button
-        onClick={onOpenCv}
-        whileHover={{ color: '#5eead4' }}
-        className="group flex items-center gap-1 font-mono text-[11px] text-slate-500 hover:text-teal-300 transition-colors duration-150 cursor-pointer"
-      >
-        Resume
-        <ChevronRight size={10} className="text-slate-700 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all duration-150" />
-      </motion.button>
+            {chip}
+          </motion.button>
+        ))}
+
+        {/* Separator dot */}
+        <span className="flex items-center text-slate-800 font-mono text-xs px-0.5 select-none">·</span>
+
+        {/* Web4You chip — indigo accent */}
+        <motion.button
+          onClick={goWeb4You}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.15, duration: 0.35 }}
+          whileHover={{ y: -2, borderColor: 'rgba(99,102,241,0.55)', color: '#a5b4fc' }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center gap-1.5 font-mono text-[10px] tracking-wide text-indigo-400/70 border border-indigo-500/25 bg-indigo-500/[0.05] hover:bg-indigo-500/[0.1] px-2.5 py-1 rounded-lg transition-colors duration-200 cursor-pointer will-change-transform"
+        >
+          <Globe size={9} />
+          Web4You
+        </motion.button>
+      </div>
     </motion.div>
   )
 }
@@ -395,8 +404,8 @@ export default function Hero() {
               </div>
             </motion.div>
 
-            {/* 6. Navigation links */}
-            <NavLinks onOpenCv={() => setCvOpen(true)} />
+            {/* 6. Stack chips + Web4You */}
+            <StackAndBusiness />
           </div>
         </div>
 
