@@ -4,7 +4,7 @@ import { personalInfo, projects } from '../data/content'
 import {
   MessageCircle, Linkedin, Github, Terminal, ChevronDown,
   FileText, Layers, ChevronRight, ArrowRight,
-  Mail, Phone, Globe,
+  Mail, Phone,
 } from 'lucide-react'
 import CvModal from './CvModal'
 
@@ -118,7 +118,6 @@ const STACK_CHIPS = [
 
 function StackAndBusiness() {
   const goSkills = () => document.querySelector('#skills')?.scrollIntoView({ behavior: 'smooth' })
-  const goWeb4You = () => document.querySelector('#web4you')?.scrollIntoView({ behavior: 'smooth' })
 
   return (
     <motion.div variants={fadeUp} dir="ltr" className="w-full space-y-2.5">
@@ -133,33 +132,22 @@ function StackAndBusiness() {
           <motion.button
             key={chip}
             onClick={goSkills}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 + i * 0.05, duration: 0.35 }}
-            whileHover={{ y: -2, borderColor: 'rgba(45,212,191,0.45)', color: '#5eead4' }}
-            whileTap={{ scale: 0.95 }}
-            className="font-mono text-[10px] tracking-wide text-slate-500 border border-white/10 bg-white/[0.03] hover:bg-teal-500/[0.06] px-2.5 py-1 rounded-lg transition-colors duration-200 cursor-pointer will-change-transform"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.65 + i * 0.045, duration: 0.3, ease: 'backOut' }}
+            whileHover={{
+              y: -2,
+              boxShadow: '0 0 10px rgba(45,212,191,0.18)',
+              borderColor: 'rgba(45,212,191,0.4)',
+              color: '#5eead4',
+            }}
+            whileTap={{ scale: 0.94 }}
+            className="font-mono text-[10px] tracking-wide text-slate-500 border border-white/[0.09] rounded-lg px-2.5 py-1 cursor-pointer will-change-transform transition-colors duration-150"
+            style={{ background: 'rgba(255,255,255,0.025)' }}
           >
             {chip}
           </motion.button>
         ))}
-
-        {/* Separator dot */}
-        <span className="flex items-center text-slate-800 font-mono text-xs px-0.5 select-none">·</span>
-
-        {/* Web4You chip — indigo accent */}
-        <motion.button
-          onClick={goWeb4You}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.15, duration: 0.35 }}
-          whileHover={{ y: -2, borderColor: 'rgba(99,102,241,0.55)', color: '#a5b4fc' }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-1.5 font-mono text-[10px] tracking-wide text-indigo-400/70 border border-indigo-500/25 bg-indigo-500/[0.05] hover:bg-indigo-500/[0.1] px-2.5 py-1 rounded-lg transition-colors duration-200 cursor-pointer will-change-transform"
-        >
-          <Globe size={9} />
-          Web4You
-        </motion.button>
       </div>
     </motion.div>
   )
