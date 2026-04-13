@@ -4,6 +4,7 @@ import Hero from './components/Hero'
 import About from './components/About'
 import Skills from './components/Skills'
 import ProjectsGrid from './components/ProjectsGrid'
+import Web4YouSection from './components/Web4YouSection'
 import Footer from './components/Footer'
 
 const blobs = [
@@ -43,12 +44,12 @@ export default function App() {
       {/* Static dot-grid layer */}
       <div className="fixed inset-0 bg-dot-grid pointer-events-none z-0 opacity-50" />
 
-      {/* Animated ambient blobs */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Animated ambient blobs — desktop only (blur-[130px] is too heavy for mobile GPU) */}
+      <div className="hidden md:block fixed inset-0 pointer-events-none z-0 overflow-hidden">
         {blobs.map((blob) => (
           <motion.div
             key={blob.id}
-            className={`absolute rounded-full blur-[130px] pointer-events-none ${blob.className}`}
+            className={`absolute rounded-full blur-[130px] pointer-events-none will-change-transform ${blob.className}`}
             animate={blob.animate}
             transition={{
               duration: blob.duration,
@@ -67,6 +68,7 @@ export default function App() {
         <About />
         <Skills />
         <ProjectsGrid />
+        <Web4YouSection />
         <Footer />
       </div>
     </div>

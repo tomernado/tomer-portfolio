@@ -131,3 +131,11 @@ export const projects = [
     githubLink: "https://github.com/tomernado/DevStore",
   },
 ];
+
+export const web4youData = {
+  tagline: 'בניית אתרים מקצועיים לעסקים קטנים ובינוניים',
+  description:
+    'Web4You היא חברת בניית אתרים שהקמתי מתוך תשוקה לטכנולוגיה ועיצוב. אני מאמין שכל עסק ראוי לנוכחות דיגיטלית מרשימה. [תוסיף כאן את הסיפור שלך על העסק — למה פתחת אותו, מה אתה מציע, מה מייחד אותך].',
+  url: 'https://web4-you.vercel.app/',
+  screenshot: `${base}img/web4you.png`,
+};
