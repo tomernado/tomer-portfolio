@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef, useLayoutEffect } from 'react'
+import { motion, AnimatePresence, useMotionValue, useAnimationFrame } from 'framer-motion'
 import { Play, X, Github, Linkedin, ExternalLink, Globe } from 'lucide-react'
 import { projects } from '../data/content'
 
-/* ─── Card size configs — gives the "different sizes" feel ────────── */
+/* ─── Card size configs ────────────────────────────────────────────── */
 const CARD_SIZES = [
-  { w: 'w-[320px]', h: 'h-[280px]', mediaH: 'h-44' },  // project 1
-  { w: 'w-[400px]', h: 'h-[300px]', mediaH: 'h-48' },  // project 2
-  { w: 'w-[350px]', h: 'h-[260px]', mediaH: 'h-40' },  // project 3
-  { w: 'w-[420px]', h: 'h-[310px]', mediaH: 'h-48' },  // project 4
-  { w: 'w-[360px]', h: 'h-[270px]', mediaH: 'h-44' },  // project 5
-  { w: 'w-[390px]', h: 'h-[290px]', mediaH: 'h-44' },  // project 6
+  { w: 'w-[320px]', h: 'h-[280px]', mediaH: 'h-44' },
+  { w: 'w-[400px]', h: 'h-[300px]', mediaH: 'h-48' },
+  { w: 'w-[350px]', h: 'h-[260px]', mediaH: 'h-40' },
+  { w: 'w-[420px]', h: 'h-[310px]', mediaH: 'h-48' },
+  { w: 'w-[360px]', h: 'h-[270px]', mediaH: 'h-44' },
+  { w: 'w-[390px]', h: 'h-[290px]', mediaH: 'h-44' },
 ]
 
 /* ─── Modal variants ──────────────────────────────────────────────── */
@@ -34,12 +34,13 @@ function ProjectCard({ project, sizeConfig, onClick }) {
       onClick={onClick}
       whileHover={{
         y: -6,
-        boxShadow: '0 0 40px rgba(59,130,246,0.3), 0 0 80px rgba(59,130,246,0.08), 0 30px 70px rgba(0,0,0,0.65)',
+        boxShadow: '0 0 40px rgba(59,130,246,0.3), 0 30px 70px rgba(0,0,0,0.65)',
         borderColor: 'rgba(59,130,246,0.4)',
       }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.2 }}
-      className={`group relative flex-shrink-0 ${sizeConfig.w} ${sizeConfig.h} text-right overflow-hidden bg-white/[0.04] backdrop-blur-xl border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50`}
+      /* Mobile: solid bg. sm+: glassmorphism with backdrop-blur */
+      className={`group relative flex-shrink-0 ${sizeConfig.w} ${sizeConfig.h} text-right overflow-hidden bg-slate-900/95 sm:bg-white/[0.04] sm:backdrop-blur-xl border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 will-change-transform`}
     >
       {/* Shimmer top edge */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/35 to-transparent z-10" />
@@ -48,8 +49,12 @@ function ProjectCard({ project, sizeConfig, onClick }) {
       <div className={`relative ${sizeConfig.mediaH} overflow-hidden bg-slate-900`}>
         {project.mediaType === 'video' ? (
           <>
-            <video src={project.media} autoPlay loop muted playsInline
-              className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-600" />
+            <video
+              src={project.media}
+              autoPlay loop muted playsInline
+              preload="metadata"
+              className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-600"
+            />
             <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 bg-black/70 backdrop-blur-sm rounded-full border border-white/10 z-10">
               <Play size={8} fill="white" className="text-white" />
               <span className="font-mono text-white text-[8px] tracking-widest font-bold">VIDEO</span>
@@ -76,7 +81,6 @@ function ProjectCard({ project, sizeConfig, onClick }) {
         </div>
       </div>
 
-      {/* Bottom inset glow */}
       <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-blue-600/6 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none" />
     </motion.button>
   )
@@ -89,34 +93,31 @@ function ProjectModal({ project, onClose }) {
       {project && (
         <>
           <motion.div key="bd" variants={backdropV} initial="hidden" animate="visible" exit="exit"
-            className="fixed inset-0 z-50 bg-black/82 backdrop-blur-md"
+            className="fixed inset-0 z-50 bg-black/82 backdrop-blur-sm"
             onClick={onClose} />
 
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
             <motion.div key="modal" variants={modalV} initial="hidden" animate="visible" exit="exit"
-              className="pointer-events-auto w-full max-w-2xl" dir="rtl">
+              className="pointer-events-auto w-full max-w-2xl will-change-transform" dir="rtl">
 
-              {/* Gradient neon border */}
-              <div className="relative rounded-2xl p-[1px] bg-gradient-to-br from-blue-500/55 via-violet-500/25 to-cyan-500/40 shadow-[0_0_90px_rgba(59,130,246,0.28),_0_0_180px_rgba(59,130,246,0.07)]">
-                <div className="bg-slate-950/97 backdrop-blur-2xl rounded-2xl overflow-hidden relative">
+              <div className="relative rounded-2xl p-[1px] bg-gradient-to-br from-blue-500/55 via-violet-500/25 to-cyan-500/40 shadow-[0_0_90px_rgba(59,130,246,0.28)]">
+                <div className="bg-slate-950 sm:backdrop-blur-2xl rounded-2xl overflow-hidden relative">
 
-                  {/* Top edge */}
                   <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-400/55 to-transparent z-10" />
 
-                  {/* Close */}
                   <motion.button onClick={onClose}
                     whileHover={{ scale: 1.12, rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 18 }}
-                    className="absolute top-3 left-3 z-20 p-2 bg-slate-800/90 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-xl border border-slate-700/50 backdrop-blur-sm transition-colors duration-150"
+                    className="absolute top-3 left-3 z-20 p-2 bg-slate-800/90 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-xl border border-slate-700/50 transition-colors duration-150"
                     aria-label="Close">
                     <X size={15} />
                   </motion.button>
 
-                  {/* Media */}
                   <div className="relative w-full aspect-video bg-slate-900 overflow-hidden">
                     {project.mediaType === 'video' ? (
                       <video key={project.id} src={project.media} autoPlay loop muted playsInline controls
+                        preload="metadata"
                         className="w-full h-full object-cover" />
                     ) : (
                       <motion.img key={project.id} src={project.media} alt={project.title}
@@ -127,7 +128,6 @@ function ProjectModal({ project, onClose }) {
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/88 via-transparent to-transparent pointer-events-none" />
                   </div>
 
-                  {/* Content */}
                   <div className="px-7 pt-6 pb-7">
                     <motion.h3
                       className="font-body font-extrabold text-white text-2xl sm:text-3xl leading-snug mb-4"
@@ -180,19 +180,92 @@ function ProjectModal({ project, onClose }) {
   )
 }
 
-/* ─── Scrollable + auto-animating row ─────────────────────────────── */
+/* ─── Seamless JS-driven marquee row ──────────────────────────────── */
+const SPEED  = 0.09   // px per ms
+const COPIES = 4      // repetitions — keeps the track wide enough on any screen
+
 function MarqueeRow({ items, direction = 'left' }) {
-  // Duplicate for seamless loop
-  const doubled = [...items, ...items]
-  const animClass = direction === 'left' ? 'marquee-left' : 'marquee-right'
+  // Repeat items COPIES times so the track is always several viewports wide
+  const repeated = Array.from({ length: COPIES }, () => items).flat()
+
+  const trackRef = useRef(null)
+  const x        = useMotionValue(0)
+  const paused   = useRef(false)
+
+  // Touch drag state
+  const touchStartX  = useRef(null)
+  const touchStartY  = useRef(null)
+  const touchStartVal = useRef(0)
+  const isHorizontalSwipe = useRef(false)
+
+  // For 'right' direction start shifted left by one unit so motion is rightward
+  useLayoutEffect(() => {
+    if (!trackRef.current || direction !== 'right') return
+    x.set(-(trackRef.current.scrollWidth / COPIES))
+  }, [direction, x])
+
+  useAnimationFrame((_, delta) => {
+    if (paused.current || !trackRef.current) return
+    const unit = trackRef.current.scrollWidth / COPIES  // width of one set of items
+    if (unit <= 0) return
+    const step = SPEED * Math.min(delta, 50)
+    let next = x.get() + (direction === 'left' ? -step : step)
+    // Wrap to keep within [-unit, 0] — the seamless loop window
+    if (next <= -unit) next += unit
+    if (next > 0)      next -= unit
+    x.set(next)
+  })
+
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+    touchStartVal.current = x.get()
+    isHorizontalSwipe.current = false
+  }
+
+  const onTouchMove = (e) => {
+    if (touchStartX.current === null || !trackRef.current) return
+    const dx = e.touches[0].clientX - touchStartX.current
+    const dy = e.touches[0].clientY - touchStartY.current
+
+    if (!isHorizontalSwipe.current) {
+      if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return
+      isHorizontalSwipe.current = Math.abs(dx) > Math.abs(dy)
+      if (!isHorizontalSwipe.current) return
+    }
+
+    paused.current = true
+    const unit = trackRef.current.scrollWidth / COPIES
+    let next = touchStartVal.current + dx
+    while (next > 0)      next -= unit
+    while (next < -unit)  next += unit
+    x.set(next)
+  }
+
+  const onTouchEnd = () => {
+    if (isHorizontalSwipe.current) {
+      setTimeout(() => { paused.current = false }, 700)
+    }
+    touchStartX.current = null
+    isHorizontalSwipe.current = false
+  }
 
   return (
-    /* overflow-x-auto lets the user drag/scroll; no-scrollbar hides the bar.
-       The CSS animation independently moves the inner track via transform,
-       so both manual scroll and auto-scroll compound on the wide doubled track. */
-    <div className="overflow-x-auto no-scrollbar w-full cursor-grab active:cursor-grabbing select-none">
-      <div className={`flex gap-5 w-max pb-1 ${animClass}`}>
-        {doubled.map(({ project, size }, i) => (
+    <div
+      className="overflow-hidden w-full"
+      onMouseEnter={() => { paused.current = true }}
+      onMouseLeave={() => { paused.current = false }}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      style={{ touchAction: 'pan-y' }}
+    >
+      <motion.div
+        ref={trackRef}
+        style={{ x, willChange: 'transform' }}
+        className="flex gap-5 w-max py-2"
+      >
+        {repeated.map(({ project, size }, i) => (
           <ProjectCard
             key={`${project.id}-${i}`}
             project={project}
@@ -200,7 +273,7 @@ function MarqueeRow({ items, direction = 'left' }) {
             onClick={() => items[i % items.length]?.onSelect(project)}
           />
         ))}
-      </div>
+      </motion.div>
     </div>
   )
 }
@@ -226,7 +299,7 @@ export default function ProjectsGrid() {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true, amount: 0.1, margin: '-50px' }}
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}
         >
           {/* Section heading */}
@@ -241,21 +314,18 @@ export default function ProjectsGrid() {
               <motion.div className="h-1 bg-gradient-to-l from-transparent via-blue-500 to-blue-400 rounded-full mt-4 origin-right"
                 initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: 0.3 }} style={{ width: 56 }} />
-              <p className="font-body text-slate-500 text-sm mt-3">לחץ על כרטיס לפרטים · גרור לצדדים לגלישה</p>
+              <p className="font-body text-slate-500 text-sm mt-3">לחץ על כרטיס לפרטים · גלילה אוטומטית</p>
             </div>
           </motion.div>
 
-          {/* Carousel rows — hover pauses all */}
+          {/* Carousel rows */}
           <motion.div
-            className="marquee-pause flex flex-col gap-6"
+            className="flex flex-col gap-6"
             variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } } }}
           >
-            {/* Row 1 — scrolls left */}
             <div className="pl-5">
               <MarqueeRow items={row1} direction="left" />
             </div>
-
-            {/* Row 2 — scrolls right */}
             <div className="pr-5">
               <MarqueeRow items={row2} direction="right" />
             </div>
