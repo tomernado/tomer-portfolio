@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from 'react'
+import { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue, useAnimationFrame } from 'framer-motion'
 import { Play, X, Github, Linkedin, ExternalLink, Globe } from 'lucide-react'
 import { projects } from '../data/content'
@@ -191,6 +191,12 @@ function MarqueeRow({ items, direction = 'left' }) {
   const trackRef = useRef(null)
   const x        = useMotionValue(0)
   const paused   = useRef(false)
+  const started  = useRef(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => { started.current = true }, 900)
+    return () => clearTimeout(t)
+  }, [])
 
   // Touch drag state
   const touchStartX  = useRef(null)
@@ -205,7 +211,7 @@ function MarqueeRow({ items, direction = 'left' }) {
   }, [direction, x])
 
   useAnimationFrame((_, delta) => {
-    if (paused.current || !trackRef.current) return
+    if (!started.current || paused.current || !trackRef.current) return
     const unit = trackRef.current.scrollWidth / COPIES  // width of one set of items
     if (unit <= 0) return
     const step = SPEED * Math.min(delta, 50)

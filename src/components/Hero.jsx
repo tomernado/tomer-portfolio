@@ -111,49 +111,47 @@ function SocialBtn({ btn, delay }) {
   )
 }
 
-/* ── Nav pills (grid style, clearly clickable) ──────────────────── */
+/* ── Nav links ──────────────────────────────────────────────────── */
 const NAV_ITEMS = [
-  { label: 'Stack & Skills', icon: <Zap size={13} />,    href: '#skills'   },
-  { label: 'Secure Projects', icon: <Shield size={13} />, href: '#projects' },
-  { label: 'All Projects',    icon: <Layers size={13} />, href: '#projects' },
-  { label: 'Resume / CV',     icon: <FileText size={13} />, href: null      },
+  { label: 'About',    href: '#about'    },
+  { label: 'Skills',   href: '#skills'   },
+  { label: 'Projects', href: '#projects' },
 ]
 
-function NavGrid({ onOpenCv }) {
-  const go = (e, href, isCV) => {
+function NavLinks({ onOpenCv }) {
+  const go = (e, href) => {
     e.preventDefault()
-    if (isCV) { onOpenCv(); return }
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
-    <motion.div variants={fadeUp} className="w-full">
-      <p className="font-mono text-[9px] tracking-[0.28em] uppercase text-slate-600 mb-2.5">
-        // navigate
-      </p>
-      <div className="grid grid-cols-2 gap-2">
-        {NAV_ITEMS.map((item) => (
+    <motion.div variants={fadeUp} dir="ltr" className="flex flex-wrap gap-x-1 gap-y-1.5 justify-center sm:justify-start items-center">
+      {NAV_ITEMS.map((item, i) => (
+        <>
           <motion.a
             key={item.label}
-            href={item.href ?? '#'}
-            onClick={(e) => go(e, item.href, !item.href)}
-            whileHover={{ x: 2 }}
-            whileTap={{ scale: 0.97 }}
-            className="group flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-white/8 bg-white/[0.03] hover:bg-white/[0.07] hover:border-teal-500/35 transition-all duration-200 cursor-pointer select-none"
+            href={item.href}
+            onClick={(e) => go(e, item.href)}
+            whileHover={{ color: '#5eead4' }}
+            className="group flex items-center gap-1 font-mono text-[11px] text-slate-500 hover:text-teal-300 transition-colors duration-150 cursor-pointer"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-teal-500/60 group-hover:text-teal-400 transition-colors">{item.icon}</span>
-              <span className="font-mono text-[11px] text-slate-400 group-hover:text-white transition-colors tracking-wide">
-                {item.label}
-              </span>
-            </div>
-            <ChevronRight
-              size={12}
-              className="text-slate-700 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all duration-200"
-            />
+            {item.label}
+            <ChevronRight size={10} className="text-slate-700 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all duration-150" />
           </motion.a>
-        ))}
-      </div>
+          {i < NAV_ITEMS.length - 1 && (
+            <span key={`sep-${i}`} className="text-slate-800 font-mono text-[10px] select-none">·</span>
+          )}
+        </>
+      ))}
+      <span className="text-slate-800 font-mono text-[10px] select-none">·</span>
+      <motion.button
+        onClick={onOpenCv}
+        whileHover={{ color: '#5eead4' }}
+        className="group flex items-center gap-1 font-mono text-[11px] text-slate-500 hover:text-teal-300 transition-colors duration-150 cursor-pointer"
+      >
+        Resume
+        <ChevronRight size={10} className="text-slate-700 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all duration-150" />
+      </motion.button>
     </motion.div>
   )
 }
@@ -166,9 +164,15 @@ function ProjectStrip() {
   const trackRef = useRef(null)
   const x        = useMotionValue(0)
   const paused   = useRef(false)
+  const started  = useRef(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => { started.current = true }, 700)
+    return () => clearTimeout(t)
+  }, [])
 
   useAnimationFrame((_, delta) => {
-    if (paused.current || !trackRef.current) return
+    if (!started.current || paused.current || !trackRef.current) return
     const half = trackRef.current.scrollWidth / 2
     if (half <= 0) return
     const step = STRIP_SPEED * Math.min(delta, 50)
@@ -359,14 +363,22 @@ export default function Hero() {
               </motion.button>
             </motion.div>
 
-            {/* 4. Bio snippet */}
-            <motion.p
-              variants={fadeUp}
-              dir="rtl"
-              className="font-body text-slate-400 text-sm leading-relaxed max-w-sm text-center sm:text-right"
-            >
-              {bioSnippet}
-            </motion.p>
+            {/* 4. Bio snippet — clickable → About */}
+            <motion.div variants={fadeUp} className="w-full">
+              <button
+                onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
+                className="group text-right w-full sm:w-auto cursor-pointer"
+                dir="rtl"
+              >
+                <p className="font-body text-slate-400 text-sm leading-relaxed max-w-sm text-center sm:text-right">
+                  {bioSnippet}
+                  <span className="inline-flex items-center gap-0.5 text-teal-500/70 group-hover:text-teal-300 transition-colors font-mono text-[10px] mr-1">
+                    קרא עוד
+                    <ArrowRight size={9} className="group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </p>
+              </button>
+            </motion.div>
 
             {/* 5. Compact contact */}
             <motion.div variants={fadeUp} dir="ltr" className="flex flex-wrap gap-x-5 gap-y-1.5 justify-center sm:justify-start">
@@ -383,8 +395,8 @@ export default function Hero() {
               </div>
             </motion.div>
 
-            {/* 6. Navigation grid */}
-            <NavGrid onOpenCv={() => setCvOpen(true)} />
+            {/* 6. Navigation links */}
+            <NavLinks onOpenCv={() => setCvOpen(true)} />
           </div>
         </div>
 
