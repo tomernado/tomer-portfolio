@@ -1,11 +1,11 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ExternalLink, Globe } from 'lucide-react'
-import { web4youData } from '../data/content'
-
-const { steps, url } = web4youData
+import { useContent } from '../context/LanguageContext'
 
 export default function Web4YouSection() {
+  const { web4youData, ui, dir } = useContent()
+  const { steps, url } = web4youData
   const containerRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -46,9 +46,9 @@ export default function Web4YouSection() {
         <div className="sticky top-0 h-screen flex flex-col items-center justify-center pt-14 sm:pt-20 pb-4 px-4 sm:px-10 gap-2 sm:gap-3">
 
           {/* ── Heading ── */}
-          <div dir="rtl" className="w-full max-w-2xl flex-shrink-0">
+          <div dir={dir} className="w-full max-w-2xl flex-shrink-0">
             <p className="font-display text-indigo-400 text-[10px] tracking-[0.3em] uppercase mb-0.5 font-semibold text-center">
-              העסק שלי
+              {ui.web4you.label}
             </p>
             <h2 className="font-body font-extrabold text-2xl sm:text-4xl text-white text-center leading-tight">
               Web4You
@@ -60,7 +60,7 @@ export default function Web4YouSection() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeIndex}
-                dir="rtl"
+                dir={dir}
                 className="text-center w-full"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -130,7 +130,7 @@ export default function Web4YouSection() {
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-body font-semibold text-xs sm:text-sm transition-colors duration-200 will-change-transform"
             >
               <Globe size={14} />
-              בקר באתר Web4You
+              {ui.web4you.ctaButton}
               <ExternalLink size={12} className="opacity-60" />
             </motion.a>
           </div>

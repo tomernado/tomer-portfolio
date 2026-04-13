@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useLang } from '../context/LanguageContext'
 
 const navLinks = [
   { label: 'Home',     href: '#hero',     id: 'hero' },
@@ -12,6 +13,7 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
+  const { lang, setLang } = useLang()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -67,7 +69,7 @@ export default function Navbar() {
         </a>
 
         {/* Nav links */}
-        <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar flex-1 justify-end mr-2">
           {navLinks.map((link) => {
             const isActive = activeSection === link.id
 
@@ -108,6 +110,16 @@ export default function Navbar() {
             )
           })}
         </div>
+        {/* Language toggle */}
+        <button
+          onClick={() => setLang(lang === 'he' ? 'en' : 'he')}
+          className="flex-shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-200"
+          aria-label="Switch language"
+        >
+          <span className={`font-mono text-[10px] sm:text-[11px] font-bold transition-colors duration-200 ${lang === 'he' ? 'text-teal-300' : 'text-slate-500'}`}>עב</span>
+          <span className="text-slate-700 text-[9px]">|</span>
+          <span className={`font-mono text-[10px] sm:text-[11px] font-bold transition-colors duration-200 ${lang === 'en' ? 'text-teal-300' : 'text-slate-500'}`}>EN</span>
+        </button>
       </div>
     </nav>
   )

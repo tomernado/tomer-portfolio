@@ -1,0 +1,92 @@
+// English translations — only the text fields that differ from Hebrew.
+// URLs, images, phone, email etc. are shared and come from content.js via LanguageContext.
+
+export const personalInfo = {
+  name: "Tomer Cohen",
+  aboutText:
+    "I'm Tomer Cohen, a 3rd-year Computer Science student at HIT and a software engineer with proven experience designing complex OOP systems and secure Full-Stack web applications. I combine a strong emphasis on algorithmic efficiency and system complexity with the ability to leverage AI tools to accelerate development. I bring a background in operational management, combining positive energy and teamwork to deliver solutions under pressure. Seeking my next challenge in a demanding development role where I can express my curiosity and professionalism.",
+}
+
+export const aboutData = {
+  mainTitle: "Computer Science Graduate",
+  experience: [
+    {
+      id: 1,
+      title: "Creative Strategy & Marketing",
+      company: "Freelance",
+      description:
+        "Produced successful digital content and creative advertisements for diverse businesses. Managed the complete video production process — from understanding the client's concept and planning the content, through to final execution and delivery.",
+      date: "2023 – Present",
+    },
+    {
+      id: 2,
+      title: "Operations & Team Management",
+      company: "Restaurant Management",
+      description:
+        "Managed daily restaurant operations and shifts in high-pressure environments, including staff scheduling, recruitment, inventory supervision, supply chain management, and real-time crisis resolution.",
+      date: "2021 – 2023",
+    },
+  ],
+}
+
+export const projectDescriptions = {
+  1: "A secure Full-Stack system implementing S-SDLC methodologies, protection against OWASP vulnerabilities (SQLi, XSS), strong JWT authentication, and bcrypt encryption against a MySQL database with a responsive React interface.",
+  2: "Design and development of complex C# systems implementing advanced OOP principles and Design Patterns. Created an event-driven architecture for complete separation between business logic and UI.",
+  3: "End-to-end Java network game development. Stable server-side architecture with Java Servlets and Tomcat, plus session management. Client side built with JavaFX.",
+  4: "Transition from manual HTML/CSS development to AI-accelerated React development. Creation and deployment of 3 live websites, including domain and SSL management.",
+  5: "An interactive hub showcasing client/server logic development skills. Built complex web games connected to a fast, immersive interface.",
+  6: "An interactive slot machine game with complex client-side logic. Rich UI with animations, a scoring system, and a complete gaming experience — all in-browser, no server required.",
+  7: "A complete online store with a Hebrew RTL interface. Product catalog, shopping cart, favorites, and search — with responsive design and a focus on user experience. Built with AI tools to accelerate development.",
+}
+
+export const projectsSection = {
+  heading: "Projects",
+  subheading: "Click a card for details · Auto-scrolling",
+  cardCta: "Details",
+}
+
+export const web4youSteps = [
+  {
+    number: "01",
+    title: "Why We Started (Our Story)",
+    description:
+      "We realized the AI revolution is no longer the future — it's the present, and it's here to stay. Instead of fearing change, we chose to harness this power for business owners. We discovered that combining smart human design with deep UX/UI expertise and AI-powered coding allows us to create stunning, modern websites — at a quality level previously out of reach for most businesses.",
+  },
+  {
+    number: "02",
+    title: "How the Magic Happens (Our Method)",
+    description:
+      'We built a precise, streamlined workflow. It begins with a human discovery session to deeply understand your needs. We then translate your vision into a precise technical brief and feed it into advanced AI coding agents. Finally, we conduct rigorous quality assurance, design refinements, animation integration, and manual polish to ensure the final result is nothing short of perfect.',
+  },
+  {
+    number: "03",
+    title: "Our Clear Advantage (Why Choose Us?)",
+    description:
+      "The winning combination of premium quality, top speed, and fair pricing. Our innovative workflow saves dozens of development hours — and we pass those savings on to you. You receive a website with the finish level of a tech company — smooth animations, clean code, and custom design — in half the time and at a significantly more competitive price.",
+  },
+  {
+    number: "04",
+    title: "Our Vision Forward (Where Are We Headed?)",
+    description:
+      "The tech world evolves at a dizzying pace, and we make sure to always stay one step ahead. We are hungry to create, eager to keep learning, expanding, and integrating the latest tools to give our clients the final word on the web. Our goal is to help many more businesses turn their vision into a powerful digital reality.",
+  },
+]
+
+export const web4youSection = {
+  label: "My Business",
+  ctaButton: "Visit Web4You",
+}
+
+export const heroStrings = {
+  readMore: "Read more",
+  discoverWork: "Discover My Work",
+}
+
+export const aboutStrings = {
+  clickToSkip: "— click to skip",
+  clickToSkipTitle: "click to skip",
+}
+
+export const footerStrings = {
+  copyright: "Tomer Cohen · All rights reserved",
+}

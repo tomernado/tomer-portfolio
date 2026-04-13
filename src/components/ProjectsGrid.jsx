@@ -1,7 +1,7 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue, useAnimationFrame } from 'framer-motion'
 import { Play, X, Github, Linkedin, ExternalLink, Globe } from 'lucide-react'
-import { projects } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 
 /* ─── Card size configs ────────────────────────────────────────────── */
 const CARD_SIZES = [
@@ -29,6 +29,7 @@ const modalV = {
 
 /* ─── Single project card ─────────────────────────────────────────── */
 function ProjectCard({ project, sizeConfig, onClick }) {
+  const { ui } = useContent()
   return (
     <motion.button
       onClick={onClick}
@@ -77,7 +78,7 @@ function ProjectCard({ project, sizeConfig, onClick }) {
         </p>
         <div className="mt-2 flex items-center justify-start gap-1 text-blue-400">
           <ExternalLink size={10} />
-          <span className="font-mono text-[9px] tracking-widest uppercase">פרטים</span>
+          <span className="font-mono text-[9px] tracking-widest uppercase">{ui.projects.cardCta}</span>
         </div>
       </div>
 
@@ -286,6 +287,7 @@ function MarqueeRow({ items, direction = 'left' }) {
 
 /* ─── Main export ──────────────────────────────────────────────────── */
 export default function ProjectsGrid() {
+  const { projects, ui } = useContent()
   const [selected, setSelected] = useState(null)
 
   const row1 = projects.slice(0, 3).map((p, i) => ({
@@ -316,11 +318,11 @@ export default function ProjectsGrid() {
           >
             <div className="max-w-6xl mx-auto">
               <p className="font-display text-blue-500 text-xs tracking-[0.3em] uppercase mb-2 font-semibold">Portfolio</p>
-              <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white">פרויקטים</h2>
+              <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white">{ui.projects.heading}</h2>
               <motion.div className="h-1 bg-gradient-to-l from-transparent via-blue-500 to-blue-400 rounded-full mt-4 origin-right"
                 initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: 0.3 }} style={{ width: 56 }} />
-              <p className="font-body text-slate-500 text-sm mt-3">לחץ על כרטיס לפרטים · גלילה אוטומטית</p>
+              <p className="font-body text-slate-500 text-sm mt-3">{ui.projects.subheading}</p>
             </div>
           </motion.div>
 

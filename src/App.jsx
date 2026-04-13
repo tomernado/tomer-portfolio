@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { LanguageProvider } from './context/LanguageContext'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -40,6 +41,7 @@ const blobs = [
 
 export default function App() {
   return (
+    <LanguageProvider>
     <div className="bg-slate-950 min-h-screen relative [overflow-x:clip]">
       {/* Static dot-grid layer */}
       <div className="fixed inset-0 bg-dot-grid pointer-events-none z-0 opacity-50" />
@@ -72,5 +74,6 @@ export default function App() {
         <Footer />
       </div>
     </div>
+    </LanguageProvider>
   )
 }

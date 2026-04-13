@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, useMotionValue, useAnimationFrame } from 'framer-motion'
-import { personalInfo, projects } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import {
   Linkedin, Github, Terminal, ChevronDown,
   FileText, Layers, ArrowRight,
@@ -260,6 +260,7 @@ function ProjectStrip() {
 
 /* ── Main Hero ──────────────────────────────────────────────────── */
 export default function Hero() {
+  const { personalInfo, projects, ui, dir } = useContent()
   const nameWords = personalInfo.name.split(' ')
   const [cvOpen, setCvOpen] = useState(false)
 
@@ -317,7 +318,7 @@ export default function Hero() {
           </motion.div>
 
           {/* RIGHT — info (new order: name → title → buttons → bio → nav) */}
-          <div className="flex flex-col items-center sm:items-start text-center sm:text-right flex-1 gap-4" dir="rtl">
+          <div className={`flex flex-col items-center sm:items-start text-center ${dir === 'rtl' ? 'sm:text-right' : 'sm:text-left'} flex-1 gap-4`} dir={dir}>
 
             {/* 1. Name */}
             <div className="flex flex-wrap justify-center sm:justify-start gap-x-4">
@@ -389,7 +390,7 @@ export default function Hero() {
                 <p className="font-body text-slate-400 text-sm leading-relaxed max-w-sm text-center sm:text-right">
                   {bioSnippet}
                   <span className="inline-flex items-center gap-0.5 text-teal-500/70 group-hover:text-teal-300 transition-colors font-mono text-[10px] mr-1">
-                    קרא עוד
+                    {ui.hero.readMore}
                     <ArrowRight size={9} className="group-hover:translate-x-0.5 transition-transform" />
                   </span>
                 </p>

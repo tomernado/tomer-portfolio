@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { FileText, Briefcase } from 'lucide-react'
-import { personalInfo, aboutData } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import CvModal from './CvModal'
 
 /* ─── Typewriter hook ────────────────────────────────────────────── */
@@ -21,6 +21,7 @@ function useTypewriter(text, speed = 14, active = false) {
 }
 
 export default function About() {
+  const { personalInfo, aboutData, ui, dir } = useContent()
   const [cvOpen, setCvOpen] = useState(false)
   const [started, setStarted] = useState(false)
   const screenRef = useRef(null)
@@ -109,8 +110,8 @@ export default function About() {
                 <div
                   className="mb-8 cursor-pointer select-none"
                   onClick={finish}
-                  title="לחץ לדילוג"
-                  dir="rtl"
+                  title={ui.about.clickToSkipTitle}
+                  dir={dir}
                 >
                   {/* Prompt line */}
                   <div className="flex items-center gap-2 mb-3">
@@ -129,7 +130,7 @@ export default function About() {
 
                   {!done && (
                     <p className="mt-2 font-mono text-green-700/60 text-[10px] tracking-widest">
-                      — לחץ לדילוג
+                      {ui.about.clickToSkip}
                     </p>
                   )}
                 </div>
@@ -175,7 +176,7 @@ export default function About() {
                       </p>
 
                       {/* Description */}
-                      <p dir="rtl" className="font-body text-slate-400/90 text-xs leading-relaxed">
+                      <p dir={dir} className="font-body text-slate-400/90 text-xs leading-relaxed">
                         {exp.description}
                       </p>
                     </motion.div>
