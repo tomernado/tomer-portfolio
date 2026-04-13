@@ -1,118 +1,140 @@
-import { motion } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ExternalLink, Globe } from 'lucide-react'
 import { web4youData } from '../data/content'
 
-const fadeLeft = {
-  hidden:  { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] } },
-}
-const fadeRight = {
-  hidden:  { opacity: 0, x: 40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] } },
-}
+const { steps, url } = web4youData
 
 export default function Web4YouSection() {
-  return (
-    <section id="web4you" className="py-28 px-5 relative overflow-hidden">
+  const containerRef = useRef(null)
+  const [activeIndex, setActiveIndex] = useState(0)
 
-      {/* Accent glow */}
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      const totalScrollable = containerRef.current.offsetHeight - window.innerHeight
+      if (totalScrollable <= 0) return
+      const scrolled = Math.max(0, -rect.top)
+      const progress = Math.min(1, scrolled / totalScrollable)
+      const idx = Math.min(steps.length - 1, Math.floor(progress * steps.length))
+      setActiveIndex(idx)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  return (
+    <section id="web4you" className="relative bg-slate-950">
+
+      {/* Glow */}
       <div
-        className="absolute pointer-events-none"
         aria-hidden="true"
+        className="pointer-events-none absolute"
         style={{
-          width: 600, height: 600,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)',
-          top: '10%', right: '-15%',
+          width: 700, height: 700, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.09) 0%, transparent 70%)',
+          top: '-10%', right: '-20%',
         }}
       />
 
-      <div className="max-w-6xl mx-auto">
+      {/* Scroll driver — 4 × 100vh tall */}
+      <div ref={containerRef} style={{ minHeight: `${steps.length * 100}vh` }}>
 
-        {/* Section heading */}
-        <motion.div
-          dir="rtl"
-          className="mb-14"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.65 }}
-        >
-          <p className="font-display text-indigo-400 text-xs tracking-[0.3em] uppercase mb-2 font-semibold">
-            My Business
-          </p>
-          <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white">
-            Web4You
-          </h2>
-          <motion.div
-            className="h-1 bg-gradient-to-l from-transparent via-indigo-500 to-indigo-400 rounded-full mt-4 origin-right"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            style={{ width: 56 }}
-          />
-        </motion.div>
+        {/* Sticky panel — fills exactly one viewport */}
+        <div className="sticky top-0 h-screen flex flex-col items-center justify-between pt-20 pb-6 px-4 sm:px-10 gap-3 sm:gap-4">
 
-        {/* Two-column */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-          {/* Left — screenshot */}
-          <motion.div
-            variants={fadeLeft}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            className="relative group"
-          >
-            <div
-              className="relative rounded-2xl overflow-hidden border border-white/10"
-              style={{ boxShadow: '0 25px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(99,102,241,0.15)' }}
-            >
-              <img
-                src={web4youData.screenshot}
-                alt="Web4You website"
-                className="w-full object-cover group-hover:scale-[1.02] transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent pointer-events-none" />
-            </div>
-            {/* Glow under image */}
-            <div
-              className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-3/4 h-8 blur-2xl rounded-full pointer-events-none"
-              style={{ background: 'rgba(99,102,241,0.35)' }}
-            />
-          </motion.div>
-
-          {/* Right — text */}
-          <motion.div
-            variants={fadeRight}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            dir="rtl"
-            className="space-y-6"
-          >
-            <h3 className="font-body font-bold text-white text-2xl sm:text-3xl leading-snug">
-              {web4youData.tagline}
-            </h3>
-
-            <p className="font-body text-slate-400 text-base leading-[2.1]">
-              {web4youData.description}
+          {/* ── Heading ── */}
+          <div dir="rtl" className="w-full max-w-2xl flex-shrink-0">
+            <p className="font-display text-indigo-400 text-[10px] tracking-[0.3em] uppercase mb-1 font-semibold text-center">
+              העסק שלי
             </p>
+            <h2 className="font-body font-extrabold text-3xl sm:text-4xl text-white text-center">
+              Web4You
+            </h2>
+          </div>
 
+          {/* ── Step text (animated) ── */}
+          <div className="w-full max-w-xl flex-1 min-h-0 flex items-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeIndex}
+                dir="rtl"
+                className="text-center w-full"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -14 }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+              >
+                <p className="font-display font-bold text-indigo-400 text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-1">
+                  {steps[activeIndex].number}
+                </p>
+                <h3 className="font-body font-bold text-white text-base sm:text-xl leading-snug mb-2">
+                  {steps[activeIndex].title}
+                </h3>
+                <p className="font-body text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
+                  {steps[activeIndex].description}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* ── Image (fixed max-height, full image visible) ── */}
+          <div
+            className="w-full max-w-xs sm:max-w-sm flex-shrink-0 rounded-2xl overflow-hidden bg-slate-900/60 relative"
+            style={{
+              maxHeight: 'min(34vh, 300px)',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(99,102,241,0.18)',
+            }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={activeIndex}
+                src={steps[activeIndex].image}
+                alt={steps[activeIndex].title}
+                className="w-full h-full object-contain"
+                style={{ maxHeight: 'min(34vh, 300px)' }}
+                initial={{ opacity: 0, scale: 1.03 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.97 }}
+                transition={{ duration: 0.45, ease: 'easeInOut' }}
+              />
+            </AnimatePresence>
+          </div>
+
+          {/* ── Progress dots ── */}
+          <div className="flex gap-2 flex-shrink-0">
+            {steps.map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  scale: activeIndex === i ? 1 : 0.55,
+                  backgroundColor: activeIndex === i ? 'rgb(99,102,241)' : 'rgb(71,85,105)',
+                  boxShadow: activeIndex === i ? '0 0 8px rgba(99,102,241,0.6)' : 'none',
+                }}
+                transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+                className="w-2 h-2 rounded-full"
+              />
+            ))}
+          </div>
+
+          {/* ── CTA ── */}
+          <div className="flex-shrink-0">
             <motion.a
-              href={web4youData.url}
+              href={url}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.04, boxShadow: '0 8px 32px rgba(99,102,241,0.5)' }}
+              whileHover={{ scale: 1.05, boxShadow: '0 8px 32px rgba(99,102,241,0.5)' }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 px-7 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-body font-semibold text-sm transition-colors duration-200 will-change-transform"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-body font-semibold text-xs sm:text-sm transition-colors duration-200 will-change-transform"
             >
-              <Globe size={16} />
+              <Globe size={14} />
               בקר באתר Web4You
-              <ExternalLink size={13} className="opacity-60" />
+              <ExternalLink size={12} className="opacity-60" />
             </motion.a>
-          </motion.div>
+          </div>
+
         </div>
       </div>
     </section>

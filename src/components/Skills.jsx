@@ -69,7 +69,7 @@ export default function Skills() {
         className="max-w-5xl mx-auto"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
+        viewport={{ once: true, amount: 0.1, margin: '-50px' }}
         variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.14 } } }}
       >
         {/* Heading */}
@@ -102,10 +102,10 @@ export default function Skills() {
                 key={group.category}
                 initial={{ opacity: 0, y: 55, scale: 0.95 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, amount: 0.15 }}
+                viewport={{ once: true, amount: 0.15, margin: '-50px' }}
                 transition={{ duration: 0.65, delay: idx * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
               >
-                {/* Continuous water-float wrapper */}
+                {/* Continuous water-float wrapper — GPU-accelerated via will-change */}
                 <motion.div
                   animate={{ y: float.y, rotate: float.rotate }}
                   transition={{
@@ -115,8 +115,9 @@ export default function Skills() {
                     ease: 'easeInOut',
                     delay: float.delay,
                   }}
+                  style={{ willChange: 'transform' }}
                 >
-                  {/* Card — hover stops float & glows */}
+                  {/* Card — hover glows */}
                   <motion.div
                     whileHover={{
                       y: -3,
@@ -124,10 +125,10 @@ export default function Skills() {
                       boxShadow: `0 0 50px ${theme.accentMuted}, 0 0 100px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.07)`,
                     }}
                     transition={{ duration: 0.22 }}
-                    className="relative overflow-hidden rounded-2xl border"
+                    className="relative overflow-hidden rounded-2xl border sm:backdrop-blur-xl"
                     style={{
-                      background: 'rgba(15,23,42,0.75)',
-                      backdropFilter: 'blur(20px)',
+                      /* Mobile: solid dark bg (no blur). sm+: semi-transparent with backdrop-blur via class */
+                      background: 'rgba(15,23,42,0.95)',
                       borderColor: theme.accentBorder.replace('0.35', '0.18'),
                     }}
                   >
@@ -171,7 +172,7 @@ export default function Skills() {
                         className={`absolute left-0 right-0 h-px bg-gradient-to-r ${theme.scanLine} opacity-60`}
                         animate={{ top: ['0%', '100%', '0%'] }}
                         transition={{ duration: float.dur * 0.9, repeat: Infinity, ease: 'linear', delay: float.delay }}
-                        style={{ pointerEvents: 'none' }}
+                        style={{ pointerEvents: 'none', willChange: 'top' }}
                       />
 
                       {/* Category name as code comment */}
@@ -199,7 +200,7 @@ export default function Skills() {
                         className="flex flex-wrap gap-2"
                         initial="hidden"
                         whileInView="visible"
-                        viewport={{ once: true }}
+                        viewport={{ once: true, margin: '-50px' }}
                         variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } } }}
                       >
                         {group.items.map((item) => (

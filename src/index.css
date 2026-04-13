@@ -16,25 +16,33 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Offset anchor scroll so sections don't hide behind the fixed navbar */
+  section[id] {
+    scroll-margin-top: 4rem;
+  }
+
+  /* Sharper image rendering on high-DPI screens */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
 }
 
-/* ── Marquee carousel ──────────────────────────────────────────────────── */
-@keyframes marquee-left {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+/* ── CRT monitor effects ─────────────────────────────────────────────────── */
+@keyframes crt-flicker {
+  0%,89%,100% { opacity: 1; }
+  90%  { opacity: 0.97; }
+  91%  { opacity: 1; }
+  95%  { opacity: 0.98; }
+  96%  { opacity: 1; }
 }
-@keyframes marquee-right {
-  0%   { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
+@keyframes cursor-blink {
+  0%,49% { opacity: 1; }
+  50%,100% { opacity: 0; }
 }
-
-.marquee-left  { animation: marquee-left  45s linear infinite; }
-.marquee-right { animation: marquee-right 38s linear infinite; }
-
-.marquee-pause:hover .marquee-left,
-.marquee-pause:hover .marquee-right {
-  animation-play-state: paused;
-}
+.crt-flicker { animation: crt-flicker 7s ease-in-out infinite; }
+.cursor-blink { animation: cursor-blink 0.75s step-start infinite; }
 
 /* ── Water shimmer ──────────────────────────────────────────────────────── */
 @keyframes water-shimmer {

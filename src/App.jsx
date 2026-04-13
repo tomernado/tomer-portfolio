@@ -40,7 +40,7 @@ const blobs = [
 
 export default function App() {
   return (
-    <div className="bg-slate-950 min-h-screen relative overflow-x-hidden">
+    <div className="bg-slate-950 min-h-screen relative [overflow-x:clip]">
       {/* Static dot-grid layer */}
       <div className="fixed inset-0 bg-dot-grid pointer-events-none z-0 opacity-50" />
 
