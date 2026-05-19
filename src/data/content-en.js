@@ -4,7 +4,7 @@
 export const personalInfo = {
   name: "Tomer Cohen",
   aboutText:
-    "I'm Tomer Cohen, a 3rd-year Computer Science student at HIT and a software engineer with proven experience designing complex OOP systems and secure Full-Stack web applications. I combine a strong emphasis on algorithmic efficiency and system complexity with the ability to leverage AI tools to accelerate development. I bring a background in operational management, combining positive energy and teamwork to deliver solutions under pressure. Seeking my next challenge in a demanding development role where I can express my curiosity and professionalism.",
+    "Software Engineer focused on secure Full-Stack development and complex OOP architecture. Experienced in end-to-end application development within a web development business (Web4You), utilizing database and AI tools to optimize development workflows. Proficient in S-SDLC methodologies and secure coding practices (OWASP), with a strong emphasis on algorithmic efficiency and system complexity. Currently a 3rd-year Computer Science student at HIT, backed by a background in operations management, bringing positive energy and a teamwork-oriented mindset to deliver high-quality solutions under pressure.",
 }
 
 export const aboutData = {
@@ -12,18 +12,26 @@ export const aboutData = {
   experience: [
     {
       id: 1,
-      title: "Creative Strategy & Marketing",
-      company: "Freelance",
+      title: "Full-Stack Developer & Co-Founder",
+      company: "Web4You",
       description:
-        "Produced successful digital content and creative advertisements for diverse businesses. Managed the complete video production process — from understanding the client's concept and planning the content, through to final execution and delivery.",
-      date: "2023 – Present",
+        "Delivered 20+ web apps (React, JS, HTML/CSS). Translated client requirements into scalable features, leveraging AI (Claude) to optimize workflows and code architecture. Architected databases and infrastructure via Supabase (SQL), implementing robust authentication, RBAC, and seamless API integrations (CRMs, payment gateways).",
+      date: "2025 – Present",
     },
     {
       id: 2,
+      title: "Creative Strategy & Marketing",
+      company: "Freelance",
+      description:
+        "Managed end-to-end production of digital marketing content, translating client concepts into delivered final products.",
+      date: "2023 – 2025",
+    },
+    {
+      id: 3,
       title: "Operations & Team Management",
       company: "Restaurant Management",
       description:
-        "Managed daily restaurant operations and shifts in high-pressure environments, including staff scheduling, recruitment, inventory supervision, supply chain management, and real-time crisis resolution.",
+        "Led daily operations and staff coordination in a high-pressure environment. Responsible for real-time crisis resolution, shift management, and maintaining operational efficiency.",
       date: "2021 – 2023",
     },
   ],
