@@ -55,6 +55,17 @@ export const skills = [
 
 export const projects = [
   {
+    id: 8,
+    title: "WorkShift — ניהול משמרות חכם",
+    description:
+      "אפליקציית Full-Stack לניהול משמרות עובדים בזמן אמת. מערכת תזמון חכמה המאפשרת הצגת לוח משמרות, שיבוץ עובדים ועדכונים דינמיים — עם ממשק נוח ורספונסיבי.",
+    media: `${base}img/WorkShift.png`,
+    mediaType: "image",
+    linkedinPost:
+      "https://www.linkedin.com/feed/update/urn:li:activity:7453001379230597120/",
+    githubLink: "https://github.com/tomernado",
+  },
+  {
     id: 1,
     title: "Secure Customer Management (S-SDLC)",
     description:
@@ -107,7 +118,7 @@ export const projects = [
     mediaType: "image",
     linkedinPost: "https://www.linkedin.com/in/tomer-cohen-486457346",
     githubLink: "https://github.com/tomernado",
-    siteLink: "https://tornadogames.lovable.app/",
+    siteLink: "https://tomernado.github.io/tornadogames-main/",
   },
   {
     id: 6,

@@ -30,6 +30,7 @@ export const aboutData = {
 }
 
 export const projectDescriptions = {
+  8: "A Full-Stack shift management app for real-time employee scheduling. Features a smart scheduling system with shift boards, staff assignment, and dynamic updates — all in a clean, responsive interface.",
   1: "A secure Full-Stack system implementing S-SDLC methodologies, protection against OWASP vulnerabilities (SQLi, XSS), strong JWT authentication, and bcrypt encryption against a MySQL database with a responsive React interface.",
   2: "Design and development of complex C# systems implementing advanced OOP principles and Design Patterns. Created an event-driven architecture for complete separation between business logic and UI.",
   3: "End-to-end Java network game development. Stable server-side architecture with Java Servlets and Tomcat, plus session management. Client side built with JavaFX.",
