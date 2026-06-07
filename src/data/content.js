@@ -162,7 +162,7 @@ export const projects = [
   },
   {
     id: 10,
-    title: "Recipes AI — המלצות מתכונים חכמות",
+    title: "Chef Platform — פלטפורמת שף פרטי",
     description:
       "פלטפורמת Full-Stack מותאמת אישית לשף פרטי — ניהול תפריטים, לקוחות והזמנות במקום אחד. שילוב Machine Learning לניתוח נתונים ותובנות עסקיות, עם Containerization ב-Docker לסביבת פרודקשן יציבה.",
     media: `${base}img/Recepies.mp4`,
