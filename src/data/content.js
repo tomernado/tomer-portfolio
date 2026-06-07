@@ -95,6 +95,17 @@ export const projects = [
     githubLink: "https://github.com/tomernado",
   },
   {
+    id: 9,
+    title: "PDF Sim — ניתוח מסמכים עם AI",
+    description:
+      "כלי Full-Stack לסימולציה וניתוח קבצי PDF מבוסס ארכיטקטורת React מודולרית. שימוש ב-AI לניתוח תוכן מסמכים, חילוץ מידע ויצירת תובנות אוטומטיות — עם עיצוב נקי וחוויית משתמש אינטואיטיבית.",
+    media: `${base}img/PDFSim.jpg`,
+    mediaType: "image",
+    linkedinPost:
+      "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-architecture-react-activity-7468227901528924160-FIF0",
+    githubLink: "https://github.com/tomernado",
+  },
+  {
     id: 3,
     title: "Multiplayer Client-Server Game",
     description:
@@ -148,6 +159,17 @@ export const projects = [
     linkedinPost: "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
     githubLink: "https://github.com/tomernado/DevStore",
     siteLink: "https://tomernado.github.io/DevStore/",
+  },
+  {
+    id: 10,
+    title: "Recipes AI — המלצות מתכונים חכמות",
+    description:
+      "אפליקציית Machine Learning להמלצות מתכונים מותאמות אישית. שימוש במודלים חכמים לניתוח העדפות המשתמש ומתן המלצות דינמיות, עם Containerization מלא ב-Docker לסביבת פיתוח ופרודקשן יציבה.",
+    media: `${base}img/Recepies.mp4`,
+    mediaType: "video",
+    linkedinPost:
+      "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-machinelearning-docker-activity-7466858872373342208-XTI7",
+    githubLink: "https://github.com/tomernado",
   },
 ];
 
