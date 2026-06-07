@@ -164,7 +164,7 @@ export const projects = [
     id: 10,
     title: "Recipes AI — המלצות מתכונים חכמות",
     description:
-      "אפליקציית Machine Learning להמלצות מתכונים מותאמות אישית. שימוש במודלים חכמים לניתוח העדפות המשתמש ומתן המלצות דינמיות, עם Containerization מלא ב-Docker לסביבת פיתוח ופרודקשן יציבה.",
+      "פלטפורמת Full-Stack מותאמת אישית לשף פרטי — ניהול תפריטים, לקוחות והזמנות במקום אחד. שילוב Machine Learning לניתוח נתונים ותובנות עסקיות, עם Containerization ב-Docker לסביבת פרודקשן יציבה.",
     media: `${base}img/Recepies.mp4`,
     mediaType: "video",
     linkedinPost:
