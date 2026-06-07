@@ -104,6 +104,7 @@ export const projects = [
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-architecture-react-activity-7468227901528924160-FIF0",
     githubLink: "https://github.com/tomernado",
+    siteLink: "https://tomernado.github.io/universal_interviewer/dashboard.html",
   },
   {
     id: 3,
