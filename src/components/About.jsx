@@ -23,22 +23,22 @@ function useTypewriter(text, speed = 14, active = false) {
 export default function About() {
   const { personalInfo, aboutData, ui, dir } = useContent()
   const [cvOpen, setCvOpen] = useState(false)
-  const [started, setStarted] = useState(false)
+  const [inView, setInView] = useState(false)
   const screenRef = useRef(null)
 
-  // Start typing once the section enters view
+  // Pause typing when section leaves the viewport, resume when it returns
   useEffect(() => {
     const el = screenRef.current
     if (!el) return
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStarted(true) },
-      { threshold: 0.25 }
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.1 }
     )
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
-  const { typed, done, finish } = useTypewriter(personalInfo.aboutText, 5, started)
+  const { typed, done, finish } = useTypewriter(personalInfo.aboutText, 5, inView)
 
   return (
     <>
