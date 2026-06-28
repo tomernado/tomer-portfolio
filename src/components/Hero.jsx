@@ -48,115 +48,42 @@ function TypewriterTitle() {
   }, [])
 
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-teal-500/10 border border-teal-500/30 rounded-full">
-      <Terminal size={12} className="text-teal-400 flex-shrink-0" />
+    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-500/[0.08] border border-indigo-500/25 rounded-full">
+      <Terminal size={12} className="text-indigo-400 flex-shrink-0" />
       <span
-        className="font-display font-semibold text-sm tracking-widest uppercase text-teal-300"
+        className="font-display font-semibold text-sm tracking-widest uppercase text-indigo-300"
         style={{ transition: 'opacity 0.18s', opacity: visible ? 1 : 0, minWidth: 180 }}
       >
         {TITLES[index]}
       </span>
-      <span className="text-teal-400 font-mono text-sm" style={{ opacity: blink ? 1 : 0, transition: 'opacity 0.1s' }}>|</span>
+      <span className="text-indigo-400 font-mono text-sm" style={{ opacity: blink ? 1 : 0, transition: 'opacity 0.1s' }}>|</span>
     </div>
   )
 }
 
-/* ── Social buttons ─────────────────────────────────────────────── */
-function makeSocialBtns(personalInfo) {
-  return [
-    {
-      href: personalInfo.linkedin, label: 'LinkedIn', sublabel: 'Connect',
-      icon: <Linkedin size={14} />,
-      bg: 'linear-gradient(160deg,#2dd4bf 0%,#0d9488 55%,#0f766e 100%)',
-      shadow: '0 6px 22px rgba(13,148,136,0.5),inset 0 1px 0 rgba(255,255,255,0.25),inset 0 -2px 0 rgba(0,0,0,0.2)',
-      shadowHover: '0 10px 32px rgba(13,148,136,0.65),inset 0 1px 0 rgba(255,255,255,0.3)',
-      shadowTap: '0 2px 8px rgba(13,148,136,0.4),inset 0 2px 5px rgba(0,0,0,0.3)',
-    },
-    {
-      href: personalInfo.whatsapp, label: 'WhatsApp', sublabel: 'Message',
-      icon: (
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-      ),
-      bg: 'linear-gradient(160deg,#4ade80 0%,#16a34a 55%,#15803d 100%)',
-      shadow: '0 6px 22px rgba(22,163,74,0.5),inset 0 1px 0 rgba(255,255,255,0.25),inset 0 -2px 0 rgba(0,0,0,0.2)',
-      shadowHover: '0 10px 32px rgba(22,163,74,0.65),inset 0 1px 0 rgba(255,255,255,0.3)',
-      shadowTap: '0 2px 8px rgba(22,163,74,0.4),inset 0 2px 5px rgba(0,0,0,0.3)',
-    },
-    {
-      href: personalInfo.github, label: 'GitHub', sublabel: 'Code',
-      icon: <Github size={14} />,
-      bg: 'linear-gradient(160deg,rgba(255,255,255,0.16) 0%,rgba(255,255,255,0.07) 100%)',
-      shadow: '0 6px 22px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.2),inset 0 -2px 0 rgba(0,0,0,0.22),0 0 0 1px rgba(255,255,255,0.1)',
-      shadowHover: '0 10px 32px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.25),0 0 0 1px rgba(255,255,255,0.16)',
-      shadowTap: '0 2px 8px rgba(0,0,0,0.35),inset 0 2px 5px rgba(0,0,0,0.3)',
-    },
-  ]
-}
+/* ── Unified glass social button ────────────────────────────────── */
+const WA_ICON = (
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+)
 
-function SocialBtn({ btn, delay }) {
+function SocialBtn({ href, label, icon, iconColor, delay }) {
   return (
     <motion.a
-      href={btn.href}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 16, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 280, damping: 22, delay }}
-      whileHover={{ scale: 1.07, y: -3, boxShadow: btn.shadowHover }}
-      whileTap={{ scale: 0.96, y: 1, boxShadow: btn.shadowTap }}
-      style={{ background: btn.bg, boxShadow: btn.shadow }}
-      className="flex items-center gap-2 px-4 py-2.5 rounded-xl cursor-pointer select-none will-change-transform"
+      whileHover={{ y: -2, boxShadow: `0 8px 24px ${iconColor}20` }}
+      whileTap={{ scale: 0.96 }}
+      className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.09] bg-white/[0.04] hover:border-white/[0.18] hover:bg-white/[0.07] text-white font-semibold font-body text-[13px] transition-all duration-200 will-change-transform cursor-pointer select-none"
     >
-      <span className="text-white">{btn.icon}</span>
-      <div className="flex flex-col leading-none">
-        <span className="text-white font-semibold font-body text-[13px]">{btn.label}</span>
-        <span className="text-white/55 font-body text-[9px] tracking-wide hidden sm:block mt-0.5">{btn.sublabel}</span>
-      </div>
+      <span style={{ color: iconColor }}>{icon}</span>
+      {label}
     </motion.a>
-  )
-}
-
-/* ── Stack chips + Web4You ──────────────────────────────────────── */
-const STACK_CHIPS = [
-  'React', 'Java', 'C#', 'Node.js', 'Python', 'SQL', 'OOP', 'S-SDLC',
-]
-
-function StackAndBusiness() {
-  const goSkills = () => document.querySelector('#skills')?.scrollIntoView({ behavior: 'smooth' })
-
-  return (
-    <motion.div variants={fadeUp} dir="ltr" className="w-full space-y-2.5">
-      {/* Label */}
-      <p className="font-mono text-[9px] tracking-[0.28em] uppercase text-slate-600 text-center sm:text-left">
-        // tech stack
-      </p>
-
-      {/* Chips row — all scroll to #skills */}
-      <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start">
-        {STACK_CHIPS.map((chip, i) => (
-          <motion.button
-            key={chip}
-            onClick={goSkills}
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.65 + i * 0.045, duration: 0.3, ease: 'backOut' }}
-            whileHover={{
-              y: -2,
-              boxShadow: '0 0 10px rgba(45,212,191,0.18)',
-              borderColor: 'rgba(45,212,191,0.4)',
-              color: '#5eead4',
-            }}
-            whileTap={{ scale: 0.94 }}
-            className="font-mono text-[10px] tracking-wide text-slate-500 border border-white/[0.09] rounded-lg px-2.5 py-1 cursor-pointer will-change-transform transition-colors duration-150"
-            style={{ background: 'rgba(255,255,255,0.025)' }}
-          >
-            {chip}
-          </motion.button>
-        ))}
-      </div>
-    </motion.div>
   )
 }
 
@@ -199,7 +126,7 @@ function ProjectStrip() {
         <motion.button
           onClick={scrollToProjects}
           whileHover={{ x: 2 }}
-          className="group flex items-center gap-1 font-mono text-[10px] text-teal-500 hover:text-teal-300 transition-colors cursor-pointer"
+          className="group flex items-center gap-1 font-mono text-[10px] text-indigo-400/70 hover:text-indigo-300 transition-colors cursor-pointer"
         >
           View All
           <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform duration-200" />
@@ -238,7 +165,6 @@ function ProjectStrip() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
 
-              {/* Hover overlay — "Explore" badge */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="flex items-center gap-1 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-2.5 py-1">
                   <Layers size={8} className="text-white" />
@@ -254,7 +180,6 @@ function ProjectStrip() {
         </motion.div>
       </div>
 
-      {/* Mobile hint */}
       <p className="sm:hidden text-center font-mono text-[8px] text-slate-700 mt-2 tracking-widest uppercase">
         tap a card to explore projects
       </p>
@@ -264,10 +189,9 @@ function ProjectStrip() {
 
 /* ── Main Hero ──────────────────────────────────────────────────── */
 export default function Hero() {
-  const { personalInfo, projects, ui, dir } = useContent()
+  const { personalInfo, ui, dir } = useContent()
   const nameWords = personalInfo.name.split(' ')
   const [cvOpen, setCvOpen] = useState(false)
-  const socialBtns = makeSocialBtns(personalInfo)
 
   const bioSnippet = personalInfo.aboutText.slice(0, 115).trimEnd() + '…'
 
@@ -283,95 +207,89 @@ export default function Hero() {
         animate="visible"
       >
         {/* ── Two-column layout ── */}
-        <div className="flex flex-col sm:flex-row items-center gap-10 sm:gap-14">
+        <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-12 lg:gap-16">
 
           {/* LEFT — logo */}
           <motion.div
             className="flex-shrink-0 relative will-change-transform"
             variants={fadeUp}
-            animate={{ y: [0, -12, 0] }}
-            transition={{ y: { repeat: Infinity, duration: 5, ease: 'easeInOut' } }}
+            animate={{ y: [0, -10, 0] }}
+            transition={{ y: { repeat: Infinity, duration: 5.5, ease: 'easeInOut' } }}
           >
-            {/* Ambient glow behind logo */}
             <motion.div
               className="hidden md:block absolute inset-0 blur-3xl pointer-events-none"
               style={{
-                background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,102,241,0.22) 0%, transparent 70%)',
-                transform: 'scale(1.6)',
+                background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,102,241,0.2) 0%, transparent 70%)',
+                transform: 'scale(1.7)',
               }}
-              animate={{ opacity: [0.4, 0.75, 0.4] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+              animate={{ opacity: [0.35, 0.7, 0.35] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             />
             <LogoSVG
-              className="relative w-64 sm:w-80"
-              style={{ filter: 'drop-shadow(0 0 28px rgba(99,102,241,0.38))' }}
+              className="relative w-72 sm:w-96"
+              style={{ filter: 'drop-shadow(0 0 32px rgba(99,102,241,0.4))' }}
             />
           </motion.div>
 
-          {/* RIGHT — info (new order: name → title → buttons → bio → nav) */}
-          <div className={`flex flex-col items-center sm:items-start text-center ${dir === 'rtl' ? 'sm:text-right' : 'sm:text-left'} flex-1 gap-4`} dir={dir}>
+          {/* RIGHT — info */}
+          <div
+            className={`flex flex-col items-center sm:items-start text-center ${dir === 'rtl' ? 'sm:text-right' : 'sm:text-left'} flex-1 gap-3.5`}
+            dir={dir}
+          >
 
-            {/* 1. Name */}
-            <div className="flex flex-wrap justify-center sm:justify-start gap-x-4">
+            {/* Name */}
+            <div className="flex flex-wrap justify-center sm:justify-start gap-x-3">
               {nameWords.map((word, i) => (
                 <motion.span
                   key={i} custom={i}
                   variants={wordReveal} initial="hidden" animate="visible"
-                  className="inline-block font-body font-extrabold text-5xl sm:text-6xl leading-tight text-shimmer will-change-transform"
+                  className="inline-block font-body font-extrabold text-3xl sm:text-4xl leading-tight text-shimmer will-change-transform"
                 >
                   {word}
                 </motion.span>
               ))}
             </div>
 
-            {/* 2. Typewriter title */}
+            {/* Typewriter */}
             <motion.div variants={fadeUp}>
               <TypewriterTitle />
             </motion.div>
 
-            {/* 3. Social + CV buttons — moved up for immediate CTA */}
-            <motion.div variants={fadeUp} dir="ltr" className="flex flex-wrap gap-2.5 justify-center sm:justify-start">
-              {socialBtns.map((btn, i) => (
-                <SocialBtn key={btn.label} btn={btn} delay={0.45 + i * 0.08} />
-              ))}
-              {/* CV button */}
+            {/* Buttons — unified glass style */}
+            <motion.div variants={fadeUp} dir="ltr" className="flex flex-wrap gap-2 justify-center sm:justify-start">
+              <SocialBtn href={personalInfo.linkedin} label="LinkedIn"  icon={<Linkedin size={15} />} iconColor="#60a5fa" delay={0.45} />
+              <SocialBtn href={personalInfo.whatsapp} label="WhatsApp" icon={WA_ICON}               iconColor="#4ade80" delay={0.53} />
+              <SocialBtn href={personalInfo.github}   label="GitHub"   icon={<Github size={15} />}  iconColor="#94a3b8" delay={0.61} />
               <motion.button
                 onClick={() => setCvOpen(true)}
-                initial={{ opacity: 0, y: 16, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.69 }}
-                whileHover={{ scale: 1.07, y: -3, boxShadow: '0 8px 28px rgba(20,184,166,0.35)' }}
-                whileTap={{ scale: 0.96, y: 1 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-teal-500/30 will-change-transform"
-                style={{
-                  background: 'linear-gradient(135deg,rgba(45,212,191,0.1) 0%,rgba(15,118,110,0.16) 100%)',
-                  boxShadow: '0 4px 16px rgba(20,184,166,0.18),inset 0 1px 0 rgba(255,255,255,0.08)',
-                }}
+                whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(96,165,250,0.18)' }}
+                whileTap={{ scale: 0.96 }}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.09] bg-white/[0.04] hover:border-white/[0.18] hover:bg-white/[0.07] text-white font-semibold font-body text-[13px] transition-all duration-200 will-change-transform cursor-pointer select-none"
               >
-                <FileText size={14} className="text-teal-400" />
-                <div className="flex flex-col leading-none">
-                  <span className="text-teal-100 font-semibold font-body text-[13px]">Resume</span>
-                  <span className="text-white/50 font-body text-[9px] tracking-wide hidden sm:block mt-0.5">View / Download</span>
-                </div>
+                <FileText size={15} className="text-blue-400" />
+                Resume
               </motion.button>
             </motion.div>
 
-            {/* 4. Compact contact */}
+            {/* Contact */}
             <motion.div variants={fadeUp} dir="ltr" className="flex flex-wrap gap-x-5 gap-y-1.5 justify-center sm:justify-start">
               <a
                 href={`mailto:${personalInfo.email}`}
-                className="flex items-center gap-1.5 text-slate-500 hover:text-teal-300 transition-colors duration-200 group"
+                className="flex items-center gap-1.5 text-slate-500 hover:text-indigo-300 transition-colors duration-200 group"
               >
-                <Mail size={12} className="text-teal-500/60 group-hover:text-teal-400 transition-colors" />
+                <Mail size={12} className="text-indigo-400/50 group-hover:text-indigo-400 transition-colors" />
                 <span className="font-mono text-[11px] tracking-wide">{personalInfo.email}</span>
               </a>
               <div className="flex items-center gap-1.5 text-slate-500">
-                <Phone size={12} className="text-green-500/60" />
+                <Phone size={12} className="text-slate-500/60" />
                 <span className="font-mono text-[11px] tracking-wide">{personalInfo.phone}</span>
               </div>
             </motion.div>
 
-            {/* 5. Bio snippet — clickable → About */}
+            {/* Bio */}
             <motion.div variants={fadeUp} className="w-full">
               <button
                 onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
@@ -380,7 +298,7 @@ export default function Hero() {
               >
                 <p className="font-body text-slate-400 text-sm leading-relaxed max-w-sm text-center sm:text-right">
                   {bioSnippet}
-                  <span className="inline-flex items-center gap-0.5 text-teal-500/70 group-hover:text-teal-300 transition-colors font-mono text-[10px] mr-1">
+                  <span className="inline-flex items-center gap-0.5 text-indigo-400/60 group-hover:text-indigo-300 transition-colors font-mono text-[10px] mr-1">
                     {ui.hero.readMore}
                     <ArrowRight size={9} className="group-hover:translate-x-0.5 transition-transform" />
                   </span>
@@ -388,8 +306,6 @@ export default function Hero() {
               </button>
             </motion.div>
 
-            {/* 6. Stack chips + Web4You */}
-            <StackAndBusiness />
           </div>
         </div>
 
@@ -403,12 +319,12 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 2.2, duration: 0.8 }}
         >
-          <span className="font-mono text-[10px] tracking-[0.3em] uppercase">Discover My Work</span>
+          <span className="font-mono text-[10px] tracking-[0.3em] uppercase">{ui.hero.discoverWork}</span>
           <motion.button
             onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
             animate={{ y: [0, 6, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="text-slate-600 hover:text-teal-400 transition-colors duration-200 will-change-transform"
+            className="text-slate-600 hover:text-indigo-400 transition-colors duration-200 will-change-transform"
           >
             <ChevronDown size={20} />
           </motion.button>

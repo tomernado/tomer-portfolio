@@ -45,9 +45,6 @@ export default function App() {
     <LanguageProvider>
     <div className="bg-slate-950 min-h-screen relative [overflow-x:clip]">
       <IntroSplash />
-      {/* Static dot-grid layer */}
-      <div className="fixed inset-0 bg-dot-grid pointer-events-none z-0 opacity-50" />
-
       {/* Animated ambient blobs — desktop only (blur-[130px] is too heavy for mobile GPU) */}
       <div className="hidden md:block fixed inset-0 pointer-events-none z-0 overflow-hidden">
         {blobs.map((blob) => (
