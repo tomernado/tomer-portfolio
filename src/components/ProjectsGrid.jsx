@@ -290,12 +290,12 @@ export default function ProjectsGrid() {
   const { projects, ui } = useContent()
   const [selected, setSelected] = useState(null)
 
-  const row1 = projects.slice(0, 4).map((p, i) => ({
+  const row1 = projects.slice(0, 5).map((p, i) => ({
     project: p,
-    size: CARD_SIZES[i],
+    size: CARD_SIZES[i % CARD_SIZES.length],
     onSelect: setSelected,
   }))
-  const row2 = projects.slice(4).map((p, i) => ({
+  const row2 = projects.slice(5).map((p, i) => ({
     project: p,
     size: CARD_SIZES[i + 3] ?? CARD_SIZES[3],
     onSelect: setSelected,

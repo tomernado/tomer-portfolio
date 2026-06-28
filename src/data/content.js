@@ -84,6 +84,18 @@ export const projects = [
     githubLink: "https://github.com/tomernado/CompterSecurity-Server",
   },
   {
+    id: 11,
+    title: "SocialOrg — אוטומציה ארגונית עם AI",
+    description:
+      "פלטפורמת Full-Stack לניהול ואוטומציה של תהליכים ארגוניים באמצעות AI. המערכת מייעלת תקשורת פנים-ארגונית, מנהלת משימות ומייצרת תובנות חכמות — עם ממשק רספונסיבי מלא ו-Deployment בענן.",
+    media: `${base}img/SocialOrg.mp4`,
+    mediaType: "video",
+    linkedinPost:
+      "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-softwareengineering-automation-ugcPost-7476927528452907008-PFR7/",
+    githubLink: "https://github.com/tomernado/SocialOrg",
+    siteLink: "https://social-org-git-master-tomernados-projects.vercel.app/",
+  },
+  {
     id: 2,
     title: "Advanced OOP & Architecture",
     description:

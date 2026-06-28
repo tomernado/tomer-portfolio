@@ -9,6 +9,14 @@ export default function Web4YouSection() {
   const containerRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
+  // Preload all step images so they're ready before the user scrolls into view
+  useEffect(() => {
+    steps.forEach(step => {
+      const img = new Image()
+      img.src = step.image
+    })
+  }, [steps])
+
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return
@@ -80,11 +88,11 @@ export default function Web4YouSection() {
             </AnimatePresence>
           </div>
 
-          {/* ── Image (fixed max-height, full image visible) ── */}
+          {/* ── Image (fixed height — always reserves space to avoid layout shift) ── */}
           <div
             className="w-full max-w-xs sm:max-w-sm flex-shrink-0 rounded-2xl overflow-hidden bg-slate-900/60 relative mt-3 sm:mt-4"
             style={{
-              maxHeight: 'min(34vh, 300px)',
+              height: 'min(34vh, 300px)',
               boxShadow: '0 24px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(99,102,241,0.18)',
             }}
           >
@@ -94,7 +102,6 @@ export default function Web4YouSection() {
                 src={steps[activeIndex].image}
                 alt={steps[activeIndex].title}
                 className="w-full h-full object-contain"
-                style={{ maxHeight: 'min(34vh, 300px)' }}
                 initial={{ opacity: 0, scale: 1.03 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}

@@ -47,6 +47,7 @@ export const projectDescriptions = {
   6: "An interactive slot machine game with complex client-side logic. Rich UI with animations, a scoring system, and a complete gaming experience — all in-browser, no server required.",
   9: "A Full-Stack PDF simulation and analysis tool built on a modular React architecture. Uses AI to analyze document content, extract information, and generate automated insights — with a clean design and intuitive user experience.",
   10: "A personalized Full-Stack platform built for a private chef business — managing menus, clients, and orders in one place. Integrates Machine Learning for data analysis and business insights, fully containerized with Docker for a stable production environment.",
+  11: "A Full-Stack platform for AI-driven organizational automation. The system streamlines internal communication, manages tasks, and generates smart insights — with a fully responsive interface and cloud deployment.",
   7: "A complete online store with a Hebrew RTL interface. Product catalog, shopping cart, favorites, and search — with responsive design and a focus on user experience. Built with AI tools to accelerate development.",
 }
 
