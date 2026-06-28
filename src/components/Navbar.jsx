@@ -61,18 +61,18 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-8 h-14 sm:h-16 flex items-center justify-between gap-3">
 
         {/* Logo + Contact CTA */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <a
             href="#hero"
-            className="font-display font-bold text-lg sm:text-2xl text-white tracking-wider hover:text-teal-400 transition-colors duration-200"
+            className="font-display font-bold text-xl sm:text-2xl text-white tracking-wider hover:text-teal-400 transition-colors duration-200"
           >
             TC<span className="text-teal-500">.</span>
           </a>
           <a
             href="#contact"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-lg border border-teal-500/30 bg-teal-500/8 hover:bg-teal-500/15 hover:border-teal-500/50 transition-all duration-200"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg border border-teal-500/30 bg-teal-500/8 hover:bg-teal-500/15 hover:border-teal-500/50 transition-all duration-200"
           >
-            <span className="font-display font-semibold text-[11px] tracking-widest uppercase text-teal-300">Contact</span>
+            <span className="font-display font-semibold text-[10px] sm:text-[11px] tracking-widest uppercase text-teal-300">Contact</span>
           </a>
         </div>
 
@@ -100,7 +100,7 @@ export default function Navbar() {
                   />
                 )}
                 <span
-                  className={`relative font-display font-semibold text-[11px] sm:text-[13px] tracking-widest uppercase transition-colors duration-200 ${
+                  className={`relative font-display font-semibold text-[11px] tracking-widest uppercase transition-colors duration-200 ${
                     isActive ? 'text-teal-300' : 'text-slate-400 hover:text-white'
                   }`}
                 >

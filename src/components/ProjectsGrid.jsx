@@ -312,16 +312,17 @@ export default function ProjectsGrid() {
         >
           {/* Section heading */}
           <motion.div
-            dir="rtl"
-            className="px-5 mb-12"
+            className="px-5 mb-12 text-center"
             variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.65 } } }}
           >
             <div className="max-w-6xl mx-auto">
               <p className="font-display text-blue-500 text-xs tracking-[0.3em] uppercase mb-2 font-semibold">Portfolio</p>
               <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white">{ui.projects.heading}</h2>
-              <motion.div className="h-1 bg-gradient-to-l from-transparent via-blue-500 to-blue-400 rounded-full mt-4 origin-right"
-                initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: 0.3 }} style={{ width: 56 }} />
+              <div className="flex justify-center mt-4">
+                <motion.div className="h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-transparent rounded-full"
+                  initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.3 }} style={{ width: 56, originX: 0 }} />
+              </div>
               <p className="font-body text-slate-500 text-sm mt-3">{ui.projects.subheading}</p>
             </div>
           </motion.div>

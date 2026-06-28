@@ -92,14 +92,16 @@ export default function Contact() {
           variants={fadeUp}
           className="mb-14"
         >
-          <p className="font-display text-blue-500 text-xs tracking-[0.3em] uppercase mb-2 font-semibold">{t.label}</p>
-          <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white">{t.heading}</h2>
-          <motion.div
-            className="h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-transparent rounded-full mt-4"
-            initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            style={{ width: 56, originX: dir === 'rtl' ? 1 : 0 }}
-          />
+          <p className="font-display text-blue-500 text-xs tracking-[0.3em] uppercase mb-2 font-semibold text-center">{t.label}</p>
+          <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white text-center">{t.heading}</h2>
+          <div className="flex justify-center mt-4">
+            <motion.div
+              className="h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-transparent rounded-full"
+              initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              style={{ width: 56, originX: 0 }}
+            />
+          </div>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-14 lg:gap-20">

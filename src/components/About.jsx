@@ -197,14 +197,16 @@ export default function About() {
             transition={{ duration: 0.65 }}
             className="mb-10"
           >
-            <p className="font-display text-blue-500 text-xs tracking-[0.3em] uppercase mb-2 font-semibold">Background</p>
-            <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white">About Me</h2>
-            <motion.div
-              className="h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-transparent rounded-full mt-4"
-              initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              style={{ width: 56, originX: 0 }}
-            />
+            <p className="font-display text-blue-500 text-xs tracking-[0.3em] uppercase mb-2 font-semibold text-center">Background</p>
+            <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white text-center">About Me</h2>
+            <div className="flex justify-center mt-4">
+              <motion.div
+                className="h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-transparent rounded-full"
+                initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                style={{ width: 56, originX: 0 }}
+              />
+            </div>
           </motion.div>
 
           {/* Stats strip */}

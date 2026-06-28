@@ -94,17 +94,19 @@ export default function Skills() {
           className="mb-16"
           variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
         >
-          <p className="font-display text-indigo-400 text-xs tracking-[0.3em] uppercase mb-2 font-semibold">
+          <p className="font-display text-indigo-400 text-xs tracking-[0.3em] uppercase mb-2 font-semibold text-center">
             Technical Expertise
           </p>
-          <h2 className="font-display font-bold text-4xl sm:text-5xl text-white">Skills</h2>
-          <motion.div
-            className="h-[3px] rounded-full mt-4 origin-left"
-            style={{ width: 56, background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}
-            initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          />
+          <h2 className="font-display font-bold text-4xl sm:text-5xl text-white text-center">Skills</h2>
+          <div className="flex justify-center mt-4">
+            <motion.div
+              className="h-[3px] rounded-full"
+              style={{ width: 56, background: 'linear-gradient(90deg, #6366f1, #8b5cf6)', originX: 0 }}
+              initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            />
+          </div>
         </motion.div>
 
         {/* ── Cards grid ── */}
