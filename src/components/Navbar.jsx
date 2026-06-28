@@ -8,6 +8,7 @@ const navLinks = [
   { label: 'Skills',  href: '#skills',   id: 'skills' },
   { label: 'Projects',href: '#projects', id: 'projects' },
   { label: 'Web4You', href: '#web4you',  id: 'web4you' },
+  { label: 'Contact', href: '#contact',  id: 'contact' },
 ]
 
 export default function Navbar() {
@@ -48,19 +49,13 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-3 sm:px-8 h-12 sm:h-16 flex items-center justify-between gap-1 sm:gap-3">
 
-        {/* Left — TC. + Contact */}
-        <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
+        {/* Left — TC. */}
+        <div className="flex items-center flex-shrink-0">
           <a
             href="#hero"
-            className="font-display font-bold text-base sm:text-2xl text-white tracking-wider hover:text-teal-400 transition-colors duration-200 flex-shrink-0"
+            className="font-display font-bold text-base sm:text-2xl text-white tracking-wider hover:text-teal-400 transition-colors duration-200"
           >
             TC<span className="text-teal-500">.</span>
-          </a>
-          <a
-            href="#contact"
-            className="flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-md sm:rounded-lg border border-teal-500/30 bg-teal-500/8 hover:bg-teal-500/15 hover:border-teal-500/50 transition-all duration-200"
-          >
-            <span className="font-display font-semibold text-[9px] sm:text-[11px] tracking-widest uppercase text-teal-300">Contact</span>
           </a>
         </div>
 
