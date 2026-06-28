@@ -36,7 +36,7 @@ export default function IntroSplash() {
           {/* Logo */}
           <motion.div
             layoutId="hero-logo"
-            className="w-[min(92vw,380px)] sm:w-[560px] md:w-[640px] overflow-hidden aspect-[510/262] sm:aspect-auto"
+            className="w-[min(92vw,380px)] sm:w-[560px] md:w-[640px]"
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{
@@ -48,7 +48,6 @@ export default function IntroSplash() {
             <LogoMark
               className="w-full"
               style={{ filter: 'drop-shadow(0 0 20px rgba(99,102,241,0.38))' }}
-              nameClassName="hidden sm:block"
             />
           </motion.div>
 
