@@ -63,7 +63,7 @@ export const skills = [
 export const projects = [
   {
     id: 8,
-    title: "WorkShift — ניהול משמרות חכם",
+    title: "WorkShift — Smart Shift Management",
     description:
       "אפליקציית Full-Stack לניהול משמרות עובדים בזמן אמת. מערכת תזמון חכמה המאפשרת הצגת לוח משמרות, שיבוץ עובדים ועדכונים דינמיים — עם ממשק נוח ורספונסיבי.",
     media: `${base}img/WorkShift.png`,
@@ -86,7 +86,7 @@ export const projects = [
   },
   {
     id: 11,
-    title: "SocialOrg — אוטומציה ארגונית עם AI",
+    title: "SocialOrg — AI Organizational Automation",
     description:
       "פלטפורמת Full-Stack לניהול ואוטומציה של תהליכים ארגוניים באמצעות AI. המערכת מייעלת תקשורת פנים-ארגונית, מנהלת משימות ומייצרת תובנות חכמות — עם ממשק רספונסיבי מלא ו-Deployment בענן.",
     media: `${base}img/SocialOrg.mp4`,
@@ -109,7 +109,7 @@ export const projects = [
   },
   {
     id: 9,
-    title: "PDF Sim — ניתוח מסמכים עם AI",
+    title: "PDF Sim — AI Document Analysis",
     description:
       "כלי Full-Stack לסימולציה וניתוח קבצי PDF מבוסס ארכיטקטורת React מודולרית. שימוש ב-AI לניתוח תוכן מסמכים, חילוץ מידע ויצירת תובנות אוטומטיות — עם עיצוב נקי וחוויית משתמש אינטואיטיבית.",
     media: `${base}img/PDFSim.jpg`,
@@ -176,7 +176,7 @@ export const projects = [
   },
   {
     id: 10,
-    title: "Chef Platform — פלטפורמת שף פרטי",
+    title: "Chef Platform — Private Chef Platform",
     description:
       "פלטפורמת Full-Stack מותאמת אישית לשף פרטי — ניהול תפריטים, לקוחות והזמנות במקום אחד. שילוב Machine Learning לניתוח נתונים ותובנות עסקיות, עם Containerization ב-Docker לסביבת פרודקשן יציבה.",
     media: `${base}img/Recepies.mp4`,

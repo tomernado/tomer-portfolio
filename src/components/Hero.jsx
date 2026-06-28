@@ -363,11 +363,11 @@ export default function Hero() {
 
                 {/* Label + description */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-mono text-[8px] tracking-[0.2em] uppercase text-indigo-400/55 mb-0.5">Co-Founder</p>
+                  <p className="font-mono text-[8px] tracking-[0.2em] uppercase text-indigo-400/55 mb-0.5">{ui.hero.coFounder}</p>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                     <span className="font-body font-bold text-[13px] text-white leading-tight whitespace-nowrap">Web4You</span>
                     <span className="hidden sm:block text-slate-600 text-xs">·</span>
-                    <span className="font-body text-slate-400/80 text-xs leading-snug truncate">Designing & shipping production-grade web apps</span>
+                    <span className="font-body text-slate-400/80 text-xs leading-snug truncate">{ui.hero.web4youDesc}</span>
                   </div>
                 </div>
 
@@ -376,7 +376,7 @@ export default function Hero() {
                   className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body font-semibold text-[11px] text-white group-hover:scale-105 transition-transform duration-200"
                   style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)', boxShadow: '0 0 16px rgba(99,102,241,0.4)' }}
                 >
-                  <span className="hidden sm:inline">See More</span>
+                  <span className="hidden sm:inline">{ui.hero.seeMore}</span>
                   <ArrowRight size={11} />
                 </div>
               </button>

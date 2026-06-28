@@ -92,11 +92,32 @@ export const web4youSection = {
 export const heroStrings = {
   readMore: "Read more",
   discoverWork: "Discover My Work",
+  coFounder: "Co-Founder",
+  web4youDesc: "Designing & shipping production-grade web apps",
+  seeMore: "See More",
 }
 
 export const aboutStrings = {
   clickToSkip: "— click to skip",
   clickToSkipTitle: "click to skip",
+}
+
+export const contactStrings = {
+  label: "Get in Touch",
+  heading: "Contact",
+  headline1: "Let's build",
+  headline2: "something together.",
+  subtext: "Open to new opportunities, challenging projects, and interesting collaborations.",
+  downloadCv: "Download Resume / CV",
+  formTitle: "Send a WhatsApp message",
+  nameLabel: "Name",
+  namePlaceholder: "Your name",
+  phoneLabel: "Phone Number",
+  phonePlaceholder: "05X-XXX-XXXX",
+  messageLabel: "Message",
+  messagePlaceholder: "Tell me about your project...",
+  submitBtn: "Send via WhatsApp",
+  successMsg: "Opening WhatsApp… ✓",
 }
 
 export const footerStrings = {

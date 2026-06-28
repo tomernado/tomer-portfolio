@@ -15,6 +15,7 @@ import {
   projectsSection,
   heroStrings,
   aboutStrings,
+  contactStrings,
   footerStrings,
 } from '../data/content-en'
 
@@ -23,6 +24,9 @@ const UI_HE = {
   hero: {
     readMore:     'קרא עוד',
     discoverWork: 'Discover My Work',
+    coFounder:    'שותף מייסד',
+    web4youDesc:  'מעצב ומספק אתרים ואפליקציות web ברמת production',
+    seeMore:      'ראה עוד',
   },
   about: {
     clickToSkip:      '— לחץ לדילוג',
@@ -37,6 +41,23 @@ const UI_HE = {
     label:     'העסק שלי',
     ctaButton: 'בקר באתר Web4You',
   },
+  contact: {
+    label:            'צור קשר',
+    heading:          'יצירת קשר',
+    headline1:        'בואו נבנה',
+    headline2:        'משהו ביחד.',
+    subtext:          'פתוח להזדמנויות חדשות, פרויקטים מאתגרים ושיתופי פעולה מעניינים.',
+    downloadCv:       'הורד קורות חיים',
+    formTitle:        'שלח הודעת WhatsApp',
+    nameLabel:        'שם',
+    namePlaceholder:  'השם שלך',
+    phoneLabel:       'מספר טלפון',
+    phonePlaceholder: '05X-XXX-XXXX',
+    messageLabel:     'הודעה',
+    msgPlaceholder:   'ספר לי על הפרויקט שלך...',
+    submitBtn:        'שלח דרך WhatsApp',
+    successMsg:       'פותח WhatsApp... ✓',
+  },
   footer: {
     copyright: 'תומר כהן · כל הזכויות שמורות',
   },
@@ -46,6 +67,9 @@ const UI_EN = {
   hero: {
     readMore:     heroStrings.readMore,
     discoverWork: heroStrings.discoverWork,
+    coFounder:    heroStrings.coFounder,
+    web4youDesc:  heroStrings.web4youDesc,
+    seeMore:      heroStrings.seeMore,
   },
   about: {
     clickToSkip:      aboutStrings.clickToSkip,
@@ -59,6 +83,23 @@ const UI_EN = {
   web4you: {
     label:     web4youSection.label,
     ctaButton: web4youSection.ctaButton,
+  },
+  contact: {
+    label:            contactStrings.label,
+    heading:          contactStrings.heading,
+    headline1:        contactStrings.headline1,
+    headline2:        contactStrings.headline2,
+    subtext:          contactStrings.subtext,
+    downloadCv:       contactStrings.downloadCv,
+    formTitle:        contactStrings.formTitle,
+    nameLabel:        contactStrings.nameLabel,
+    namePlaceholder:  contactStrings.namePlaceholder,
+    phoneLabel:       contactStrings.phoneLabel,
+    phonePlaceholder: contactStrings.phonePlaceholder,
+    messageLabel:     contactStrings.messageLabel,
+    msgPlaceholder:   contactStrings.messagePlaceholder,
+    submitBtn:        contactStrings.submitBtn,
+    successMsg:       contactStrings.successMsg,
   },
   footer: {
     copyright: footerStrings.copyright,
