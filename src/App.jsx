@@ -7,6 +7,7 @@ import Skills from './components/Skills'
 import ProjectsGrid from './components/ProjectsGrid'
 import Web4YouSection from './components/Web4YouSection'
 import Footer from './components/Footer'
+import IntroSplash from './components/IntroSplash'
 
 const blobs = [
   {
@@ -43,6 +44,7 @@ export default function App() {
   return (
     <LanguageProvider>
     <div className="bg-slate-950 min-h-screen relative [overflow-x:clip]">
+      <IntroSplash />
       {/* Static dot-grid layer */}
       <div className="fixed inset-0 bg-dot-grid pointer-events-none z-0 opacity-50" />
 

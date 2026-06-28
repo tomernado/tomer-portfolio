@@ -7,6 +7,7 @@ import {
   Mail, Phone,
 } from 'lucide-react'
 import CvModal from './CvModal'
+import LogoSVG from './LogoSVG'
 
 /* ── Variants ───────────────────────────────────────────────────── */
 const heroContainer = {
@@ -284,41 +285,27 @@ export default function Hero() {
         {/* ── Two-column layout ── */}
         <div className="flex flex-col sm:flex-row items-center gap-10 sm:gap-14">
 
-          {/* LEFT — avatar */}
+          {/* LEFT — logo */}
           <motion.div
             className="flex-shrink-0 relative will-change-transform"
             variants={fadeUp}
             animate={{ y: [0, -12, 0] }}
             transition={{ y: { repeat: Infinity, duration: 5, ease: 'easeInOut' } }}
           >
-            {/* Outer dashed rotating ring */}
+            {/* Ambient glow behind logo */}
             <motion.div
-              className="absolute rounded-full border-2 border-dashed border-teal-500/30"
-              style={{ inset: '-16px' }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-            />
-            {/* Second slower counter-rotating ring — desktop only */}
-            <motion.div
-              className="hidden sm:block absolute rounded-full border border-blue-500/15"
-              style={{ inset: '-28px' }}
-              animate={{ rotate: -360 }}
-              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-            />
-            {/* Glow blob — desktop only */}
-            <motion.div
-              className="hidden md:block absolute inset-0 rounded-full bg-teal-500/20 blur-3xl scale-[1.7]"
-              animate={{ opacity: [0.35, 0.8, 0.35], scale: [1.7, 2.0, 1.7] }}
+              className="hidden md:block absolute inset-0 blur-3xl pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,102,241,0.22) 0%, transparent 70%)',
+                transform: 'scale(1.6)',
+              }}
+              animate={{ opacity: [0.4, 0.75, 0.4] }}
               transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
             />
-            {/* Photo */}
-            <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-full overflow-hidden ring-4 ring-teal-500/55 ring-offset-4 ring-offset-slate-950 shadow-[0_0_70px_rgba(20,184,166,0.4)]">
-              <img src={personalInfo.profileMedia} alt={personalInfo.name} className="w-full h-full object-cover" />
-            </div>
-            {/* Online dot */}
-            <span className="absolute bottom-3 right-3 w-5 h-5 bg-emerald-400 rounded-full border-2 border-slate-950 shadow-[0_0_12px_rgba(52,211,153,1)]">
-              <span className="block w-full h-full rounded-full bg-emerald-400 animate-ping opacity-60" />
-            </span>
+            <LogoSVG
+              className="relative w-64 sm:w-80"
+              style={{ filter: 'drop-shadow(0 0 28px rgba(99,102,241,0.38))' }}
+            />
           </motion.div>
 
           {/* RIGHT — info (new order: name → title → buttons → bio → nav) */}
