@@ -90,11 +90,8 @@ export default function Web4YouSection() {
 
           {/* ── Image (fixed height — always reserves space to avoid layout shift) ── */}
           <div
-            className="w-full max-w-xs sm:max-w-sm flex-shrink-0 rounded-2xl overflow-hidden bg-slate-900/60 relative mt-3 sm:mt-4"
-            style={{
-              height: 'min(34vh, 300px)',
-              boxShadow: '0 24px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(99,102,241,0.18)',
-            }}
+            className="w-full max-w-xs sm:max-w-xl flex-shrink-0 rounded-2xl overflow-hidden bg-slate-900/60 relative mt-3 sm:mt-4 h-[min(30vh,240px)] sm:h-[min(46vh,420px)]"
+            style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(99,102,241,0.18)' }}
           >
             <AnimatePresence mode="wait">
               <motion.img

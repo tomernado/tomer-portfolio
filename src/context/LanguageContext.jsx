@@ -69,7 +69,7 @@ const UI_EN = {
 const LanguageContext = createContext({ lang: 'he', setLang: () => {} })
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState('he')
+  const [lang, setLang] = useState('en')
   return (
     <LanguageContext.Provider value={{ lang, setLang }}>
       {children}

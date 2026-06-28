@@ -1,29 +1,26 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-const STORAGE_KEY = 'tc_intro_done'
-const LOGO_SRC = `${import.meta.env.BASE_URL}img/newLOGO.png`
+import LogoMark from './LogoMark'
 
 export default function IntroSplash() {
-  const [visible, setVisible] = useState(() => !localStorage.getItem(STORAGE_KEY))
+  const [visible, setVisible] = useState(true)
+
+  const dismiss = () => setVisible(false)
 
   useEffect(() => {
-    if (!visible) return
-    const timer = setTimeout(() => {
-      setVisible(false)
-      localStorage.setItem(STORAGE_KEY, '1')
-    }, 2800)
+    const timer = setTimeout(dismiss, 2000)
     return () => clearTimeout(timer)
-  }, [visible])
+  }, [])
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
           key="splash"
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-slate-950"
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.45, ease: 'easeInOut' }}
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-slate-950 cursor-pointer"
+          onClick={dismiss}
+          exit={{ opacity: 0, pointerEvents: 'none' }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
         >
           {/* Ambient glow */}
           <motion.div
@@ -36,12 +33,10 @@ export default function IntroSplash() {
             }}
           />
 
-          {/* Logo — layoutId links it to the hero logo so Framer Motion flies it there on exit */}
-          <motion.img
+          {/* Logo */}
+          <motion.div
             layoutId="hero-logo"
-            src={LOGO_SRC}
-            alt="Tomer Cohen"
-            className="w-64 sm:w-80 md:w-96 relative"
+            className="w-[min(92vw,380px)] sm:w-[560px] md:w-[640px] overflow-hidden aspect-[510/262] sm:aspect-auto"
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{
@@ -49,16 +44,21 @@ export default function IntroSplash() {
               opacity: { duration: 0.45, ease: 'easeOut' },
               layout:  { type: 'spring', stiffness: 180, damping: 30, mass: 1 },
             }}
-            style={{ filter: 'drop-shadow(0 0 52px rgba(99,102,241,0.5))' }}
-          />
+          >
+            <LogoMark
+              className="w-full"
+              style={{ filter: 'drop-shadow(0 0 20px rgba(99,102,241,0.38))' }}
+              nameClassName="hidden sm:block"
+            />
+          </motion.div>
 
-          {/* Loading dots — exit quickly before the logo starts moving */}
+          {/* Loading dots */}
           <motion.div
-            className="flex gap-2 mt-10 relative"
+            className="flex gap-2 mt-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.15 } }}
-            transition={{ delay: 0.85, duration: 0.4 }}
+            exit={{ opacity: 0, transition: { duration: 0.1 } }}
+            transition={{ delay: 0.7, duration: 0.4 }}
           >
             {[0, 1, 2].map((i) => (
               <motion.div
@@ -69,6 +69,16 @@ export default function IntroSplash() {
               />
             ))}
           </motion.div>
+
+          {/* Tap hint */}
+          <motion.p
+            className="absolute bottom-8 font-mono text-[10px] tracking-[0.25em] uppercase text-slate-600"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+          >
+            tap to continue
+          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>

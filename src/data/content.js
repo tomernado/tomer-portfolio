@@ -70,7 +70,8 @@ export const projects = [
     mediaType: "image",
     linkedinPost:
       "https://www.linkedin.com/feed/update/urn:li:activity:7453001379230597120/",
-    githubLink: "https://github.com/tomernado",
+    githubLink: "https://github.com/tomernado/WorkShift",
+    siteLink: "https://workshift-ekq8.onrender.com",
   },
   {
     id: 1,
@@ -103,8 +104,8 @@ export const projects = [
     media: `${base}img/OpenWOrldGame.mp4`,
     mediaType: "video",
     linkedinPost:
-      "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
-    githubLink: "https://github.com/tomernado",
+      "https://www.linkedin.com/posts/tomer-cohen-486457346_softwareengineering-claudecode-ai-activity-7446866692426620929-1zcR?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFaQVuYB4TlPvjKcWTSihPNIMkLKQp8ySKE",
+    githubLink: "https://github.com/tomernado/GTA-Game",
   },
   {
     id: 9,
@@ -115,7 +116,7 @@ export const projects = [
     mediaType: "image",
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-architecture-react-activity-7468227901528924160-FIF0",
-    githubLink: "https://github.com/tomernado",
+    githubLink: "https://github.com/tomernado/universal_interviewer",
     siteLink: "https://tomernado.github.io/universal_interviewer/dashboard.html",
   },
   {
@@ -147,8 +148,8 @@ export const projects = [
       "מרכז אינטראקטיבי המציג יכולות פיתוח לוגיקה צד לקוח/שרת. בניית משחקי רשת מורכבים וחיבורם לממשק חווייתי ומהיר.",
     media: `${base}img/TornadoZoneAI.png`,
     mediaType: "image",
-    linkedinPost: "https://www.linkedin.com/in/tomer-cohen-486457346",
-    githubLink: "https://github.com/tomernado",
+    linkedinPost: "https://www.linkedin.com/posts/tomer-cohen-486457346_softwareengineering-csharp-react-activity-7436389412193804288-uL7j?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFaQVuYB4TlPvjKcWTSihPNIMkLKQp8ySKE",
+    githubLink: "https://github.com/tomernado/tornadogames-main",
     siteLink: "https://tomernado.github.io/tornadogames-main/",
   },
   {
@@ -182,7 +183,7 @@ export const projects = [
     mediaType: "video",
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-machinelearning-docker-activity-7466858872373342208-XTI7",
-    githubLink: "https://github.com/tomernado",
+    githubLink: "https://github.com/tomernado/bens-playbook",
   },
 ];
 

@@ -1,18 +1,24 @@
+import { useId } from 'react'
+
 export default function LogoSVG({ className = '', style = {} }) {
+  const uid = useId().replace(/:/g, 'x')
+  const grad  = `${uid}G`
+  const line  = `${uid}L`
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 600 290"
+      viewBox="0 0 620 285"
       className={className}
       style={style}
     >
       <defs>
-        <linearGradient id="tcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id={grad} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%"   stopColor="#60A5FA" />
           <stop offset="55%"  stopColor="#818CF8" />
           <stop offset="100%" stopColor="#A78BFA" />
         </linearGradient>
-        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <linearGradient id={line} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%"   stopColor="transparent" />
           <stop offset="35%"  stopColor="#818CF8" stopOpacity="0.55" />
           <stop offset="65%"  stopColor="#818CF8" stopOpacity="0.55" />
@@ -20,71 +26,60 @@ export default function LogoSVG({ className = '', style = {} }) {
         </linearGradient>
       </defs>
 
-      {/* Dashed ring behind TC */}
-      <circle
-        cx="300" cy="122" r="102"
+      {/* Dashed ring */}
+      <circle cx="310" cy="114" r="105"
         fill="rgba(59,130,246,0.035)"
         stroke="rgba(99,102,241,0.16)"
         strokeWidth="1"
         strokeDasharray="6 4"
       />
 
-      {/* Corner brackets — top-left */}
-      <path d="M 178 30 L 150 30 L 150 58"  stroke="url(#tcGrad)" strokeWidth="2" fill="none" opacity="0.6" />
-      {/* top-right */}
-      <path d="M 422 30 L 450 30 L 450 58"  stroke="url(#tcGrad)" strokeWidth="2" fill="none" opacity="0.6" />
-      {/* bottom-left */}
-      <path d="M 178 214 L 150 214 L 150 186" stroke="url(#tcGrad)" strokeWidth="2" fill="none" opacity="0.6" />
-      {/* bottom-right */}
-      <path d="M 422 214 L 450 214 L 450 186" stroke="url(#tcGrad)" strokeWidth="2" fill="none" opacity="0.6" />
+      {/* Corner brackets */}
+      <path d="M 192 26 L 162 26 L 162 54"  stroke={`url(#${grad})`} strokeWidth="2" fill="none" opacity="0.6"/>
+      <path d="M 428 26 L 458 26 L 458 54"  stroke={`url(#${grad})`} strokeWidth="2" fill="none" opacity="0.6"/>
+      <path d="M 192 210 L 162 210 L 162 182" stroke={`url(#${grad})`} strokeWidth="2" fill="none" opacity="0.6"/>
+      <path d="M 428 210 L 458 210 L 458 182" stroke={`url(#${grad})`} strokeWidth="2" fill="none" opacity="0.6"/>
 
       {/* TC Monogram */}
       <text
-        x="300" y="150"
+        x="310" y="148"
         fontFamily="system-ui, -apple-system, sans-serif"
         fontSize="118"
         fontWeight="900"
-        fill="url(#tcGrad)"
-        stroke="rgba(255,255,255,0.15)"
-        strokeWidth="2"
+        fill={`url(#${grad})`}
+        stroke="rgba(255,255,255,0.12)"
+        strokeWidth="1.5"
         textAnchor="middle"
         letterSpacing="-8"
-      >
-        TC
-      </text>
+      >TC</text>
 
       {/* Separator line */}
-      <line x1="130" y1="172" x2="470" y2="172" stroke="url(#lineGrad)" strokeWidth="1" />
-
-      {/* Diamond accents at line ends */}
-      <polygon points="126,172 132,167 138,172 132,177" fill="rgba(129,140,248,0.45)" />
-      <polygon points="462,172 468,167 474,172 468,177" fill="rgba(129,140,248,0.45)" />
+      <line x1="150" y1="168" x2="470" y2="168" stroke={`url(#${line})`} strokeWidth="1"/>
+      <polygon points="146,168 152,163 158,168 152,173" fill="rgba(129,140,248,0.45)"/>
+      <polygon points="462,168 468,163 474,168 468,173" fill="rgba(129,140,248,0.45)"/>
 
       {/* Full name */}
       <text
-        x="300" y="208"
+        x="310" y="204"
         fontFamily="system-ui, -apple-system, sans-serif"
-        fontSize="34"
+        fontSize="32"
         fontWeight="800"
         fill="#FFFFFF"
         textAnchor="middle"
         letterSpacing="7"
-      >
-        TOMER COHEN
-      </text>
+      >TOMER COHEN</text>
 
-      {/* Subtitle */}
+      {/* Subtitle — hidden on mobile, visible on sm+ */}
       <text
-        x="300" y="246"
+        x="310" y="250"
         fontFamily="system-ui, -apple-system, sans-serif"
-        fontSize="11.5"
+        fontSize="16"
         fontWeight="400"
         fill="#6B7280"
         textAnchor="middle"
-        letterSpacing="2.5"
-      >
-        FULL-STACK · SOFTWARE ENGINEER · AI SYSTEMS
-      </text>
+        letterSpacing="1.5"
+        className="hidden sm:inline"
+      >SOFTWARE DEVELOPER  |  FULL-STACK ENGINEER  |  AI SYSTEMS</text>
     </svg>
   )
 }

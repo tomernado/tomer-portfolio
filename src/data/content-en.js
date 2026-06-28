@@ -4,7 +4,7 @@
 export const personalInfo = {
   name: "Tomer Cohen",
   aboutText:
-    "Software Engineer focused on secure Full-Stack development and complex OOP architecture. Experienced in end-to-end application development within a web development business (Web4You), utilizing database and AI tools to optimize development workflows. Proficient in S-SDLC methodologies and secure coding practices (OWASP), with a strong emphasis on algorithmic efficiency and system complexity. Currently a 3rd-year Computer Science student at HIT, backed by a background in operations management, bringing positive energy and a teamwork-oriented mindset to deliver high-quality solutions under pressure.",
+    "Software Engineer with a focus on secure Full-Stack development, AI integration and autonomous AI agents, and complex OOP architecture. Experienced in end-to-end application development within a web development business (Web4You), leveraging AI-assisted workflows to optimize system performance. Proficient in S-SDLC methodologies and OWASP security standards, with a strong emphasis on algorithmic efficiency and scalable backend design. Currently a 3rd-year Computer Science student with a professional background in operations management, bringing a rigorous, team-oriented mindset to deliver high-quality solutions under pressure.",
 }
 
 export const aboutData = {

@@ -4,11 +4,10 @@ import { useContent } from '../context/LanguageContext'
 import {
   Linkedin, Github, Terminal, ChevronDown,
   FileText, Layers, ArrowRight,
-  Mail, Phone,
+  Briefcase, ExternalLink,
 } from 'lucide-react'
 import CvModal from './CvModal'
-
-const LOGO_SRC = `${import.meta.env.BASE_URL}img/newLOGO.png`
+import LogoMark from './LogoMark'
 
 /* ── Variants ───────────────────────────────────────────────────── */
 const heroContainer = {
@@ -28,20 +27,37 @@ const wordReveal = {
 }
 
 /* ── Typewriter ─────────────────────────────────────────────────── */
-const TITLES = ['Full-Stack Engineer', 'OOP Architect', 'Security Developer', 'AI-Assisted Dev']
+const TITLES = ['Software Developer', 'AI Developer', 'Full-Stack Developer', 'Backend Developer']
 
 function TypewriterTitle() {
-  const [index, setIndex]     = useState(0)
-  const [visible, setVisible] = useState(true)
+  const [text, setText]       = useState('')
+  const [titleIdx, setTitleIdx] = useState(0)
+  const [phase, setPhase]     = useState('typing') // 'typing' | 'deleting'
   const [blink, setBlink]     = useState(true)
 
   useEffect(() => {
-    const iv = setInterval(() => {
-      setVisible(false)
-      setTimeout(() => { setIndex(i => (i + 1) % TITLES.length); setVisible(true) }, 200)
-    }, 3000)
-    return () => clearInterval(iv)
-  }, [])
+    const title = TITLES[titleIdx]
+
+    if (phase === 'typing') {
+      if (text.length < title.length) {
+        const id = setTimeout(() => setText(title.slice(0, text.length + 1)), 88)
+        return () => clearTimeout(id)
+      } else {
+        const id = setTimeout(() => setPhase('deleting'), 1900)
+        return () => clearTimeout(id)
+      }
+    }
+
+    if (phase === 'deleting') {
+      if (text.length > 0) {
+        const id = setTimeout(() => setText(prev => prev.slice(0, -1)), 50)
+        return () => clearTimeout(id)
+      } else {
+        setTitleIdx(i => (i + 1) % TITLES.length)
+        setPhase('typing')
+      }
+    }
+  }, [text, phase, titleIdx])
 
   useEffect(() => {
     const iv = setInterval(() => setBlink(b => !b), 530)
@@ -49,15 +65,15 @@ function TypewriterTitle() {
   }, [])
 
   return (
-    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-500/[0.08] border border-indigo-500/25 rounded-full">
-      <Terminal size={12} className="text-indigo-400 flex-shrink-0" />
+    <div className="flex items-center gap-3" dir="ltr">
+      <span className="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0 shadow-[0_0_8px_rgba(96,165,250,0.8)]" />
       <span
-        className="font-display font-semibold text-sm tracking-widest uppercase text-indigo-300"
-        style={{ transition: 'opacity 0.18s', opacity: visible ? 1 : 0, minWidth: 180 }}
+        className="font-body font-semibold text-lg sm:text-xl text-slate-200 tracking-wide"
+        style={{ minWidth: 210 }}
       >
-        {TITLES[index]}
+        {text}
       </span>
-      <span className="text-indigo-400 font-mono text-sm" style={{ opacity: blink ? 1 : 0, transition: 'opacity 0.1s' }}>|</span>
+      <span className="text-blue-400 font-mono text-lg" style={{ opacity: blink ? 1 : 0, transition: 'opacity 0.1s' }}>|</span>
     </div>
   )
 }
@@ -80,7 +96,7 @@ function SocialBtn({ href, label, icon, iconColor, delay }) {
       transition={{ type: 'spring', stiffness: 280, damping: 22, delay }}
       whileHover={{ y: -2, boxShadow: `0 8px 24px ${iconColor}20` }}
       whileTap={{ scale: 0.96 }}
-      className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.09] bg-white/[0.04] hover:border-white/[0.18] hover:bg-white/[0.07] text-white font-semibold font-body text-[13px] transition-all duration-200 will-change-transform cursor-pointer select-none"
+      className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-white/[0.09] bg-white/[0.04] hover:border-white/[0.18] hover:bg-white/[0.07] text-white font-semibold font-body text-[13px] transition-all duration-200 will-change-transform cursor-pointer select-none"
     >
       <span style={{ color: iconColor }}>{icon}</span>
       {label}
@@ -121,9 +137,12 @@ function ProjectStrip() {
 
       {/* Header row */}
       <div className="flex items-center justify-between mb-3 px-0.5">
-        <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-slate-500">
-          // featured.projects
-        </p>
+        <div className="flex items-center gap-2">
+          <div className="w-0.5 h-3.5 rounded-full bg-indigo-500/55" />
+          <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-slate-500">
+            Featured Projects
+          </p>
+        </div>
         <motion.button
           onClick={scrollToProjects}
           whileHover={{ x: 2 }}
@@ -149,33 +168,40 @@ function ProjectStrip() {
             <motion.button
               key={`${p.id}-${i}`}
               onClick={scrollToProjects}
-              whileHover={{ y: -3, boxShadow: '0 12px 32px rgba(0,0,0,0.5)' }}
+              whileHover={{ y: -4, boxShadow: '0 16px 40px rgba(0,0,0,0.65), 0 0 0 1px rgba(99,102,241,0.22)' }}
               whileTap={{ scale: 0.97 }}
-              className="relative w-40 h-[104px] sm:w-48 sm:h-28 rounded-xl overflow-hidden flex-shrink-0 group border border-white/8 cursor-pointer will-change-transform"
+              className="relative w-44 h-[116px] sm:w-52 sm:h-[136px] rounded-2xl overflow-hidden flex-shrink-0 group border border-white/[0.1] hover:border-indigo-400/25 cursor-pointer will-change-transform transition-colors duration-300"
             >
               {p.mediaType === 'video' ? (
                 <video
                   src={p.media} muted autoPlay loop playsInline preload="metadata"
-                  className="w-full h-full object-cover opacity-60 group-hover:opacity-95 group-hover:scale-105 transition-all duration-500"
+                  className="w-full h-full object-cover opacity-55 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
                 />
               ) : (
                 <img
                   src={p.media} alt={p.title}
-                  className="w-full h-full object-cover opacity-60 group-hover:opacity-95 group-hover:scale-105 transition-all duration-500"
+                  className="w-full h-full object-cover opacity-55 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
+              {/* Hover indigo tint */}
+              <div className="absolute inset-0 bg-indigo-500/0 group-hover:bg-indigo-500/[0.07] transition-colors duration-300" />
 
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="flex items-center gap-1 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-2.5 py-1">
-                  <Layers size={8} className="text-white" />
-                  <span className="font-mono text-[8px] text-white tracking-wider">Explore</span>
+              {/* Hover explore chip — top right */}
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-250 translate-y-1 group-hover:translate-y-0">
+                <span className="flex items-center gap-1 bg-indigo-500/75 backdrop-blur-sm rounded-full px-2 py-0.5">
+                  <Layers size={7} className="text-white" />
+                  <span className="font-mono text-[7px] text-white tracking-wider uppercase">View</span>
                 </span>
               </div>
 
-              <p className="absolute bottom-2 left-2 right-2 font-mono text-[8px] text-white/65 truncate text-left">
-                {p.title}
-              </p>
+              {/* Bottom title bar */}
+              <div className="absolute bottom-0 left-0 right-0 px-2.5 pb-2 pt-5">
+                <p className="font-body text-[9px] sm:text-[10px] text-white/85 font-semibold leading-tight truncate text-left">
+                  {p.title}
+                </p>
+              </div>
             </motion.button>
           ))}
         </motion.div>
@@ -190,7 +216,7 @@ function ProjectStrip() {
 
 /* ── Main Hero ──────────────────────────────────────────────────── */
 export default function Hero() {
-  const { personalInfo, ui, dir } = useContent()
+  const { personalInfo, web4youData, ui, dir } = useContent()
   const nameWords = personalInfo.name.split(' ')
   const [cvOpen, setCvOpen] = useState(false)
 
@@ -199,16 +225,16 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center pt-16 px-5 pb-10 overflow-hidden"
+      className="relative min-h-screen flex items-center justify-start sm:justify-center pt-16 px-5 pb-10 overflow-hidden"
     >
       <motion.div
-        className="max-w-5xl mx-auto w-full"
+        className="max-w-6xl mx-auto w-full"
         variants={heroContainer}
         initial="hidden"
         animate="visible"
       >
         {/* ── Two-column layout ── */}
-        <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-12 lg:gap-16">
+        <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-12 lg:gap-16">
 
           {/* LEFT — logo (layoutId links to IntroSplash logo for the fly-in transition) */}
           <motion.div
@@ -219,43 +245,60 @@ export default function Hero() {
           >
             {/* Ambient glow */}
             <motion.div
-              className="hidden md:block absolute inset-0 blur-3xl pointer-events-none"
+              className="hidden md:block absolute inset-0 blur-2xl pointer-events-none"
               style={{
-                background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,102,241,0.18) 0%, transparent 70%)',
-                transform: 'scale(1.7)',
+                background: 'radial-gradient(ellipse 70% 50% at 50% 50%, rgba(99,102,241,0.12) 0%, transparent 65%)',
+                transform: 'scale(1.1)',
               }}
-              animate={{ opacity: [0.3, 0.65, 0.3] }}
+              animate={{ opacity: [0.2, 0.45, 0.2] }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             />
-            <motion.img
+            <motion.div
               layoutId="hero-logo"
-              src={LOGO_SRC}
-              alt="Tomer Cohen"
-              className="relative w-72 sm:w-96"
-              transition={{
-                layout: { type: 'spring', stiffness: 180, damping: 30, mass: 1 },
-              }}
-              style={{ filter: 'drop-shadow(0 0 32px rgba(99,102,241,0.4))' }}
-            />
+              className="relative w-[min(92vw,300px)] sm:w-[520px] overflow-hidden aspect-[510/262] sm:aspect-auto"
+              transition={{ layout: { type: 'spring', stiffness: 180, damping: 30, mass: 1 } }}
+            >
+              <LogoMark
+                className="w-full"
+                style={{ filter: 'drop-shadow(0 0 14px rgba(99,102,241,0.22))' }}
+                nameClassName="hidden sm:block"
+              />
+            </motion.div>
           </motion.div>
 
           {/* RIGHT — info */}
           <div
-            className={`flex flex-col items-center sm:items-start text-center ${dir === 'rtl' ? 'sm:text-right' : 'sm:text-left'} flex-1 gap-3.5`}
-            dir={dir}
+            className="flex flex-col items-center text-center flex-1 gap-3.5 relative"
           >
 
-            {/* Name */}
-            <div className="flex flex-wrap justify-center sm:justify-start gap-x-3">
-              {nameWords.map((word, i) => (
-                <motion.span
-                  key={i} custom={i}
-                  variants={wordReveal} initial="hidden" animate="visible"
-                  className="inline-block font-body font-extrabold text-3xl sm:text-4xl leading-tight text-shimmer will-change-transform"
-                >
-                  {word}
-                </motion.span>
-              ))}
+            {/* Name + Photo row — grouped and centered */}
+            <div className="flex items-center gap-4 sm:gap-5" dir="ltr">
+              <div className="flex gap-x-2 sm:gap-x-3" dir={dir}>
+                {nameWords.map((word, i) => (
+                  <motion.span
+                    key={i} custom={i}
+                    variants={wordReveal} initial="hidden" animate="visible"
+                    className="inline-block font-body font-extrabold text-[28px] sm:text-5xl lg:text-6xl leading-tight text-shimmer will-change-transform tracking-tight whitespace-nowrap"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="flex-shrink-0 w-[76px] h-[76px] sm:w-[112px] sm:h-[112px] rounded-full overflow-hidden border-2 border-indigo-500/40 shadow-[0_0_28px_rgba(99,102,241,0.25)] ring-1 ring-white/[0.08]"
+              >
+                <img
+                  src={personalInfo.profileMedia}
+                  alt="Tomer Cohen"
+                  className="w-full h-full object-cover object-top"
+                  loading="eager"
+                  decoding="sync"
+                  style={{ transform: 'translate3d(0,0,0)', WebkitTransform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden', imageRendering: 'auto' }}
+                />
+              </motion.div>
             </div>
 
             {/* Typewriter */}
@@ -263,54 +306,79 @@ export default function Hero() {
               <TypewriterTitle />
             </motion.div>
 
-            {/* Buttons — unified glass style */}
-            <motion.div variants={fadeUp} dir="ltr" className="flex flex-wrap gap-2 justify-center sm:justify-start">
-              <SocialBtn href={personalInfo.linkedin} label="LinkedIn"  icon={<Linkedin size={15} />} iconColor="#60a5fa" delay={0.45} />
-              <SocialBtn href={personalInfo.whatsapp} label="WhatsApp" icon={WA_ICON}               iconColor="#4ade80" delay={0.53} />
-              <SocialBtn href={personalInfo.github}   label="GitHub"   icon={<Github size={15} />}  iconColor="#94a3b8" delay={0.61} />
-              <motion.button
-                onClick={() => setCvOpen(true)}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.69 }}
-                whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(96,165,250,0.18)' }}
-                whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.09] bg-white/[0.04] hover:border-white/[0.18] hover:bg-white/[0.07] text-white font-semibold font-body text-[13px] transition-all duration-200 will-change-transform cursor-pointer select-none"
-              >
-                <FileText size={15} className="text-blue-400" />
-                Resume
-              </motion.button>
-            </motion.div>
+            {/* 2×2 buttons + Bio side by side */}
+            <motion.div variants={fadeUp} className="w-full">
+              <div className="flex flex-col sm:flex-row gap-3 items-stretch" dir="ltr">
+                {/* 2×2 social buttons — LEFT */}
+                <div className="grid grid-cols-2 gap-2 flex-shrink-0 content-start">
+                  <SocialBtn href={personalInfo.linkedin} label="LinkedIn"  icon={<Linkedin size={14} />} iconColor="#60a5fa" delay={0.45} />
+                  <SocialBtn href={personalInfo.whatsapp} label="WhatsApp" icon={WA_ICON}               iconColor="#4ade80" delay={0.53} />
+                  <SocialBtn href={personalInfo.github}   label="GitHub"   icon={<Github size={14} />}  iconColor="#94a3b8" delay={0.61} />
+                  <motion.button
+                    onClick={() => setCvOpen(true)}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ type: 'spring', stiffness: 280, damping: 22, delay: 0.69 }}
+                    whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(96,165,250,0.18)' }}
+                    whileTap={{ scale: 0.96 }}
+                    className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-white/[0.09] bg-white/[0.04] hover:border-white/[0.18] hover:bg-white/[0.07] text-white font-semibold font-body text-[13px] transition-all duration-200 will-change-transform cursor-pointer select-none"
+                  >
+                    <FileText size={14} className="text-blue-400" />
+                    Resume
+                  </motion.button>
+                </div>
 
-            {/* Contact */}
-            <motion.div variants={fadeUp} dir="ltr" className="flex flex-wrap gap-x-5 gap-y-1.5 justify-center sm:justify-start">
-              <a
-                href={`mailto:${personalInfo.email}`}
-                className="flex items-center gap-1.5 text-slate-500 hover:text-indigo-300 transition-colors duration-200 group"
-              >
-                <Mail size={12} className="text-indigo-400/50 group-hover:text-indigo-400 transition-colors" />
-                <span className="font-mono text-[11px] tracking-wide">{personalInfo.email}</span>
-              </a>
-              <div className="flex items-center gap-1.5 text-slate-500">
-                <Phone size={12} className="text-slate-500/60" />
-                <span className="font-mono text-[11px] tracking-wide">{personalInfo.phone}</span>
+                {/* Bio card — RIGHT */}
+                <button
+                  onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="group flex-1 min-w-0 cursor-pointer"
+                  dir={dir}
+                >
+                  <div className="relative p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.055] hover:border-indigo-500/20 transition-colors duration-300 h-full">
+                    <p className="font-body text-slate-400/90 text-sm leading-[1.8]">
+                      {bioSnippet}
+                      <span className="inline-flex items-center gap-0.5 text-indigo-400/60 group-hover:text-indigo-300 transition-colors font-mono text-[10px] ml-1">
+                        {ui.hero.readMore}
+                        <ArrowRight size={9} className="group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    </p>
+                  </div>
+                </button>
               </div>
             </motion.div>
 
-            {/* Bio */}
-            <motion.div variants={fadeUp} className="w-full">
+            {/* Web4You callout — below buttons & bio */}
+            <motion.div variants={fadeUp} dir="ltr" className="w-full">
               <button
-                onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
-                className="group text-right w-full sm:w-auto cursor-pointer"
-                dir="rtl"
+                onClick={() => document.querySelector('#web4you')?.scrollIntoView({ behavior: 'smooth' })}
+                className="group w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl border border-indigo-500/15 bg-indigo-500/[0.04] hover:bg-indigo-500/[0.08] hover:border-indigo-500/30 transition-all duration-300 text-left cursor-pointer"
               >
-                <p className="font-body text-slate-400 text-sm leading-relaxed max-w-sm text-center sm:text-right">
-                  {bioSnippet}
-                  <span className="inline-flex items-center gap-0.5 text-indigo-400/60 group-hover:text-indigo-300 transition-colors font-mono text-[10px] mr-1">
-                    {ui.hero.readMore}
-                    <ArrowRight size={9} className="group-hover:translate-x-0.5 transition-transform" />
-                  </span>
-                </p>
+                {/* Icon box */}
+                <div
+                  className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
+                  style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)' }}
+                >
+                  <Briefcase size={15} className="text-indigo-400" />
+                </div>
+
+                {/* Label + description */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-mono text-[8px] tracking-[0.2em] uppercase text-indigo-400/55 mb-0.5">Co-Founder</p>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                    <span className="font-body font-bold text-[13px] text-white leading-tight whitespace-nowrap">Web4You</span>
+                    <span className="hidden sm:block text-slate-600 text-xs">·</span>
+                    <span className="font-body text-slate-400/80 text-xs leading-snug truncate">Designing & shipping production-grade web apps</span>
+                  </div>
+                </div>
+
+                {/* CTA chip */}
+                <div
+                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-body font-semibold text-[11px] text-white group-hover:scale-105 transition-transform duration-200"
+                  style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)', boxShadow: '0 0 16px rgba(99,102,241,0.4)' }}
+                >
+                  <span className="hidden sm:inline">See More</span>
+                  <ArrowRight size={11} />
+                </div>
               </button>
             </motion.div>
 

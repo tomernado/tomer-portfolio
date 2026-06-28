@@ -6,6 +6,7 @@ import About from './components/About'
 import Skills from './components/Skills'
 import ProjectsGrid from './components/ProjectsGrid'
 import Web4YouSection from './components/Web4YouSection'
+import Contact from './components/Contact'
 import Footer from './components/Footer'
 import IntroSplash from './components/IntroSplash'
 
@@ -70,6 +71,7 @@ export default function App() {
         <Skills />
         <ProjectsGrid />
         <Web4YouSection />
+        <Contact />
         <Footer />
       </div>
     </div>
