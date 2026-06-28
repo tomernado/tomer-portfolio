@@ -7,7 +7,8 @@ import {
   Mail, Phone,
 } from 'lucide-react'
 import CvModal from './CvModal'
-import LogoSVG from './LogoSVG'
+
+const LOGO_SRC = `${import.meta.env.BASE_URL}img/newLOGO.png`
 
 /* ── Variants ───────────────────────────────────────────────────── */
 const heroContainer = {
@@ -209,24 +210,31 @@ export default function Hero() {
         {/* ── Two-column layout ── */}
         <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-12 lg:gap-16">
 
-          {/* LEFT — logo */}
+          {/* LEFT — logo (layoutId links to IntroSplash logo for the fly-in transition) */}
           <motion.div
             className="flex-shrink-0 relative will-change-transform"
             variants={fadeUp}
             animate={{ y: [0, -10, 0] }}
             transition={{ y: { repeat: Infinity, duration: 5.5, ease: 'easeInOut' } }}
           >
+            {/* Ambient glow */}
             <motion.div
               className="hidden md:block absolute inset-0 blur-3xl pointer-events-none"
               style={{
-                background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,102,241,0.2) 0%, transparent 70%)',
+                background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,102,241,0.18) 0%, transparent 70%)',
                 transform: 'scale(1.7)',
               }}
-              animate={{ opacity: [0.35, 0.7, 0.35] }}
+              animate={{ opacity: [0.3, 0.65, 0.3] }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             />
-            <LogoSVG
+            <motion.img
+              layoutId="hero-logo"
+              src={LOGO_SRC}
+              alt="Tomer Cohen"
               className="relative w-72 sm:w-96"
+              transition={{
+                layout: { type: 'spring', stiffness: 180, damping: 30, mass: 1 },
+              }}
               style={{ filter: 'drop-shadow(0 0 32px rgba(99,102,241,0.4))' }}
             />
           </motion.div>
