@@ -1,7 +1,27 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, Mail, Linkedin, Github, Download, Send } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
+import MagneticButton from './MagneticButton'
+
+function FieldLabel({ children, active }) {
+  return (
+    <label className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.22em] uppercase text-white/50 mb-2">
+      {children}
+      <AnimatePresence>
+        {active && (
+          <motion.span
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            transition={{ duration: 0.2 }}
+            className="w-1 h-1 rounded-full bg-white"
+          />
+        )}
+      </AnimatePresence>
+    </label>
+  )
+}
 
 const WA_ICON = (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -23,43 +43,35 @@ export default function Contact() {
       href: `tel:${personalInfo.phone}`,
       icon: <Phone size={20} />,
       label: personalInfo.phone,
-      bg: 'bg-green-500/10 hover:bg-green-500/18',
-      border: 'border-green-500/20 hover:border-green-500/40',
-      color: 'text-green-400',
+      color: 'text-white/70',
     },
     {
       href: personalInfo.whatsapp,
       icon: WA_ICON,
       label: 'WhatsApp',
-      bg: 'bg-green-500/10 hover:bg-green-500/18',
-      border: 'border-green-500/20 hover:border-green-500/40',
-      color: 'text-green-400',
+      color: 'text-[#4ade80]',
     },
     {
       href: `mailto:${personalInfo.email}`,
       icon: <Mail size={20} />,
       label: personalInfo.email,
-      bg: 'bg-blue-500/10 hover:bg-blue-500/18',
-      border: 'border-blue-500/20 hover:border-blue-500/40',
-      color: 'text-blue-400',
+      color: 'text-white/70',
     },
     {
       href: personalInfo.linkedin,
       icon: <Linkedin size={20} />,
       label: 'LinkedIn',
-      bg: 'bg-blue-500/10 hover:bg-blue-500/18',
-      border: 'border-blue-500/20 hover:border-blue-500/40',
-      color: 'text-blue-400',
+      color: 'text-white/70',
     },
     {
       href: personalInfo.github,
       icon: <Github size={20} />,
       label: 'GitHub',
-      bg: 'bg-slate-700/25 hover:bg-slate-700/40',
-      border: 'border-slate-600/30 hover:border-slate-500/50',
-      color: 'text-slate-300',
+      color: 'text-white/70',
     },
   ]
+
+  const whatsappNumber = personalInfo.whatsapp.replace(/^https?:\/\/wa\.me\//, '')
 
   const [form, setForm]   = useState({ name: '', phone: '', message: '' })
   const [sent, setSent]   = useState(false)
@@ -70,39 +82,43 @@ export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault()
     const text = encodeURIComponent(`Hi Tomer! 👋\nName: ${form.name}\nPhone: ${form.phone}\n\n${form.message}`)
-    window.open(`https://wa.me/972543210990?text=${text}`, '_blank')
+    window.open(`https://wa.me/${whatsappNumber}?text=${text}`, '_blank')
     setSent(true)
     setTimeout(() => { setSent(false); setForm({ name: '', phone: '', message: '' }) }, 4000)
   }
 
   const inputClass = (field) =>
-    `w-full px-4 py-3.5 bg-slate-800/50 border rounded-xl text-white text-sm font-body placeholder-slate-600 focus:outline-none transition-all duration-200 ${
+    `w-full px-4 py-3.5 bg-white/[0.03] border rounded-xl text-white text-sm font-body placeholder-white/25 focus:outline-none transition-all duration-200 ${
       focus === field
-        ? 'border-blue-500/60 bg-slate-800/80 shadow-[0_0_0_3px_rgba(59,130,246,0.1)]'
-        : 'border-slate-700/60 hover:border-slate-600/70'
+        ? 'border-white/40 bg-white/[0.06]'
+        : 'border-white/10 hover:border-white/20'
     }`
 
   return (
-    <section id="contact" className="relative py-24 px-5 border-t border-slate-800/50" dir={dir}>
+    <section id="contact" className="relative py-24 px-5 border-t border-white/10" dir={dir}>
       <div className="max-w-6xl mx-auto">
 
-        {/* Section header */}
+        {/* Section marker */}
         <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-3 mb-14"
+        >
+          <span className="font-mono text-white/45 text-xs">05</span>
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="font-mono text-white/50 text-xs tracking-[0.3em] uppercase">{t.label}</span>
+        </motion.div>
+
+        <motion.h2
           initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}
           variants={fadeUp}
-          className="mb-14"
+          className="font-display font-bold text-white tracking-tight mb-14"
+          style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
         >
-          <p className="font-display text-blue-500 text-xs tracking-[0.3em] uppercase mb-2 font-semibold text-center">{t.label}</p>
-          <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white text-center">{t.heading}</h2>
-          <div className="flex justify-center mt-4">
-            <motion.div
-              className="h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-transparent rounded-full"
-              initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              style={{ width: 56, originX: 0 }}
-            />
-          </div>
-        </motion.div>
+          {t.heading}
+        </motion.h2>
 
         <div className="grid md:grid-cols-2 gap-14 lg:gap-20">
 
@@ -115,11 +131,11 @@ export default function Contact() {
             className="flex flex-col gap-7"
           >
             <motion.div variants={fadeUp}>
-              <h2 className="font-body font-extrabold text-3xl sm:text-4xl text-white leading-snug mb-3">
+              <h2 className="font-display font-bold text-3xl sm:text-4xl text-white leading-snug mb-3 tracking-tight">
                 {t.headline1}<br />
-                <span className="text-blue-400">{t.headline2}</span>
+                <span className="text-white/50">{t.headline2}</span>
               </h2>
-              <p className="font-body text-slate-400 text-sm leading-relaxed max-w-xs">
+              <p className="font-body text-white/45 text-sm leading-relaxed max-w-xs">
                 {t.subtext}
               </p>
             </motion.div>
@@ -127,16 +143,20 @@ export default function Contact() {
             {/* 5 social icon buttons */}
             <motion.div variants={fadeUp} className="grid grid-cols-5 gap-3">
               {SOCIAL.map((s, i) => (
-                <a
+                <MagneticButton
+                  as="a"
+                  strength={0.35}
                   key={i}
                   href={s.href}
                   target={s.href.startsWith('mailto') || s.href.startsWith('tel') ? '_self' : '_blank'}
                   rel="noopener noreferrer"
                   title={s.label}
-                  className={`flex items-center justify-center aspect-square rounded-2xl border ${s.bg} ${s.border} ${s.color} transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 active:scale-95`}
+                  aria-label={s.label}
+                  whileTap={{ scale: 0.92 }}
+                  className={`flex items-center justify-center aspect-square rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/25 ${s.color} transition-colors duration-200`}
                 >
                   {s.icon}
-                </a>
+                </MagneticButton>
               ))}
             </motion.div>
 
@@ -145,9 +165,9 @@ export default function Contact() {
               variants={fadeUp}
               href={personalInfo.cvPdf}
               download="Tomer_Cohen_Resume.pdf"
-              className="group flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl border border-slate-600/40 bg-white/[0.025] hover:bg-white/[0.055] hover:border-slate-500/55 text-white font-semibold font-body text-sm transition-all duration-200"
+              className="group flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl border border-white/15 bg-white/[0.025] hover:bg-white/[0.055] hover:border-white/30 text-white font-semibold font-body text-sm transition-all duration-200"
             >
-              <Download size={15} className="text-slate-400 group-hover:text-blue-400 transition-colors duration-200" />
+              <Download size={15} className="text-white/50 group-hover:text-white transition-colors duration-200" />
               {t.downloadCv}
             </motion.a>
           </motion.div>
@@ -167,10 +187,8 @@ export default function Contact() {
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5" dir="ltr">
-              <div>
-                <label className="block font-mono text-[10px] tracking-[0.22em] uppercase text-slate-500 mb-2">
-                  {t.nameLabel}
-                </label>
+              <motion.div animate={{ y: focus === 'name' ? -2 : 0 }} transition={{ duration: 0.2 }}>
+                <FieldLabel active={focus === 'name'}>{t.nameLabel}</FieldLabel>
                 <input
                   type="text" name="name" value={form.name}
                   onChange={set('name')}
@@ -180,12 +198,10 @@ export default function Contact() {
                   required
                   className={inputClass('name')}
                 />
-              </div>
+              </motion.div>
 
-              <div>
-                <label className="block font-mono text-[10px] tracking-[0.22em] uppercase text-slate-500 mb-2">
-                  {t.phoneLabel}
-                </label>
+              <motion.div animate={{ y: focus === 'phone' ? -2 : 0 }} transition={{ duration: 0.2 }}>
+                <FieldLabel active={focus === 'phone'}>{t.phoneLabel}</FieldLabel>
                 <input
                   type="tel" name="phone" value={form.phone}
                   onChange={set('phone')}
@@ -195,12 +211,10 @@ export default function Contact() {
                   required
                   className={inputClass('phone')}
                 />
-              </div>
+              </motion.div>
 
-              <div>
-                <label className="block font-mono text-[10px] tracking-[0.22em] uppercase text-slate-500 mb-2">
-                  {t.messageLabel}
-                </label>
+              <motion.div animate={{ y: focus === 'message' ? -2 : 0 }} transition={{ duration: 0.2 }}>
+                <FieldLabel active={focus === 'message'}>{t.messageLabel}</FieldLabel>
                 <textarea
                   name="message" value={form.message}
                   onChange={set('message')}
@@ -210,11 +224,12 @@ export default function Contact() {
                   required rows={5}
                   className={`${inputClass('message')} resize-none`}
                 />
-              </div>
+              </motion.div>
 
-              <motion.button
+              <MagneticButton
+                as="button"
+                strength={0.15}
                 type="submit"
-                whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-semibold font-body text-sm text-white transition-all duration-200"
                 style={{
@@ -234,7 +249,7 @@ export default function Contact() {
                     {t.submitBtn}
                   </>
                 )}
-              </motion.button>
+              </MagneticButton>
             </form>
           </motion.div>
 

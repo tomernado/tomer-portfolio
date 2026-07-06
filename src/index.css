@@ -7,8 +7,8 @@
 
   body {
     font-family: 'Assistant', sans-serif;
-    background-color: #020817;
-    color: #f8fafc;
+    background-color: #050505;
+    color: #fafafa;
     overflow-x: hidden;
   }
 
@@ -27,6 +27,26 @@
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
   }
+
+  /* Visible, consistent keyboard focus everywhere — premium sites never hide this */
+  :focus-visible {
+    outline: 1.5px solid rgba(255,255,255,0.75);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* ── Motion respect ──────────────────────────────────────────────────────
+   Decorative/ambient loops are neutralised for users who ask for reduced
+   motion. Framer Motion components additionally check useReducedMotion()
+   in JS; this covers the plain-CSS effects below. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ── CRT monitor effects ─────────────────────────────────────────────────── */
@@ -44,71 +64,68 @@
 .crt-flicker { animation: crt-flicker 7s ease-in-out infinite; }
 .cursor-blink { animation: cursor-blink 0.75s step-start infinite; }
 
-/* ── Water shimmer ──────────────────────────────────────────────────────── */
-@keyframes water-shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-@keyframes water-ripple {
-  0%   { transform: scale(1); opacity: 0.5; }
-  100% { transform: scale(2.4); opacity: 0; }
-}
-
-/* ── Shimmer text ───────────────────────────────────────────────────────── */
-@keyframes shimmer {
+/* ── Sheen sweep (used for premium card hover + shimmer text) ───────────── */
+@keyframes sheen-sweep {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
 
 @layer utilities {
-  .bg-dot-grid {
-    background-image: radial-gradient(circle, rgba(59,130,246,0.1) 1px, transparent 1px);
-    background-size: 28px 28px;
+  /* Cinematic film-grain — static, extremely subtle, no animation cost */
+  .grain-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .bg-line-grid {
-    background-image:
-      linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
+  .perspective-1000 { perspective: 1000px; }
 
   .text-shimmer {
     background: linear-gradient(90deg,
-      #f8fafc 0%, #93c5fd 25%, #f8fafc 50%, #93c5fd 75%, #f8fafc 100%
+      #fafafa 0%, #ffffff 25%, #8a8a90 50%, #ffffff 75%, #fafafa 100%
     );
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: shimmer 4s linear infinite;
+    animation: sheen-sweep 5s linear infinite;
   }
 
-  /* Water-glow card — base */
-  .water-card {
+  /* Premium card sheen — a single soft diagonal light sweep on hover */
+  .sheen-card {
     position: relative;
     overflow: hidden;
   }
-  .water-card::after {
+  .sheen-card::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg,
-      rgba(59,130,246,0.08) 0%,
-      transparent 50%,
-      rgba(99,102,241,0.06) 100%
+    background: linear-gradient(115deg,
+      transparent 30%,
+      rgba(255,255,255,0.06) 48%,
+      rgba(255,255,255,0.1) 50%,
+      rgba(255,255,255,0.06) 52%,
+      transparent 70%
     );
-    background-size: 200% 200%;
-    animation: water-shimmer 6s ease-in-out infinite;
+    background-size: 250% 250%;
+    background-position: 120% 120%;
+    transition: background-position 0.9s ease;
     pointer-events: none;
     border-radius: inherit;
+  }
+  .sheen-card:hover::after {
+    background-position: -20% -20%;
   }
 
   /* Scrollbar */
   ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: #0f172a; }
-  ::-webkit-scrollbar-thumb { background: #1e40af; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+  ::-webkit-scrollbar-track { background: #0b0b0d; }
+  ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #71717a; }
 
   /* Hide horizontal scrollbar for carousel */
   .no-scrollbar::-webkit-scrollbar { display: none; }

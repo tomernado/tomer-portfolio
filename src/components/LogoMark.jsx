@@ -24,16 +24,16 @@ export default function LogoMark({ className = '', style = {}, nameClassName = '
           <stop offset="100%" stopColor="#7f92a8" />
         </linearGradient>
         <linearGradient id={cG} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%"   stopColor="#7dd3fc" />
-          <stop offset="45%"  stopColor="#3b82f6" />
-          <stop offset="100%" stopColor="#1e3a8a" />
+          <stop offset="0%"   stopColor="#f4f4f5" />
+          <stop offset="45%"  stopColor="#a1a1aa" />
+          <stop offset="100%" stopColor="#3f3f46" />
         </linearGradient>
         <linearGradient id={lG} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stopColor="#3b82f6" stopOpacity="0"   />
-          <stop offset="15%"  stopColor="#3b82f6" stopOpacity="0.9" />
-          <stop offset="50%"  stopColor="#60a5fa" stopOpacity="1"   />
-          <stop offset="85%"  stopColor="#3b82f6" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#3b82f6" stopOpacity="0"   />
+          <stop offset="0%"   stopColor="#ffffff" stopOpacity="0"   />
+          <stop offset="15%"  stopColor="#ffffff" stopOpacity="0.7" />
+          <stop offset="50%"  stopColor="#ffffff" stopOpacity="1"   />
+          <stop offset="85%"  stopColor="#ffffff" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0"   />
         </linearGradient>
         <linearGradient id={shG} x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%"   stopColor="white" stopOpacity="0"    />
@@ -53,7 +53,7 @@ export default function LogoMark({ className = '', style = {}, nameClassName = '
       {/* Ambient pulse behind C */}
       <motion.ellipse
         cx="318" cy="125" rx="115" ry="100"
-        fill="rgba(59,130,246,0.11)"
+        fill="rgba(255,255,255,0.08)"
         animate={{ opacity: [0.4, 1, 0.4], scale: [0.95, 1.06, 0.95] }}
         transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
         style={{ transformOrigin: '318px 125px' }}
@@ -78,7 +78,8 @@ export default function LogoMark({ className = '', style = {}, nameClassName = '
       <line x1="12" y1="250" x2="498" y2="250" stroke={`url(#${lG})`} strokeWidth="1.5" />
 
       {/* Center glow dot */}
-      <motion.circle cx="255" cy="250" r="3" fill="#60a5fa"
+      <motion.circle cx="255" cy="250" r="3" fill="#e4e4e7"
+        initial={{ r: 2 }}
         animate={{ opacity: [0.3, 1, 0.3], r: [2, 4.5, 2] }}
         transition={{ duration: 2.3, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}
       />
@@ -88,7 +89,7 @@ export default function LogoMark({ className = '', style = {}, nameClassName = '
         <text x="255" y="290" fontFamily="'Segoe UI', -apple-system, system-ui, sans-serif"
           fontSize="27" fontWeight="700" textAnchor="middle" style={{ letterSpacing: '0.32em' }}>
           <tspan fill="white">TOMER </tspan>
-          <tspan fill="#60a5fa">COHEN</tspan>
+          <tspan fill="#a1a1aa">COHEN</tspan>
         </text>
       </g>
 

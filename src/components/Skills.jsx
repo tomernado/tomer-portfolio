@@ -1,245 +1,135 @@
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { skills } from '../data/content'
+import SpotlightCard from './SpotlightCard'
+import { ACCENT } from '../motion'
 
-/* ─── Theme per category ──────────────────────────────────────────── */
-const THEMES = {
-  Languages: {
-    accent: '#3b82f6',
-    accentMuted: 'rgba(59,130,246,0.14)',
-    accentBorder: 'rgba(59,130,246,0.32)',
-    badge: 'bg-blue-500/[0.08] text-blue-200 border-blue-500/20 hover:bg-blue-500/[0.18] hover:border-blue-400/40',
-    badgeGlow: '0 0 16px rgba(59,130,246,0.55)',
-    cardGlow: 'rgba(59,130,246,0.12)',
-    tabFile: 'languages.ts',
-    dot: 'bg-blue-400',
-    headerText: 'text-blue-400',
-    scanLine: 'from-blue-500/0 via-blue-500/25 to-blue-500/0',
-    sectionGlow: 'rgba(59,130,246,0.07)',
-  },
-  'Architecture & Security': {
-    accent: '#8b5cf6',
-    accentMuted: 'rgba(139,92,246,0.14)',
-    accentBorder: 'rgba(139,92,246,0.32)',
-    badge: 'bg-violet-500/[0.08] text-violet-200 border-violet-500/20 hover:bg-violet-500/[0.18] hover:border-violet-400/40',
-    badgeGlow: '0 0 16px rgba(139,92,246,0.55)',
-    cardGlow: 'rgba(139,92,246,0.12)',
-    tabFile: 'architecture.ts',
-    dot: 'bg-violet-400',
-    headerText: 'text-violet-400',
-    scanLine: 'from-violet-500/0 via-violet-500/25 to-violet-500/0',
-    sectionGlow: 'rgba(139,92,246,0.07)',
-  },
-  'Frontend & Backend': {
-    accent: '#06b6d4',
-    accentMuted: 'rgba(6,182,212,0.14)',
-    accentBorder: 'rgba(6,182,212,0.32)',
-    badge: 'bg-cyan-500/[0.08] text-cyan-200 border-cyan-500/20 hover:bg-cyan-500/[0.18] hover:border-cyan-400/40',
-    badgeGlow: '0 0 16px rgba(6,182,212,0.55)',
-    cardGlow: 'rgba(6,182,212,0.12)',
-    tabFile: 'frontend.tsx',
-    dot: 'bg-cyan-400',
-    headerText: 'text-cyan-400',
-    scanLine: 'from-cyan-500/0 via-cyan-500/25 to-cyan-500/0',
-    sectionGlow: 'rgba(6,182,212,0.07)',
-  },
-  'Databases & Tools': {
-    accent: '#10b981',
-    accentMuted: 'rgba(16,185,129,0.14)',
-    accentBorder: 'rgba(16,185,129,0.32)',
-    badge: 'bg-emerald-500/[0.08] text-emerald-200 border-emerald-500/20 hover:bg-emerald-500/[0.18] hover:border-emerald-400/40',
-    badgeGlow: '0 0 16px rgba(16,185,129,0.55)',
-    cardGlow: 'rgba(16,185,129,0.12)',
-    tabFile: 'database.sql',
-    dot: 'bg-emerald-400',
-    headerText: 'text-emerald-400',
-    scanLine: 'from-emerald-500/0 via-emerald-500/25 to-emerald-500/0',
-    sectionGlow: 'rgba(16,185,129,0.07)',
-  },
+const TAB_FILES = {
+  Languages: 'languages.ts',
+  'Architecture & Security': 'architecture.ts',
+  'Frontend & Backend': 'frontend.tsx',
+  'Databases & Tools': 'database.sql',
 }
-
-const FLOATS = [
-  { y: [0, -11, 3, -8, 2, -10, 0], rotate: [0,  0.5, -0.3, 0.4, -0.2, 0], dur: 7.2, delay: 0   },
-  { y: [0,  -8, 4, -13, 1, -7,  0], rotate: [0, -0.4,  0.6,-0.3,  0.5, 0], dur: 8.8, delay: 1.1 },
-  { y: [0, -14, 2, -9,  4, -12, 0], rotate: [0,  0.3, -0.5, 0.2, -0.4, 0], dur: 6.5, delay: 0.5 },
-  { y: [0,  -9, 5, -11, 2, -8,  0], rotate: [0, -0.3,  0.4,-0.5,  0.3, 0], dur: 9.0, delay: 1.8 },
-]
 
 const badgeItem = {
   hidden:  { opacity: 0, scale: 0.7, y: 8 },
   visible: { opacity: 1, scale: 1,   y: 0, transition: { duration: 0.32, ease: 'backOut' } },
 }
 
-export default function Skills() {
+function SkillCard({ group, wide = false }) {
+  const reduceMotion = useReducedMotion()
   return (
-    <section id="skills" className="py-28 px-5 relative overflow-hidden" dir="ltr">
+    <motion.div
+      initial={{ opacity: 0, y: 32 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2, margin: '-50px' }}
+      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+      whileHover={{ y: -4 }}
+      className={wide ? 'sm:col-span-2' : ''}
+    >
+      <SpotlightCard
+        className="overflow-hidden rounded-2xl border border-white/10 hover:border-white/20 backdrop-blur-xl transition-colors duration-300 h-full"
+        style={{ background: 'rgba(255,255,255,0.025)' }}
+      >
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)' }} />
 
-      {/* Subtle ambient glow — matches section vibe without a grid pattern */}
+        {/* Tab bar */}
+        <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/[0.08]" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <span className="w-2.5 h-2.5 rounded-full bg-white/40" />
+          <span className="w-2.5 h-2.5 rounded-full bg-white/25" />
+          <span className="w-2.5 h-2.5 rounded-full bg-white/12" />
+          <div className="ml-3 flex items-center gap-1.5 px-3 py-0.5 rounded-t-md text-[10px] font-mono border border-white/12" style={{ background: 'rgba(255,255,255,0.05)' }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+            <span className="text-white/70">{TAB_FILES[group.category] ?? 'skills.ts'}</span>
+          </div>
+          <span className="ml-auto font-mono text-[9px] text-white/45 tracking-widest">{group.items.length} items</span>
+        </div>
+
+        <div className="p-5 sm:p-6 relative">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="font-mono text-white/45 text-xs">{'// '}</span>
+            <span className="font-mono text-xs font-semibold tracking-wider text-white/70">{group.category}</span>
+            <motion.span
+              className="ml-auto w-1.5 h-1.5 rounded-full"
+              style={{ background: ACCENT.css }}
+              animate={reduceMotion ? undefined : { opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </div>
+
+          <div className="absolute bottom-0 left-5 right-5 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent)' }} />
+
+          <motion.div
+            className="flex flex-wrap gap-2"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } } }}
+          >
+            {group.items.map((item) => (
+              <motion.span
+                key={item}
+                variants={badgeItem}
+                whileHover={{ scale: 1.06, y: -2, borderColor: 'rgba(255,255,255,0.4)', backgroundColor: 'rgba(255,255,255,0.09)' }}
+                whileTap={{ scale: 0.94 }}
+                className="px-3 py-1.5 rounded-lg border border-white/12 bg-white/[0.03] text-white/75 text-[11px] font-mono font-semibold tracking-wide cursor-default select-none transition-colors duration-150"
+              >
+                {item}
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
+      </SpotlightCard>
+    </motion.div>
+  )
+}
+
+export default function Skills() {
+  const [primary, ...rest] = skills
+
+  return (
+    <section id="skills" className="py-28 sm:py-36 px-5 relative overflow-hidden" dir="ltr">
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse 65% 35% at 50% 0%, rgba(99,102,241,0.07) 0%, transparent 70%)',
-        }}
+        style={{ background: 'radial-gradient(ellipse 65% 35% at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%)' }}
       />
 
-      <motion.div
-        className="max-w-5xl mx-auto relative"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1, margin: '-50px' }}
-        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.14 } } }}
-      >
-        {/* ── Heading ── */}
+      <div className="max-w-6xl mx-auto relative">
+
+        {/* Section marker */}
         <motion.div
-          className="mb-16"
-          variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-3 mb-16"
         >
-          <p className="font-display text-indigo-400 text-xs tracking-[0.3em] uppercase mb-2 font-semibold text-center">
-            Technical Expertise
-          </p>
-          <h2 className="font-display font-bold text-4xl sm:text-5xl text-white text-center">Skills</h2>
-          <div className="flex justify-center mt-4">
-            <motion.div
-              className="h-[3px] rounded-full"
-              style={{ width: 56, background: 'linear-gradient(90deg, #6366f1, #8b5cf6)', originX: 0 }}
-              initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            />
-          </div>
+          <span className="font-mono text-white/45 text-xs">02</span>
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="font-mono text-white/50 text-xs tracking-[0.3em] uppercase">Skills</span>
         </motion.div>
 
-        {/* ── Cards grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {skills.map((group, idx) => {
-            const theme = THEMES[group.category] ?? THEMES['Languages']
-            const float = FLOATS[idx] ?? FLOATS[0]
+        <motion.h2
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="font-display font-bold text-white tracking-tight leading-[1.05] mb-16"
+          style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
+        >
+          Tools I reach for,<br />technologies I trust.
+        </motion.h2>
 
-            return (
-              <motion.div
-                key={group.category}
-                initial={{ opacity: 0, y: 55, scale: 0.96 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, amount: 0.15, margin: '-50px' }}
-                transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
-              >
-                {/* Float wrapper */}
-                <motion.div
-                  animate={{ y: float.y, rotate: float.rotate }}
-                  transition={{
-                    repeat: Infinity, repeatType: 'mirror',
-                    duration: float.dur, ease: 'easeInOut', delay: float.delay,
-                  }}
-                  style={{ willChange: 'transform' }}
-                >
-                  {/* Card */}
-                  <motion.div
-                    whileHover={{
-                      y: -4,
-                      boxShadow: `0 0 60px ${theme.cardGlow}, 0 20px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)`,
-                    }}
-                    transition={{ duration: 0.22 }}
-                    className="relative overflow-hidden rounded-2xl border backdrop-blur-xl"
-                    style={{
-                      background: 'rgba(10,15,30,0.75)',
-                      borderColor: theme.accentBorder.replace('0.32', '0.18'),
-                      boxShadow: `inset 0 1px 0 rgba(255,255,255,0.04)`,
-                    }}
-                  >
-                    {/* Top shimmer */}
-                    <div
-                      className="absolute top-0 left-0 right-0 h-px"
-                      style={{ background: `linear-gradient(90deg, transparent, ${theme.accentBorder}, transparent)` }}
-                    />
-
-                    {/* ── Tab bar ── */}
-                    <div
-                      className="flex items-center gap-1.5 px-4 py-2.5 border-b"
-                      style={{
-                        background: 'rgba(255,255,255,0.02)',
-                        borderColor: theme.accentBorder.replace('0.32', '0.1'),
-                      }}
-                    >
-                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500/70" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400/70" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
-
-                      <div
-                        className="ml-3 flex items-center gap-1.5 px-3 py-0.5 rounded-t-md text-[10px] font-mono"
-                        style={{
-                          background: theme.accentMuted,
-                          borderTop: `1px solid ${theme.accentBorder}`,
-                          borderLeft: `1px solid ${theme.accentBorder}`,
-                          borderRight: `1px solid ${theme.accentBorder}`,
-                        }}
-                      >
-                        <span className={`${theme.dot} w-1.5 h-1.5 rounded-full`} />
-                        <span className={theme.headerText}>{theme.tabFile}</span>
-                      </div>
-
-                      <span className="ml-auto font-mono text-[9px] text-slate-600 tracking-widest">
-                        {group.items.length} items
-                      </span>
-                    </div>
-
-                    {/* ── Body ── */}
-                    <div className="p-5 relative">
-                      {/* Scan-line */}
-                      <motion.div
-                        className={`absolute left-0 right-0 h-px bg-gradient-to-r ${theme.scanLine} opacity-50`}
-                        animate={{ top: ['0%', '100%', '0%'] }}
-                        transition={{ duration: float.dur * 0.9, repeat: Infinity, ease: 'linear', delay: float.delay }}
-                        style={{ pointerEvents: 'none', willChange: 'top' }}
-                      />
-
-                      {/* Category label */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className="font-mono text-slate-600 text-xs">{'// '}</span>
-                        <span className={`font-mono text-xs font-semibold tracking-wider ${theme.headerText}`}>
-                          {group.category}
-                        </span>
-                        <motion.div
-                          className="ml-auto w-1.5 h-1.5 rounded-full"
-                          animate={{ opacity: [1, 0.25, 1] }}
-                          transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut', delay: idx * 0.35 }}
-                          style={{ background: theme.accent, boxShadow: `0 0 6px ${theme.accent}` }}
-                        />
-                      </div>
-
-                      {/* Bottom accent */}
-                      <div
-                        className="absolute bottom-0 left-5 right-5 h-px"
-                        style={{ background: `linear-gradient(90deg, transparent, ${theme.accentBorder}, transparent)` }}
-                      />
-
-                      {/* Badges */}
-                      <motion.div
-                        className="flex flex-wrap gap-2"
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-50px' }}
-                        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.045, delayChildren: 0.05 } } }}
-                      >
-                        {group.items.map((item) => (
-                          <motion.span
-                            key={item}
-                            variants={badgeItem}
-                            whileHover={{ scale: 1.08, y: -2, boxShadow: theme.badgeGlow }}
-                            whileTap={{ scale: 0.93 }}
-                            className={`px-3 py-1.5 rounded-lg border text-[11px] font-mono font-semibold tracking-wide cursor-default select-none transition-colors duration-150 ${theme.badge}`}
-                          >
-                            {item}
-                          </motion.span>
-                        ))}
-                      </motion.div>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-            )
-          })}
+        {/* Bento: primary category full-width, rest in a 3-up row */}
+        <div className="flex flex-col gap-6">
+          <SkillCard group={primary} wide />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {rest.map((group) => (
+              <SkillCard key={group.category} group={group} />
+            ))}
+          </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   )
 }

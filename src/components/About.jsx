@@ -1,154 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { FileText, Briefcase, Code2, Database, Globe, Cpu, GitBranch, Server, Package, Brain, Shield, Terminal } from 'lucide-react'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { FileText } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
 import CvModal from './CvModal'
-
-/* ─── Tech-orbit card ────────────────────────────────────────────── */
-function TechOrbitCard({ large = false }) {
-  const S  = large ? 280 : 200
-  const IR = large ? 62  : 44
-  const OR = large ? 108 : 76
-  const innerBox    = large ? 38 : 30
-  const outerBox    = large ? 32 : 26
-  const innerIcon   = large ? 16 : 13
-  const outerIcon   = large ? 13 : 11
-  const innerOffset = innerBox / 2
-  const outerOffset = outerBox / 2
-  const centerPx    = large ? 72 : 58
-  const centerFont  = large ? 13 : 10
-  const nameFont    = large ? '9px' : '7px'
-  const outerNameFont = large ? '8px' : '6px'
-  const glowSize    = large ? 'w-28 h-28' : 'w-20 h-20'
-
-  const innerSkills = [
-    { Icon: Code2,    color: '#60a5fa', name: 'React'      },
-    { Icon: Cpu,      color: '#f472b6', name: 'Java'       },
-    { Icon: Database, color: '#a78bfa', name: 'SQL'        },
-    { Icon: Globe,    color: '#34d399', name: 'Python'     },
-  ]
-  const outerSkills = [
-    { Icon: Package,   color: '#c084fc', name: 'Docker'    },
-    { Icon: GitBranch, color: '#4ade80', name: 'Git'       },
-    { Icon: Shield,    color: '#fb923c', name: 'OWASP'     },
-    { Icon: Brain,     color: '#fbbf24', name: 'LLMs'      },
-    { Icon: Server,    color: '#67e8f9', name: 'Node.js'   },
-    { Icon: Terminal,  color: '#818cf8', name: 'TypeScript'},
-  ]
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: 0.46 }}
-      whileHover={{ borderColor: 'rgba(99,102,241,0.28)', boxShadow: '0 0 20px rgba(99,102,241,0.08), inset 0 0 20px rgba(99,102,241,0.03)' }}
-      className="rounded-lg border border-indigo-500/10 p-4 transition-all duration-300 flex flex-col items-center"
-      style={{ background: 'rgba(0,0,0,0.3)' }}
-    >
-      <div className="w-full flex items-center gap-1.5 mb-2 pb-2 border-b border-indigo-500/[0.08]">
-        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0 animate-pulse" />
-        <span className="font-mono text-[9px] text-indigo-400/50 tracking-widest uppercase">Tech Stack · Core Skills</span>
-      </div>
-
-      <div className="relative" style={{ width: S, height: S }}>
-        {/* Dashed orbit paths */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="rounded-full border border-dashed border-slate-700/40" style={{ width: IR*2, height: IR*2 }} />
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="rounded-full border border-dashed border-slate-700/25" style={{ width: OR*2, height: OR*2 }} />
-        </div>
-
-        {/* Inner ring — clockwise */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-        >
-          {innerSkills.map((item, i) => {
-            const rad = ((i / innerSkills.length) * 360 - 90) * (Math.PI / 180)
-            return (
-              <motion.div
-                key={i}
-                className="absolute flex flex-col items-center gap-0.5"
-                style={{ left: S/2 + Math.cos(rad)*IR - innerOffset, top: S/2 + Math.sin(rad)*IR - innerOffset }}
-                animate={{ rotate: -360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              >
-                <div style={{ width: innerBox, height: innerBox, background: `${item.color}18`, border: `1px solid ${item.color}55`, color: item.color }}
-                  className="rounded-lg flex items-center justify-center">
-                  <item.Icon size={innerIcon} />
-                </div>
-                <span className="font-mono tracking-wide" style={{ color: `${item.color}cc`, fontSize: nameFont }}>
-                  {item.name}
-                </span>
-              </motion.div>
-            )
-          })}
-        </motion.div>
-
-        {/* Outer ring — counter-clockwise */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 33, repeat: Infinity, ease: 'linear' }}
-        >
-          {outerSkills.map((item, i) => {
-            const rad = ((i / outerSkills.length) * 360 - 90) * (Math.PI / 180)
-            return (
-              <motion.div
-                key={i}
-                className="absolute flex flex-col items-center gap-0.5"
-                style={{ left: S/2 + Math.cos(rad)*OR - outerOffset, top: S/2 + Math.sin(rad)*OR - outerOffset }}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 33, repeat: Infinity, ease: 'linear' }}
-              >
-                <div style={{ width: outerBox, height: outerBox, background: `${item.color}14`, border: `1px solid ${item.color}45`, color: item.color }}
-                  className="rounded-lg flex items-center justify-center">
-                  <item.Icon size={outerIcon} />
-                </div>
-                <span className="font-mono tracking-wide" style={{ color: `${item.color}99`, fontSize: outerNameFont }}>
-                  {item.name}
-                </span>
-              </motion.div>
-            )
-          })}
-        </motion.div>
-
-        {/* Center glow */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className={`${glowSize} rounded-full`}
-            style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)' }} />
-        </div>
-
-        {/* Central identity card */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            style={{
-              width: centerPx, height: centerPx,
-              background: 'linear-gradient(135deg, rgba(15,20,45,0.98), rgba(8,12,28,0.98))',
-              border: '1px solid rgba(99,102,241,0.5)',
-            }}
-            className="rounded-xl flex flex-col items-center justify-center"
-            animate={{ boxShadow: [
-              '0 0 16px rgba(99,102,241,0.15)',
-              '0 0 30px rgba(99,102,241,0.28)',
-              '0 0 16px rgba(99,102,241,0.15)',
-            ]}}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <span className="font-mono text-indigo-300 font-bold" style={{ fontSize: centerFont }}>&lt;TC/&gt;</span>
-            <div className="flex items-center gap-0.5 mt-1">
-              <span className="w-1 h-1 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
-              <span className="font-mono text-green-400 text-[7px]">online</span>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </motion.div>
-  )
-}
+import { ACCENT } from '../motion'
 
 /* ─── Typewriter hook ────────────────────────────────────────────── */
 function useTypewriter(text, speed = 14, active = false) {
@@ -165,229 +20,220 @@ function useTypewriter(text, speed = 14, active = false) {
   return { typed: text.slice(0, index), done: index >= text.length, finish }
 }
 
+/* ─── Count-up hook — animates 0 → target once triggered ─────────── */
+function useCountUp(target, active, duration = 1400) {
+  const [value, setValue] = useState(0)
+  const reduceMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (!active) return
+    if (reduceMotion) { setValue(target); return }
+    let raf
+    const start = performance.now()
+    const tick = (now) => {
+      const progress = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - progress, 3) // easeOutCubic
+      setValue(Math.round(eased * target))
+      if (progress < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [active, target, duration, reduceMotion])
+
+  return value
+}
+
+const STATS = [
+  { value: '20+',          label: 'Projects Built',  sub: 'Client-delivered, end to end', countTo: 20, suffix: '+' },
+  { value: 'OOP · C/S',    label: 'Architecture',    sub: 'Design Patterns · MVC' },
+  { value: 'Full-Stack',   label: 'Development',     sub: 'React · Node.js · Java' },
+  { value: 'RAG & Agents', label: 'AI Systems',      sub: 'Claude · Gemini · LLMs' },
+]
+
+function StatValue({ stat, active }) {
+  const count = useCountUp(stat.countTo ?? 0, active && !!stat.countTo)
+  if (!stat.countTo) return <>{stat.value}</>
+  return <>{count}{stat.suffix}</>
+}
+
 export default function About() {
   const { personalInfo, aboutData, ui, dir } = useContent()
   const [cvOpen, setCvOpen] = useState(false)
   const [inView, setInView] = useState(false)
-  const screenRef = useRef(null)
+  const [statsInView, setStatsInView] = useState(false)
+  const bioRef = useRef(null)
+  const timelineRef = useRef(null)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    const el = screenRef.current
+    const el = bioRef.current
     if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.1 }
+      { threshold: 0.15 }
     )
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
-  const { typed, done, finish } = useTypewriter(personalInfo.aboutText, 5, inView)
+  const { typed, done, finish } = useTypewriter(personalInfo.aboutText, 10, inView)
+
+  // Timeline line "draws" itself in as the reader scrolls past it
+  const { scrollYProgress: timelineProgress } = useScroll({
+    target: timelineRef,
+    offset: ['start 0.85', 'end 0.6'],
+  })
 
   return (
     <>
-      <section id="about" className="pt-2 pb-24 px-5">
+      <section id="about" className="py-28 sm:py-36 px-5">
         <div className="max-w-6xl mx-auto">
 
-          {/* Section heading */}
+          {/* Section marker */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.65 }}
-            className="mb-10"
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-3 mb-16 sm:mb-24"
           >
-            <p className="font-display text-blue-500 text-xs tracking-[0.3em] uppercase mb-2 font-semibold text-center">Background</p>
-            <h2 className="font-body font-extrabold text-4xl sm:text-5xl text-white text-center">About Me</h2>
-            <div className="flex justify-center mt-4">
-              <motion.div
-                className="h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-transparent rounded-full"
-                initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: 0.3 }}
-                style={{ width: 56, originX: 0 }}
-              />
-            </div>
+            <span className="font-mono text-white/45 text-xs">01</span>
+            <div className="h-px flex-1 bg-white/10" />
+            <span className="font-mono text-white/50 text-xs tracking-[0.3em] uppercase">Background</span>
           </motion.div>
 
-          {/* Stats strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
-            {[
-              { value: '20+',           label: 'Projects Built',  sub: 'Client-delivered',        accent: '#60a5fa', dot: 'bg-blue-400'    },
-              { value: 'OOP · C/S',     label: 'Architecture',    sub: 'Design Patterns · MVC',   accent: '#a78bfa', dot: 'bg-violet-400'  },
-              { value: 'Full-Stack',    label: 'Development',     sub: 'React · Node.js · Java',  accent: '#34d399', dot: 'bg-emerald-400' },
-              { value: 'RAG & Agents',  label: 'AI Systems',      sub: 'Claude · Gemini · LLMs',  accent: '#fbbf24', dot: 'bg-amber-400'   },
-            ].map((stat, i) => (
+          {/* ── Editorial intro: heading + bio (left) / stat list (right) ── */}
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 mb-24 sm:mb-32">
+
+            {/* LEFT — heading + typed bio */}
+            <div className="lg:col-span-7" ref={bioRef}>
+              <motion.h2
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                className="font-display font-bold text-white tracking-tight leading-[1.05] mb-8"
+                style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
+              >
+                {aboutData.mainTitle}
+              </motion.h2>
+
               <motion.div
-                key={i}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="relative p-4 rounded-xl border bg-white/[0.02] overflow-hidden hover:bg-white/[0.035] transition-colors duration-300"
-                style={{ borderColor: `${stat.accent}25` }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                onClick={finish}
+                title={ui.about.clickToSkipTitle}
+                className="cursor-pointer select-none"
+                dir={dir}
               >
-                <div className="absolute top-0 left-0 w-14 h-14 pointer-events-none opacity-25"
-                  style={{ background: `radial-gradient(circle at 0% 0%, ${stat.accent} 0%, transparent 70%)` }} />
-                <div className="flex items-center gap-1.5 mb-2">
-                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${stat.dot}`} />
-                  <span className="font-mono text-[9px] tracking-[0.18em] uppercase" style={{ color: `${stat.accent}bb` }}>
-                    {stat.label}
+                <p className="font-body text-white/70 leading-[1.75]" style={{ fontSize: 'clamp(1.05rem, 1.6vw, 1.3rem)' }}>
+                  {typed}
+                  <span className={`inline-block w-[2px] h-[1.05em] bg-white/70 align-middle ml-1 ${done ? 'cursor-blink' : ''}`} />
+                </p>
+                {!done && (
+                  <p className="mt-3 font-mono text-white/45 text-[10px] tracking-widest uppercase">
+                    {ui.about.clickToSkip}
+                  </p>
+                )}
+              </motion.div>
+
+              <motion.button
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                onClick={() => setCvOpen(true)}
+                whileHover={{ gap: '0.75rem' }}
+                className="mt-10 inline-flex items-center gap-2 font-mono text-sm text-white/60 hover:text-white border-b border-white/20 hover:border-white/60 pb-1 transition-colors duration-200"
+              >
+                <FileText size={14} />
+                view_resume.pdf
+              </motion.button>
+            </div>
+
+            {/* RIGHT — stat list */}
+            <div className="lg:col-span-5 flex flex-col">
+              {STATS.map((stat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  onViewportEnter={i === 0 ? () => setStatsInView(true) : undefined}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 + i * 0.08 }}
+                  whileHover={{ x: -4 }}
+                  className={`flex items-baseline justify-between gap-6 py-5 ${i !== 0 ? 'border-t border-white/10' : ''}`}
+                >
+                  <div>
+                    <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-white/50 mb-1.5">{stat.label}</p>
+                    <p className="font-mono text-[11px] text-white/45">{stat.sub}</p>
+                  </div>
+                  <p className="font-display font-bold text-white text-xl sm:text-2xl text-right flex-shrink-0 tracking-tight tabular-nums">
+                    <StatValue stat={stat} active={statsInView} />
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Experience timeline ── */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-3 mb-12"
+          >
+            <span className="font-mono text-white/50 text-[10px] tracking-[0.3em] uppercase">Experience</span>
+            <div className="h-px flex-1 bg-white/10" />
+          </motion.div>
+
+          <div ref={timelineRef} className="relative pl-8 sm:pl-10">
+            {/* Vertical line — base track + scroll-drawn fill */}
+            <div className="absolute left-[3px] sm:left-[5px] top-2 bottom-2 w-px bg-white/12" />
+            <motion.div
+              className="absolute left-[3px] sm:left-[5px] top-2 bottom-2 w-px origin-top"
+              style={{
+                scaleY: reduceMotion ? 1 : timelineProgress,
+                background: `linear-gradient(rgba(${ACCENT.rgb},0.9), rgba(255,255,255,0.6))`,
+              }}
+            />
+
+            {aboutData.experience.map((exp, i) => (
+              <motion.div
+                key={exp.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.55, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                className={`relative ${i !== aboutData.experience.length - 1 ? 'pb-12 sm:pb-14' : ''}`}
+              >
+                {/* Node — the current role gets the accent, past roles stay neutral */}
+                <span
+                  className="absolute -left-8 sm:-left-10 top-1.5 w-[7px] h-[7px] rounded-full ring-4 ring-ink-950"
+                  style={i === 0 ? { background: ACCENT.css, boxShadow: `0 0 10px rgba(${ACCENT.rgb},0.7)` } : { background: '#fff' }}
+                />
+
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-6">
+                  <span className="font-mono text-[11px] text-white/50 tracking-widest uppercase flex-shrink-0 sm:w-32">
+                    {exp.date}
                   </span>
+                  <div className="flex-1">
+                    <h3 className="font-display font-semibold text-white text-lg sm:text-xl tracking-tight mb-1">
+                      {exp.title}
+                    </h3>
+                    <p className="font-mono text-[11px] text-white/50 mb-3 tracking-wide">@ {exp.company}</p>
+                    <p dir={dir} className="font-body text-white/50 text-sm leading-relaxed max-w-2xl">
+                      {exp.description}
+                    </p>
+                  </div>
                 </div>
-                <p className="font-body font-extrabold text-lg sm:text-xl text-white leading-tight">{stat.value}</p>
-                <p className="font-mono text-[9px] text-slate-600 mt-1.5 tracking-wide">{stat.sub}</p>
               </motion.div>
             ))}
           </div>
 
-          {/* CRT Monitor */}
-          <motion.div
-            initial={{ opacity: 0, y: 56, scale: 0.97 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            ref={screenRef}
-          >
-            {/* Monitor outer bezel */}
-            <div
-              className="crt-flicker rounded-2xl overflow-hidden border border-indigo-500/20 shadow-[0_0_80px_rgba(99,102,241,0.07),0_0_0_1px_rgba(99,102,241,0.06),inset_0_0_80px_rgba(0,0,0,0.6)]"
-              style={{ background: 'linear-gradient(160deg, rgba(2,12,27,0.98) 0%, rgba(2,8,20,1) 100%)' }}
-            >
-
-              {/* ── Title bar ── */}
-              <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-indigo-500/10"
-                style={{ background: 'rgba(0,0,0,0.45)' }}>
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-indigo-500/70" />
-                <span className="ml-4 font-mono text-[11px] text-indigo-400/50 tracking-wider">
-                  about.sh — tomer@portfolio:~
-                </span>
-                <span className="ml-auto font-mono text-[10px] text-indigo-400/30">[ system ]</span>
-              </div>
-
-              {/* ── Screen content ── */}
-              <div className="relative p-6 sm:p-8">
-
-                {/* Scanlines overlay */}
-                <div
-                  className="absolute inset-0 pointer-events-none z-10"
-                  style={{
-                    background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px, transparent 1px, transparent 3px)',
-                  }}
-                />
-
-                {/* Subtle inner glow */}
-                <div className="absolute inset-0 pointer-events-none rounded-b-2xl"
-                  style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(99,102,241,0.05) 0%, transparent 70%)' }} />
-
-                {/* ── Top row: bio text (always) + large orbital (desktop only) ── */}
-                <div className="flex flex-col lg:flex-row lg:gap-10">
-
-                  {/* LEFT — bio text */}
-                  <div className="lg:w-5/12 lg:flex-shrink-0">
-                    <div className="mb-6 flex items-center gap-3 flex-wrap" dir="rtl">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-indigo-500/25 bg-indigo-500/5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse flex-shrink-0" />
-                        <span className="font-mono text-indigo-300 text-xs tracking-widest font-semibold">
-                          {aboutData.mainTitle}
-                        </span>
-                      </div>
-                      <span className="font-mono text-indigo-400/40 text-[10px] tracking-wider">HIT · 2025</span>
-                    </div>
-
-                    <div
-                      className="mb-8 lg:mb-0 cursor-pointer select-none"
-                      onClick={finish}
-                      title={ui.about.clickToSkipTitle}
-                      dir={dir}
-                    >
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="font-mono text-indigo-500 text-sm">$</span>
-                        <span className="font-mono text-indigo-400/50 text-xs tracking-widest">cat profile.txt</span>
-                      </div>
-                      <p className="font-mono text-[13px] sm:text-sm leading-[1.85] text-slate-100 relative">
-                        {typed}
-                        <span className={`inline-block w-[7px] h-[14px] bg-indigo-400 align-middle ml-0.5 ${done ? 'cursor-blink' : ''}`} />
-                      </p>
-                      {!done && (
-                        <p className="mt-2 font-mono text-indigo-600/50 text-[10px] tracking-widest">
-                          {ui.about.clickToSkip}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* RIGHT — large orbital (desktop only, hidden on mobile) */}
-                  <div className="hidden lg:flex flex-1 min-w-0 border-l border-indigo-500/[0.08] pl-8 items-center justify-center">
-                    <TechOrbitCard large />
-                  </div>
-
-                </div>
-
-                {/* ── Experience + CV (below on desktop, below bio on mobile) ── */}
-                <div className="mt-6 lg:mt-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-px flex-1 bg-indigo-500/10" />
-                    <div className="flex items-center gap-1.5 px-3 py-0.5 border border-indigo-500/15 rounded bg-indigo-500/5">
-                      <Briefcase size={10} className="text-indigo-400/60" />
-                      <span className="font-mono text-[10px] text-indigo-400/60 tracking-widest uppercase">Experience</span>
-                    </div>
-                    <div className="h-px flex-1 bg-indigo-500/10" />
-                  </div>
-
-                  {/* Grid: 1-col mobile, 2-col sm, 3-col lg */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
-                    {aboutData.experience.map((exp, i) => (
-                      <motion.div
-                        key={exp.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.1 + i * 0.12 }}
-                        whileHover={{
-                          borderColor: 'rgba(99,102,241,0.25)',
-                          boxShadow: '0 0 20px rgba(99,102,241,0.08), inset 0 0 20px rgba(99,102,241,0.03)',
-                        }}
-                        className="rounded-lg border border-indigo-500/10 p-4 transition-colors duration-300"
-                        style={{ background: 'rgba(0,0,0,0.3)' }}
-                      >
-                        <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-indigo-500/[0.08]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500/50 flex-shrink-0" />
-                          <span className="font-mono text-[9px] text-indigo-400/50 tracking-widest uppercase">{exp.date}</span>
-                        </div>
-                        <p className="font-mono text-[11px] text-indigo-300/90 font-semibold leading-tight mb-1">{exp.title}</p>
-                        <p className="font-mono text-[10px] text-indigo-400/60 mb-3 tracking-wide">@ {exp.company}</p>
-                        <p dir={dir} className="font-body text-slate-400/90 text-xs leading-relaxed">{exp.description}</p>
-                      </motion.div>
-                    ))}
-
-                    {/* Small orbital — mobile/tablet only (hidden on lg) */}
-                    <div className="lg:hidden">
-                      <TechOrbitCard />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end border-t border-indigo-500/10 pt-5">
-                    <motion.button
-                      onClick={() => setCvOpen(true)}
-                      whileHover={{
-                        scale: 1.04,
-                        boxShadow: '0 0 24px rgba(99,102,241,0.25)',
-                        borderColor: 'rgba(99,102,241,0.5)',
-                      }}
-                      whileTap={{ scale: 0.97 }}
-                      className="flex items-center gap-2.5 px-5 py-2.5 rounded-lg border border-indigo-500/25 font-mono text-sm text-indigo-400 will-change-transform transition-colors duration-200"
-                      style={{ background: 'rgba(99,102,241,0.05)' }}
-                    >
-                      <FileText size={14} />
-                      <span className="tracking-wider">./view_resume.sh</span>
-                    </motion.button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
