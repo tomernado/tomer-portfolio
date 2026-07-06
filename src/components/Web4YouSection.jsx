@@ -1,8 +1,17 @@
 import { useRef, useState, useEffect } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion'
 import { ExternalLink, Globe, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
-import { ACCENT } from '../motion'
+import SectionMarker from './SectionMarker'
+import { ACCENT, VIEWPORT, EASE_OUT } from '../motion'
+
+/* Web4You's own cross-section identity: a left-to-right mask wipe on the
+   heading (distinct from About's settle, Skills' assemble, Projects'
+   converge) — pairs naturally with the sticky panel that follows. */
+const maskReveal = {
+  hidden:  { clipPath: 'inset(0 100% 0 0)' },
+  visible: { clipPath: 'inset(0 0% 0 0)', transition: { duration: 0.9, ease: EASE_OUT } },
+}
 
 function StepRow({ step, index, active, onActivate, dir, stepRef }) {
   return (
@@ -17,8 +26,12 @@ function StepRow({ step, index, active, onActivate, dir, stepRef }) {
     >
       <motion.div
         className="pl-6 flex items-baseline gap-4"
-        animate={{ opacity: active ? 1 : 0.4, x: active ? 0 : -4 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        animate={{
+          opacity: active ? 1 : 0.4,
+          x: active ? 0 : -4,
+          filter: active ? 'blur(0px)' : 'blur(1.5px)',
+        }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
         <span className={`font-mono text-xs tracking-widest flex-shrink-0 transition-colors duration-300 ${active ? 'text-white' : 'text-white/45'}`}>
           {step.number}
@@ -63,7 +76,15 @@ function MobileStepCarousel({ steps }) {
         style={{ scrollSnapType: 'x mandatory' }}
       >
         {steps.map((step, i) => (
-          <div key={i} className="snap-center shrink-0 w-full pr-3" style={{ scrollSnapAlign: 'center' }}>
+          <motion.div
+            key={i}
+            className="snap-center shrink-0 w-full pr-3"
+            style={{ scrollSnapAlign: 'center' }}
+            initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: i * 0.05 }}
+          >
             <div className="rounded-2xl overflow-hidden bg-ink-900 relative h-[220px] border border-white/10 mb-4">
               <img src={step.image} alt={step.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent" />
@@ -71,7 +92,7 @@ function MobileStepCarousel({ steps }) {
             <p className="font-mono text-xs tracking-widest text-white/45 mb-1.5">{step.number}</p>
             <h3 className="font-display font-semibold text-xl text-white tracking-tight mb-1.5">{step.title}</h3>
             <p className="font-body text-sm leading-relaxed text-white/55">{step.description}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -116,23 +137,19 @@ export default function Web4YouSection() {
     })
   }, [steps])
 
-  // Scroll-driven activation: whichever step is closest to viewport-center wins.
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter(e => e.isIntersecting)
-        if (visible.length === 0) return
-        const closest = visible.reduce((best, e) =>
-          Math.abs(e.boundingClientRect.top) < Math.abs(best.boundingClientRect.top) ? e : best
-        )
-        const idx = stepRefs.current.indexOf(closest.target)
-        if (idx !== -1) setActiveIndex(idx)
-      },
-      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
-    )
-    stepRefs.current.forEach(el => el && observer.observe(el))
-    return () => observer.disconnect()
-  }, [steps])
+  // Continuous scroll-linked progress through the step list — smoother and
+  // more precise than the old IntersectionObserver heuristic, and it's what
+  // actually makes this read as "sticky storytelling" rather than a series
+  // of independent triggers.
+  const { scrollYProgress } = useScroll({
+    target: stepsContainerRef,
+    offset: ['start start', 'end end'],
+  })
+  const rawIndex = useTransform(scrollYProgress, [0, 1], [0, steps.length - 0.001])
+  useMotionValueEvent(rawIndex, 'change', (v) => {
+    const idx = Math.max(0, Math.min(steps.length - 1, Math.floor(v)))
+    setActiveIndex((prev) => (prev === idx ? prev : idx))
+  })
 
   // Slide the progress indicator to track the active step's position
   useEffect(() => {
@@ -155,23 +172,17 @@ export default function Web4YouSection() {
 
       <div className="max-w-6xl mx-auto relative">
 
-        {/* Section marker */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-3 mb-8"
-        >
-          <span className="font-mono text-white/45 text-xs">04</span>
-          <div className="h-px flex-1 bg-white/10" />
-          <span className="font-mono text-white/50 text-xs tracking-[0.3em] uppercase">{ui.web4you.label}</span>
-        </motion.div>
+        <SectionMarker index="04" label={ui.web4you.label} className="mb-8" />
 
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-16">
-          <h2 className="font-display font-bold text-white tracking-tight" style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}>
+          <motion.h2
+            initial="hidden" whileInView="visible" viewport={VIEWPORT}
+            variants={maskReveal}
+            className="font-display font-bold text-white tracking-tight"
+            style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
+          >
             Web4You
-          </h2>
+          </motion.h2>
           <motion.a
             href={url}
             target="_blank"
@@ -195,7 +206,8 @@ export default function Web4YouSection() {
           <div ref={stepsContainerRef} className="relative">
             <div className="absolute left-0 top-0 bottom-0 w-px bg-white/10" />
             <motion.div
-              className="absolute left-0 w-px bg-white"
+              className="absolute left-0 w-px"
+              style={{ background: `linear-gradient(rgba(${ACCENT.rgb},0.9), rgba(255,255,255,0.6))` }}
               animate={{ top: indicator.top, height: indicator.height }}
               transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 30 }}
             />
@@ -228,10 +240,10 @@ export default function Web4YouSection() {
                     src={steps[activeIndex].image}
                     alt={steps[activeIndex].title}
                     className="w-full h-full object-cover"
-                    initial={{ opacity: 0, scale: 1.04, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }}
+                    transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
                   />
                 </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent pointer-events-none" />

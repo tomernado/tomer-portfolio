@@ -1,9 +1,12 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
-import { motion, AnimatePresence, useMotionValue, useAnimationFrame, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useSpring, useAnimationFrame, useReducedMotion } from 'framer-motion'
 import { Play, X, Github, Linkedin, ExternalLink, Globe, Pause } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
 import SpotlightCard from './SpotlightCard'
 import MagneticButton from './MagneticButton'
+import SectionMarker from './SectionMarker'
+import BorderBeam from './BorderBeam'
+import { headingReveal, revealUp, revealLeft, revealRight, VIEWPORT, ACCENT } from '../motion'
 
 /* ─── Card size configs ────────────────────────────────────────────── */
 const CARD_SIZES = [
@@ -32,11 +35,26 @@ const modalV = {
 /* ─── Single project card ─────────────────────────────────────────── */
 function ProjectCard({ project, sizeConfig, onClick, hidden }) {
   const { ui } = useContent()
+  const reduceMotion = useReducedMotion()
+  const rotateX = useSpring(0, { stiffness: 220, damping: 18, mass: 0.5 })
+  const rotateY = useSpring(0, { stiffness: 220, damping: 18, mass: 0.5 })
+
+  const onMove = (e) => {
+    if (reduceMotion) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    rotateY.set(((e.clientX - rect.left) / rect.width - 0.5) * 8)
+    rotateX.set(-((e.clientY - rect.top) / rect.height - 0.5) * 8)
+  }
+  const onLeave = () => { rotateX.set(0); rotateY.set(0) }
+
   return (
     <motion.button
       onClick={onClick}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
       tabIndex={hidden ? -1 : 0}
       aria-hidden={hidden || undefined}
+      style={{ rotateX, rotateY, transformPerspective: 800 }}
       whileHover={{ y: -6, borderColor: 'rgba(255,255,255,0.32)' }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.2 }}
@@ -300,48 +318,119 @@ function MarqueeRow({ items, direction = 'left' }) {
   )
 }
 
-/* ─── Featured project spotlight ──────────────────────────────────── */
-function FeaturedProject({ project, onClick }) {
+/* ─── Featured project spotlight ──────────────────────────────────────
+   Rotates through a curated set (Chef Platform → SocialOrg → WorkShift →
+   repeat) instead of pinning a single project forever. Pauses on hover;
+   respects reduced motion by simply not auto-advancing. ─────────────── */
+const FEATURED_ORDER = [10, 11, 8]
+const FEATURED_ROTATE_MS = 6000
+
+function FeaturedProject({ projects, onClick }) {
   const { ui } = useContent()
+  const reduceMotion = useReducedMotion()
+  const featuredList = FEATURED_ORDER
+    .map((id) => projects.find((p) => p.id === id))
+    .filter(Boolean)
+  const list = featuredList.length ? featuredList : projects.slice(0, 1)
+
+  const [index, setIndex] = useState(0)
+  const paused = useRef(false)
+
+  useEffect(() => {
+    if (reduceMotion || list.length < 2) return
+    const t = setInterval(() => {
+      if (!paused.current) setIndex((i) => (i + 1) % list.length)
+    }, FEATURED_ROTATE_MS)
+    return () => clearInterval(t)
+  }, [reduceMotion, list.length])
+
+  const project = list[index]
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={VIEWPORT}
+      variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
       className="px-5 mb-16 sm:mb-20"
     >
-      <div className="max-w-6xl mx-auto">
+      <div
+        className="max-w-6xl mx-auto"
+        onMouseEnter={() => { paused.current = true }}
+        onMouseLeave={() => { paused.current = false }}
+      >
+        <BorderBeam>
         <SpotlightCard
           as="button"
-          onClick={onClick}
+          onClick={() => onClick(project)}
           radius={420}
-          className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center text-left w-full cursor-pointer rounded-3xl"
+          className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center text-left w-full cursor-pointer rounded-3xl p-6 sm:p-8 lg:p-10"
         >
-          <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 group-hover:border-white/25 transition-colors duration-300 order-2 lg:order-1">
-            {project.mediaType === 'video' ? (
-              <video src={project.media} muted autoPlay loop playsInline preload="metadata"
-                className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500" />
-            ) : (
-              <img src={project.media} alt={project.title}
-                className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-ink-950/60 via-transparent to-transparent" />
-          </div>
-          <div className="order-1 lg:order-2">
-            <p className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/50 mb-4">Featured Project</p>
-            <h3 className="font-display font-bold text-white tracking-tight leading-[1.05] mb-4" style={{ fontSize: 'clamp(1.75rem, 3.2vw, 2.75rem)' }}>
-              {project.title}
-            </h3>
-            <p className="font-body text-white/50 text-sm sm:text-base leading-relaxed mb-6 max-w-lg">
-              {project.description}
-            </p>
+          {/* Image converges from the left, text from the right — the same
+              opposing directions the two marquee rows below scroll in,
+              so the section's own motion identity is horizontal. */}
+          <motion.div
+            variants={revealLeft}
+            className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 group-hover:border-white/25 transition-colors duration-300 order-2 lg:order-1"
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, scale: 1.03, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.98, filter: 'blur(6px)' }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-0"
+              >
+                {project.mediaType === 'video' ? (
+                  <video key={project.id} src={project.media} muted autoPlay loop playsInline preload="metadata"
+                    className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500" />
+                ) : (
+                  <img src={project.media} alt={project.title}
+                    className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500" />
+                )}
+              </motion.div>
+            </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-t from-ink-950/60 via-transparent to-transparent pointer-events-none" />
+          </motion.div>
+          <motion.div variants={revealRight} className="order-1 lg:order-2">
+            <div className="flex items-center gap-3 mb-4">
+              <p className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/50">Featured Project</p>
+              {list.length > 1 && (
+                <div className="flex items-center gap-1.5">
+                  {list.map((p, i) => (
+                    <span
+                      key={p.id}
+                      className="w-1.5 h-1.5 rounded-full transition-colors duration-300"
+                      style={{ background: i === index ? ACCENT.css : 'rgba(255,255,255,0.2)' }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <h3 className="font-display font-bold text-white tracking-tight leading-[1.05] mb-4" style={{ fontSize: 'clamp(1.75rem, 3.2vw, 2.75rem)' }}>
+                  {project.title}
+                </h3>
+                <p className="font-body text-white/50 text-sm sm:text-base leading-relaxed mb-6 max-w-lg">
+                  {project.description}
+                </p>
+              </motion.div>
+            </AnimatePresence>
             <span className="inline-flex items-center gap-2 font-mono text-xs text-white/60 group-hover:text-white border-b border-white/20 group-hover:border-white/60 pb-1 transition-colors duration-200">
               <ExternalLink size={12} />
               {ui.projects.cardCta}
             </span>
-          </div>
+          </motion.div>
         </SpotlightCard>
+        </BorderBeam>
       </div>
     </motion.div>
   )
@@ -352,7 +441,9 @@ export default function ProjectsGrid() {
   const { projects, ui } = useContent()
   const [selected, setSelected] = useState(null)
 
-  const [featured, ...others] = projects
+  // The rotating spotlight above already covers these three, so the
+  // marquee rows show everything else — no duplicate cards.
+  const others = projects.filter((p) => !FEATURED_ORDER.includes(p.id))
 
   const row1 = others.slice(0, 5).map((p, i) => ({
     project: p,
@@ -375,20 +466,30 @@ export default function ProjectsGrid() {
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}
         >
           {/* Section marker + heading */}
-          <motion.div
-            className="px-5 mb-16 max-w-6xl mx-auto"
-            variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.65 } } }}
-          >
-            <div className="flex items-center gap-3 mb-8">
-              <span className="font-mono text-white/45 text-xs">03</span>
-              <div className="h-px flex-1 bg-white/10" />
-              <span className="font-mono text-white/50 text-xs tracking-[0.3em] uppercase">Portfolio</span>
-            </div>
-            <h2 className="font-display font-bold text-white tracking-tight" style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}>{ui.projects.heading}</h2>
-            <p className="font-body text-white/50 text-sm mt-3">{ui.projects.subheading}</p>
-          </motion.div>
+          <div className="px-5 mb-16 max-w-6xl mx-auto">
+            <SectionMarker index="03" label="Portfolio" className="mb-8" />
+            <motion.h2
+              initial="hidden"
+              whileInView="visible"
+              viewport={VIEWPORT}
+              variants={headingReveal}
+              className="font-display font-bold text-white tracking-tight"
+              style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
+            >
+              {ui.projects.heading}
+            </motion.h2>
+            <motion.p
+              initial="hidden"
+              whileInView="visible"
+              viewport={VIEWPORT}
+              variants={revealUp}
+              className="font-body text-white/50 text-sm mt-3"
+            >
+              {ui.projects.subheading}
+            </motion.p>
+          </div>
 
-          <FeaturedProject project={featured} onClick={() => setSelected(featured)} />
+          <FeaturedProject projects={projects} onClick={setSelected} />
 
           {/* Carousel rows */}
           <motion.div

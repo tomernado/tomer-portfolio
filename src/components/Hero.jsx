@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, useAnimationFrame, useReducedMotion, useMotionTemplate } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform, useScroll, useAnimationFrame, useReducedMotion, useMotionTemplate } from 'framer-motion'
 import { useContent } from '../context/LanguageContext'
 import {
   Linkedin, Github, ChevronDown,
@@ -314,6 +314,17 @@ export default function Hero() {
     mvY.set(relY - 0.5)
   }
 
+  // Hero's own cross-section handoff: instead of just fading in and sitting
+  // static, it quietly recedes — softening and drifting up — as the reader
+  // scrolls it out of view, so About feels like it's arriving over Hero
+  // rather than simply appearing after it.
+  const { scrollYProgress: heroExit } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
+  const exitOpacity = useTransform(heroExit, [0, 0.6, 1], [1, 1, 0.4])
+  const exitScale   = useTransform(heroExit, [0, 0.6, 1], [1, 1, 0.95])
+  const exitY        = useTransform(heroExit, [0, 0.6, 1], [0, 0, -30])
+  const exitBlur     = useTransform(heroExit, [0, 0.6, 1], [0, 0, 3])
+  const exitFilter   = useMotionTemplate`blur(${exitBlur}px)`
+
   return (
     <section
       ref={sectionRef}
@@ -352,6 +363,7 @@ export default function Hero() {
         variants={heroContainer}
         initial="hidden"
         animate="visible"
+        style={reduceMotion ? undefined : { opacity: exitOpacity, scale: exitScale, y: exitY, filter: exitFilter }}
       >
         <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
 

@@ -3,7 +3,8 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion
 import { FileText } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
 import CvModal from './CvModal'
-import { ACCENT } from '../motion'
+import SectionMarker from './SectionMarker'
+import { ACCENT, headingReveal, revealUp, VIEWPORT } from '../motion'
 
 /* ─── Typewriter hook ────────────────────────────────────────────── */
 function useTypewriter(text, speed = 14, active = false) {
@@ -63,7 +64,19 @@ export default function About() {
   const [statsInView, setStatsInView] = useState(false)
   const bioRef = useRef(null)
   const timelineRef = useRef(null)
+  const sectionRef = useRef(null)
   const reduceMotion = useReducedMotion()
+
+  // About's own cross-section identity: it arrives with a quiet depth-settle
+  // (a gentle scale/opacity climb) rather than the blur Hero uses to leave —
+  // each boundary reads differently while both are scroll-linked, not just
+  // viewport-triggered.
+  const { scrollYProgress: enterProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'start 0.4'],
+  })
+  const enterScale   = useTransform(enterProgress, [0, 1], [0.97, 1])
+  const enterOpacity = useTransform(enterProgress, [0, 1], [0.75, 1])
 
   useEffect(() => {
     const el = bioRef.current
@@ -86,21 +99,20 @@ export default function About() {
 
   return (
     <>
-      <section id="about" className="py-28 sm:py-36 px-5">
-        <div className="max-w-6xl mx-auto">
+      <section ref={sectionRef} id="about" className="relative py-28 sm:py-36 px-5">
+        {/* Bridge glow — carries a soft accent from Hero's atmosphere across
+            the seam instead of cutting hard into a plain section. */}
+        <div
+          aria-hidden="true"
+          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[900px] h-64 pointer-events-none"
+          style={{ background: `radial-gradient(ellipse 50% 100% at 50% 0%, rgba(${ACCENT.rgb},0.05), transparent 75%)` }}
+        />
+        <motion.div
+          className="max-w-6xl mx-auto"
+          style={reduceMotion ? undefined : { scale: enterScale, opacity: enterOpacity }}
+        >
 
-          {/* Section marker */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-3 mb-16 sm:mb-24"
-          >
-            <span className="font-mono text-white/45 text-xs">01</span>
-            <div className="h-px flex-1 bg-white/10" />
-            <span className="font-mono text-white/50 text-xs tracking-[0.3em] uppercase">Background</span>
-          </motion.div>
+          <SectionMarker index="01" label="Background" className="mb-16 sm:mb-24" />
 
           {/* ── Editorial intro: heading + bio (left) / stat list (right) ── */}
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 mb-24 sm:mb-32">
@@ -108,10 +120,10 @@ export default function About() {
             {/* LEFT — heading + typed bio */}
             <div className="lg:col-span-7" ref={bioRef}>
               <motion.h2
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                initial="hidden"
+                whileInView="visible"
+                viewport={VIEWPORT}
+                variants={headingReveal}
                 className="font-display font-bold text-white tracking-tight leading-[1.05] mb-8"
                 style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
               >
@@ -162,7 +174,7 @@ export default function About() {
                   whileInView={{ opacity: 1, x: 0 }}
                   onViewportEnter={i === 0 ? () => setStatsInView(true) : undefined}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 + i * 0.08 }}
+                  transition={{ duration: 0.5, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                   whileHover={{ x: -4 }}
                   className={`flex items-baseline justify-between gap-6 py-5 ${i !== 0 ? 'border-t border-white/10' : ''}`}
                 >
@@ -180,10 +192,10 @@ export default function About() {
 
           {/* ── Experience timeline ── */}
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 0.6 }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={VIEWPORT}
+            variants={revealUp}
             className="flex items-center gap-3 mb-12"
           >
             <span className="font-mono text-white/50 text-[10px] tracking-[0.3em] uppercase">Experience</span>
@@ -234,7 +246,7 @@ export default function About() {
             ))}
           </div>
 
-        </div>
+        </motion.div>
       </section>
 
       <CvModal isOpen={cvOpen} onClose={() => setCvOpen(false)} />

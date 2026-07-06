@@ -29,6 +29,24 @@ export const staggerContainer = (stagger = 0.1, delayChildren = 0) => ({
   visible: { transition: { staggerChildren: stagger, delayChildren } },
 })
 
+/* Blur→focus: the one treatment every big section heading shares — mirrors
+   the Hero name reveal so the "materializing" moment reads as one system
+   instead of a Hero-only trick. */
+export const headingReveal = {
+  hidden:  { opacity: 0, y: 24, filter: 'blur(8px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.85, ease: EASE_OUT } },
+}
+
+/* Card-grid reveal: subtle scale-in, used for any grid of cards/tiles. */
+export const cardReveal = {
+  hidden:  { opacity: 0, y: 30, scale: 0.97 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: DURATION.base, ease: EASE_OUT } },
+}
+
+/* Standard viewport gate — reused so "when" a reveal fires is as
+   consistent as "how" it animates. */
+export const VIEWPORT = { once: true, amount: 0.2, margin: '-60px' }
+
 /* Accent — the one spot of color allowed in an otherwise monochrome system.
    Echoes the portrait's own neon circuit-board lighting. */
 export const ACCENT = {

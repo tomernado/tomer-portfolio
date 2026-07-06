@@ -1,7 +1,8 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { skills } from '../data/content'
 import SpotlightCard from './SpotlightCard'
-import { ACCENT } from '../motion'
+import SectionMarker from './SectionMarker'
+import { ACCENT, headingReveal, VIEWPORT, EASE_OUT } from '../motion'
 
 const TAB_FILES = {
   Languages: 'languages.ts',
@@ -15,14 +16,23 @@ const badgeItem = {
   visible: { opacity: 1, scale: 1,   y: 0, transition: { duration: 0.32, ease: 'backOut' } },
 }
 
-function SkillCard({ group, wide = false }) {
+/* Skills' own cross-section identity: cards "assemble" into place with a
+   faint alternating tilt, rather than the plain scale/blur other sections
+   use — reads as this section's own signature while still scroll-triggered
+   like everywhere else. */
+const assembleVariant = (i) => ({
+  hidden:  { opacity: 0, y: 34, scale: 0.94, rotate: i % 2 === 0 ? -2.5 : 2.5 },
+  visible: { opacity: 1, y: 0, scale: 1, rotate: 0, transition: { duration: 0.7, ease: EASE_OUT, delay: i * 0.06 } },
+})
+
+function SkillCard({ group, wide = false, index = 0 }) {
   const reduceMotion = useReducedMotion()
   return (
     <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2, margin: '-50px' }}
-      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={VIEWPORT}
+      variants={assembleVariant(index)}
       whileHover={{ y: -4 }}
       className={wide ? 'sm:col-span-2' : ''}
     >
@@ -96,24 +106,13 @@ export default function Skills() {
 
       <div className="max-w-6xl mx-auto relative">
 
-        {/* Section marker */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-3 mb-16"
-        >
-          <span className="font-mono text-white/45 text-xs">02</span>
-          <div className="h-px flex-1 bg-white/10" />
-          <span className="font-mono text-white/50 text-xs tracking-[0.3em] uppercase">Skills</span>
-        </motion.div>
+        <SectionMarker index="02" label="Skills" className="mb-16" />
 
         <motion.h2
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={VIEWPORT}
+          variants={headingReveal}
           className="font-display font-bold text-white tracking-tight leading-[1.05] mb-16"
           style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
         >
@@ -122,10 +121,10 @@ export default function Skills() {
 
         {/* Bento: primary category full-width, rest in a 3-up row */}
         <div className="flex flex-col gap-6">
-          <SkillCard group={primary} wide />
+          <SkillCard group={primary} wide index={0} />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {rest.map((group) => (
-              <SkillCard key={group.category} group={group} />
+            {rest.map((group, i) => (
+              <SkillCard key={group.category} group={group} index={i + 1} />
             ))}
           </div>
         </div>

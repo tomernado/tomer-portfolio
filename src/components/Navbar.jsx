@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { useLang } from '../context/LanguageContext'
 import { ACCENT } from '../motion'
+import MagneticButton from './MagneticButton'
 
 const navLinks = [
   { label: 'Home',     href: '#hero',     id: 'hero' },
@@ -82,7 +83,9 @@ export default function Navbar() {
           {navLinks.map((link) => {
             const isActive = activeSection === link.id
             return (
-              <a
+              <MagneticButton
+                as="a"
+                strength={0.15}
                 key={link.href}
                 href={link.href}
                 className="relative flex-shrink-0 whitespace-nowrap px-3.5 py-2 rounded-full transition-colors duration-200"
@@ -100,7 +103,7 @@ export default function Navbar() {
                 }`}>
                   {link.label}
                 </span>
-              </a>
+              </MagneticButton>
             )
           })}
         </div>

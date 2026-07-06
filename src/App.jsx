@@ -21,6 +21,7 @@ const glows = [
     animate: { x: [0, 60, -20, 0], y: [0, -40, 30, 0] },
     duration: 34,
     depth: 18,
+    scrollDepth: -220, // drifts up as the page scrolls — a slower, deeper layer
   },
   {
     id: 2,
@@ -28,6 +29,7 @@ const glows = [
     animate: { x: [0, -50, 25, 0], y: [0, 40, -30, 0] },
     duration: 40,
     depth: 28,
+    scrollDepth: 160, // drifts down — opposite direction for real depth separation
   },
 ]
 
@@ -51,9 +53,10 @@ function usePointerNormalized() {
   return { px, py }
 }
 
-function ParallaxGlow({ glow, px, py }) {
+function ParallaxGlow({ glow, px, py, scrollYProgress }) {
   const x = useSpring(useMotionValue(0), { stiffness: 40, damping: 20 })
   const y = useSpring(useMotionValue(0), { stiffness: 40, damping: 20 })
+  const scrollY = useTransform(scrollYProgress, [0, 1], [0, glow.reduceMotion ? 0 : glow.scrollDepth])
 
   useEffect(() => {
     const unsubX = px.on('change', (v) => x.set(v * glow.depth * 2))
@@ -62,12 +65,14 @@ function ParallaxGlow({ glow, px, py }) {
   }, [px, py, x, y, glow.depth])
 
   return (
-    <motion.div style={{ x, y }} className="absolute inset-0 will-change-transform">
-      <motion.div
-        className={`absolute rounded-full blur-[140px] pointer-events-none will-change-transform ${glow.className}`}
-        animate={glow.reduceMotion ? undefined : glow.animate}
-        transition={{ duration: glow.duration, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-      />
+    <motion.div style={{ y: scrollY }} className="absolute inset-0 will-change-transform">
+      <motion.div style={{ x, y }} className="absolute inset-0 will-change-transform">
+        <motion.div
+          className={`absolute rounded-full blur-[140px] pointer-events-none will-change-transform ${glow.className}`}
+          animate={glow.reduceMotion ? undefined : glow.animate}
+          transition={{ duration: glow.duration, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+        />
+      </motion.div>
     </motion.div>
   )
 }
@@ -91,10 +96,32 @@ export default function App() {
       {/* Cinematic grain */}
       <div className="grain-overlay" aria-hidden="true" />
 
+      {/* Subtle moving grid — transform-only (not background-position) so it
+          stays GPU-composited; a bare hint of structure drifting behind
+          everything rather than a flat black void. */}
+      {!reduceMotion && (
+        <motion.div
+          aria-hidden="true"
+          className="hidden md:block fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-[0.05]"
+        >
+          <motion.div
+            className="absolute will-change-transform"
+            style={{
+              inset: '-10%',
+              backgroundImage:
+                'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
+              backgroundSize: '64px 64px',
+            }}
+            animate={{ x: [0, 64, 0], y: [0, 64, 0] }}
+            transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
+          />
+        </motion.div>
+      )}
+
       {/* Ambient glows with subtle mouse-parallax depth */}
       <div className="hidden md:block fixed inset-0 pointer-events-none z-0 overflow-hidden">
         {glows.map((glow) => (
-          <ParallaxGlow key={glow.id} glow={{ ...glow, reduceMotion }} px={px} py={py} />
+          <ParallaxGlow key={glow.id} glow={{ ...glow, reduceMotion }} px={px} py={py} scrollYProgress={scrollYProgress} />
         ))}
         <motion.div
           aria-hidden="true"

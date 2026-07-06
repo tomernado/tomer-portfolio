@@ -3,6 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Phone, Mail, Linkedin, Github, Download, Send } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
 import MagneticButton from './MagneticButton'
+import SectionMarker from './SectionMarker'
+import { VIEWPORT, EASE_OUT } from '../motion'
+
+/* Contact's own cross-section identity: a spotlight-style scale-up-from-
+   center arrival — this is the closing act of the journey, so it should
+   feel like it's coming into focus rather than sliding/settling like the
+   sections before it. */
+const spotlightReveal = {
+  hidden:  { opacity: 0, scale: 0.92, filter: 'blur(6px)' },
+  visible: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: { duration: 0.8, ease: EASE_OUT } },
+}
 
 function FieldLabel({ children, active }) {
   return (
@@ -98,22 +109,11 @@ export default function Contact() {
     <section id="contact" className="relative py-24 px-5 border-t border-white/10" dir={dir}>
       <div className="max-w-6xl mx-auto">
 
-        {/* Section marker */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-3 mb-14"
-        >
-          <span className="font-mono text-white/45 text-xs">05</span>
-          <div className="h-px flex-1 bg-white/10" />
-          <span className="font-mono text-white/50 text-xs tracking-[0.3em] uppercase">{t.label}</span>
-        </motion.div>
+        <SectionMarker index="05" label={t.label} className="mb-14" />
 
         <motion.h2
-          initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}
-          variants={fadeUp}
+          initial="hidden" whileInView="visible" viewport={VIEWPORT}
+          variants={spotlightReveal}
           className="font-display font-bold text-white tracking-tight mb-14"
           style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
         >

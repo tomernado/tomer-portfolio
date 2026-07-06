@@ -1,5 +1,6 @@
 import { Github, Linkedin, Mail } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
+import MagneticButton from './MagneticButton'
 
 export default function Footer() {
   const { personalInfo, ui } = useContent()
@@ -22,31 +23,37 @@ export default function Footer() {
 
         {/* Social icons */}
         <div className="flex items-center gap-4 order-2 sm:order-3">
-          <a
+          <MagneticButton
+            as="a"
+            strength={0.4}
             href={personalInfo.github}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/15 transition-all duration-200 hover:scale-110"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/15 transition-colors duration-200"
           >
             <Github size={17} />
-          </a>
-          <a
+          </MagneticButton>
+          <MagneticButton
+            as="a"
+            strength={0.4}
             href={personalInfo.linkedin}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/15 transition-all duration-200 hover:scale-110"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/15 transition-colors duration-200"
           >
             <Linkedin size={17} />
-          </a>
-          <a
+          </MagneticButton>
+          <MagneticButton
+            as="a"
+            strength={0.4}
             href={`mailto:${personalInfo.email}`}
             aria-label="Email"
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/15 transition-all duration-200 hover:scale-110"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-white/50 hover:text-white hover:bg-white/8 border border-transparent hover:border-white/15 transition-colors duration-200"
           >
             <Mail size={17} />
-          </a>
+          </MagneticButton>
         </div>
       </div>
     </footer>
