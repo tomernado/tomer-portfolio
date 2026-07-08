@@ -7,12 +7,12 @@ import { ACCENT } from '../motion'
  * page rather than something scattered everywhere. Built with the classic
  * padding-trick: a 1px inset reveals a rotating conic-gradient underneath.
  */
-export default function BorderBeam({ children, className = '', rounded = 'rounded-3xl', duration = 8 }) {
+export default function BorderBeam({ children, className = '', rounded = 'rounded-3xl', duration = 8, animate = true }) {
   const reduceMotion = useReducedMotion()
 
   return (
     <div className={`relative ${rounded} ${className}`} style={{ padding: 1 }}>
-      {!reduceMotion && (
+      {!reduceMotion && animate && (
         <motion.div
           aria-hidden="true"
           className={`absolute inset-0 ${rounded}`}
@@ -23,7 +23,7 @@ export default function BorderBeam({ children, className = '', rounded = 'rounde
           transition={{ duration, repeat: Infinity, ease: 'linear' }}
         />
       )}
-      {reduceMotion && (
+      {(reduceMotion || !animate) && (
         <div aria-hidden="true" className={`absolute inset-0 ${rounded} bg-white/10`} />
       )}
       <div className={`relative ${rounded} bg-ink-950 overflow-hidden h-full`}>

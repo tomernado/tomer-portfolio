@@ -13,12 +13,17 @@ import { useEffect, useRef } from 'react'
 // against the video still buffering (especially on mobile networks), and
 // a rejected play() promise with no retry left the card looking like it
 // "didn't load" until the user scrolled away and back.
-export function useVideoAutoplayInView() {
+//
+// `enabled=false` disables autoplay entirely (no observer, no play calls)
+// — used on mobile, where even one video at a time has repeatedly turned
+// out to be enough to crash Safari when several other cards' videos are
+// also mounted (just not playing) elsewhere on the page.
+export function useVideoAutoplayInView(enabled = true) {
   const ref = useRef(null)
 
   useEffect(() => {
     const el = ref.current
-    if (!el) return
+    if (!el || !enabled) return
     let wantsToPlay = false
 
     const tryPlay = () => {
@@ -42,7 +47,7 @@ export function useVideoAutoplayInView() {
       el.removeEventListener('canplay', tryPlay)
       el.removeEventListener('loadeddata', tryPlay)
     }
-  }, [])
+  }, [enabled])
 
   return ref
 }

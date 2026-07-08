@@ -14,6 +14,7 @@ import BorderBeam from './BorderBeam'
 import SectionDissolve from './SectionDissolve'
 import { headingReveal, revealUp, cardReveal, staggerContainer, VIEWPORT, ACCENT, EASE_OUT } from '../motion'
 import { useVideoAutoplayInView } from '../hooks/useVideoAutoplayInView'
+import { useIsDesktop } from '../hooks/useIsDesktop'
 
 /* Bright section tone, matching About's "black cards on white" language —
    Projects sits between two other sections that already made this switch,
@@ -204,6 +205,12 @@ function FeaturedCard({ project, i, delta, onSelect }) {
   const { name, subtitle } = splitTitle(project.title)
   const abs = Math.min(Math.abs(delta), 3)
   const isFront = delta === 0
+  // Autoplaying video decode is one of the most reliable ways to crash
+  // Mobile Safari, especially with several <video> elements mounted at
+  // once (all 6 carousel cards are always in the DOM). Desktop-only;
+  // mobile shows the video paused at whatever frame it loads to instead
+  // of looping.
+  const isDesktop = useIsDesktop()
 
   return (
     <motion.div
@@ -217,7 +224,10 @@ function FeaturedCard({ project, i, delta, onSelect }) {
       transition={{ type: 'spring', stiffness: 260, damping: 32, mass: 0.9 }}
       dir="ltr"
     >
-      <BorderBeam>
+      {/* Only the front card's border actually rotates — the other five
+          are always mounted (absolutely stacked) so six concurrent
+          rotating-gradient layers would run at all times otherwise. */}
+      <BorderBeam animate={isFront}>
         <div className="grid lg:grid-cols-2 gap-0 rounded-3xl overflow-hidden">
           <button
             onClick={() => isFront && onSelect(project)}
@@ -233,7 +243,7 @@ function FeaturedCard({ project, i, delta, onSelect }) {
               {String(i + 1).padStart(2, '0')}
             </span>
             {project.mediaType === 'video' ? (
-              <video src={project.media} muted autoPlay={isFront} loop playsInline preload="metadata" className="w-full h-full object-cover" />
+              <video src={project.media} muted autoPlay={isFront && isDesktop} loop playsInline preload="metadata" className="w-full h-full object-cover" />
             ) : (
               <img src={project.media} alt={project.title} className="w-full h-full object-cover" />
             )}
@@ -390,7 +400,8 @@ function FeaturedCarousel({ projects, onSelect, index, setIndex }) {
 /* ─── "Explore more" grid — the rest of the set, compact cards ───────── */
 function MiniProjectCard({ project, onClick }) {
   const { name, subtitle } = splitTitle(project.title)
-  const videoRef = useVideoAutoplayInView()
+  const isDesktop = useIsDesktop()
+  const videoRef = useVideoAutoplayInView(isDesktop)
   return (
     <motion.button
       variants={cardReveal}
