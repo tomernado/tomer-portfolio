@@ -1,14 +1,56 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import {
+  SiJavascript, SiTypescript, SiPython, SiC, SiCplusplus,
+  SiReact, SiNodedotjs, SiExpress, SiNextdotjs, SiVite,
+  SiDocker, SiPostman, SiMysql, SiMongodb, SiGit, SiLinux,
+} from 'react-icons/si'
+import { DiJava } from 'react-icons/di'
+import { TbBrandCSharp } from 'react-icons/tb'
+import { Database, Box, LayoutGrid, Layers, Cloud, ShieldCheck, CheckSquare, Lock, Sparkles } from 'lucide-react'
 import { skills } from '../data/content'
 import SpotlightCard from './SpotlightCard'
 import SectionMarker from './SectionMarker'
-import { ACCENT, headingReveal, VIEWPORT, EASE_OUT } from '../motion'
+import Particles from './Particles'
+import { ACCENT, headingReveal, revealUp, VIEWPORT, EASE_OUT } from '../motion'
 
 const TAB_FILES = {
   Languages: 'languages.ts',
   'Architecture & Security': 'architecture.ts',
   'Frontend & Backend': 'frontend.tsx',
   'Databases & Tools': 'database.sql',
+}
+
+// Each pill gets its real technology mark where one exists — brand icons
+// for concrete tools/languages, a small purple concept icon for practices
+// that don't have a logo of their own (OOP, JWT, Testing…).
+const ITEM_ICON = {
+  Java:               [DiJava,          '#f89820'],
+  'C#':               [TbBrandCSharp,   '#9b4f96'],
+  JavaScript:         [SiJavascript,    '#F7DF1E'],
+  TypeScript:         [SiTypescript,    '#3178C6'],
+  Python:             [SiPython,        '#3776AB'],
+  SQL:                [Database,        '#c4b5fd'],
+  C:                  [SiC,             '#A8B9CC'],
+  'C++':              [SiCplusplus,     '#00599C'],
+  OOP:                [Box,             '#c4b5fd'],
+  'Design Patterns':  [LayoutGrid,      '#c4b5fd'],
+  'Clean Architecture': [Layers,        '#c4b5fd'],
+  'REST APIs':        [Cloud,           '#c4b5fd'],
+  JWT:                [ShieldCheck,     '#c4b5fd'],
+  Testing:            [CheckSquare,     '#c4b5fd'],
+  'Secure Development': [Lock,          '#c4b5fd'],
+  React:              [SiReact,         '#61DAFB'],
+  'Node.js':          [SiNodedotjs,     '#5FA04E'],
+  Express:            [SiExpress,       '#e5e7eb'],
+  'Next.js':          [SiNextdotjs,     '#e5e7eb'],
+  Vite:               [SiVite,          '#BD34FE'],
+  Docker:             [SiDocker,        '#2496ED'],
+  Postman:            [SiPostman,       '#FF6C37'],
+  MySQL:              [SiMysql,         '#4479A1'],
+  MongoDB:            [SiMongodb,       '#47A248'],
+  Git:                [SiGit,           '#F05032'],
+  Linux:              [SiLinux,         '#FCC624'],
+  'AI Engineering':   [Sparkles,        '#c4b5fd'],
 }
 
 const badgeItem = {
@@ -27,7 +69,18 @@ const assembleVariant = (i) => ({
 
 function SkillCard({ group, wide = false, index = 0 }) {
   const reduceMotion = useReducedMotion()
+  // Mobile only (mobile-first: applied by default, reset at sm: where the
+  // bento/grid layout takes over): a slight alternating horizontal offset
+  // + overlap so the stack reads as layered cards rather than plain
+  // full-width rows. A plain CSS transform on a wrapper div, kept separate
+  // from the motion.div below so it never fights Framer's own transform.
+  const mobileStagger = index === 0
+    ? 'sm:mt-0'
+    : index % 2 === 1
+      ? '-mt-3 ml-4 mr-0 sm:m-0'
+      : '-mt-3 mr-4 ml-0 sm:m-0'
   return (
+    <div className={mobileStagger}>
     <motion.div
       initial="hidden"
       whileInView="visible"
@@ -44,9 +97,9 @@ function SkillCard({ group, wide = false, index = 0 }) {
 
         {/* Tab bar */}
         <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/[0.08]" style={{ background: 'rgba(255,255,255,0.02)' }}>
-          <span className="w-2.5 h-2.5 rounded-full bg-white/40" />
-          <span className="w-2.5 h-2.5 rounded-full bg-white/25" />
-          <span className="w-2.5 h-2.5 rounded-full bg-white/12" />
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#6b21a8' }} />
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#a855f7' }} />
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#c4b5fd' }} />
           <div className="ml-3 flex items-center gap-1.5 px-3 py-0.5 rounded-t-md text-[10px] font-mono border border-white/12" style={{ background: 'rgba(255,255,255,0.05)' }}>
             <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
             <span className="text-white/70">{TAB_FILES[group.category] ?? 'skills.ts'}</span>
@@ -75,49 +128,107 @@ function SkillCard({ group, wide = false, index = 0 }) {
             viewport={{ once: true, margin: '-50px' }}
             variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } } }}
           >
-            {group.items.map((item) => (
-              <motion.span
-                key={item}
-                variants={badgeItem}
-                whileHover={{ scale: 1.06, y: -2, borderColor: 'rgba(255,255,255,0.4)', backgroundColor: 'rgba(255,255,255,0.09)' }}
-                whileTap={{ scale: 0.94 }}
-                className="px-3 py-1.5 rounded-lg border border-white/12 bg-white/[0.03] text-white/75 text-[11px] font-mono font-semibold tracking-wide cursor-default select-none transition-colors duration-150"
-              >
-                {item}
-              </motion.span>
-            ))}
+            {group.items.map((item) => {
+              const [Icon, color] = ITEM_ICON[item] ?? [null, null]
+              return (
+                <motion.span
+                  key={item}
+                  variants={badgeItem}
+                  whileHover={{
+                    scale: 1.07, y: -3,
+                    borderColor: 'rgba(255,255,255,0.4)',
+                    backgroundColor: 'rgba(255,255,255,0.09)',
+                    boxShadow: `0 10px 24px -8px rgba(${ACCENT.rgb},0.5), 0 0 0 1px rgba(${ACCENT.rgb},0.18)`,
+                  }}
+                  whileTap={{ scale: 0.94 }}
+                  transition={{ duration: 0.18, ease: EASE_OUT }}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/12 bg-white/[0.03] text-white/75 text-[11px] font-mono font-semibold tracking-wide cursor-default select-none transition-colors duration-150"
+                >
+                  {Icon && <Icon size={13} style={{ color, flexShrink: 0 }} />}
+                  {item}
+                </motion.span>
+              )
+            })}
           </motion.div>
         </div>
       </SpotlightCard>
     </motion.div>
+    </div>
   )
 }
 
 export default function Skills() {
   const [primary, ...rest] = skills
+  const reduceMotion = useReducedMotion()
 
   return (
     <section id="skills" className="py-28 sm:py-36 px-5 relative overflow-hidden" dir="ltr">
+      {/* Base — explicit near-black matching Hero's own tone, so the
+          section reads as genuinely dark rather than an inherited flat
+          fill, with just enough layered lighting on top for depth. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-[#04050A]" />
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'radial-gradient(ellipse 65% 35% at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%)' }}
       />
+      {/* Soft purple ambient lighting — top-left and a faint echo on the
+          right, both low-opacity so they read as atmosphere rather than
+          a competing glow. */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute -top-32 -left-32 w-[620px] h-[620px] rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.16) 0%, transparent 70%)`, filter: 'blur(60px)' }}
+        animate={reduceMotion ? undefined : { opacity: [0.55, 0.85, 0.55] }}
+        transition={reduceMotion ? undefined : { duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="absolute top-[20%] -right-40 w-[480px] h-[480px] rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.1) 0%, transparent 72%)`, filter: 'blur(60px)' }}
+        animate={reduceMotion ? undefined : { opacity: [0.4, 0.65, 0.4] }}
+        transition={reduceMotion ? undefined : { duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 50%, transparent 55%, rgba(0,0,0,0.35) 100%)' }}
+      />
+      <Particles count={22} />
 
       <div className="max-w-6xl mx-auto relative">
 
-        <SectionMarker index="02" label="Skills" className="mb-16" />
+        <SectionMarker index="02" label="Skills & Technologies" className="mb-16" />
 
-        <motion.h2
-          initial="hidden"
-          whileInView="visible"
-          viewport={VIEWPORT}
-          variants={headingReveal}
-          className="font-display font-bold text-white tracking-tight leading-[1.05] mb-16"
-          style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
-        >
-          Tools I reach for,<br />technologies I trust.
-        </motion.h2>
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-16">
+          <motion.h2
+            initial="hidden"
+            whileInView="visible"
+            viewport={VIEWPORT}
+            variants={headingReveal}
+            className="font-display font-bold text-white tracking-tight leading-[1.05]"
+            style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
+          >
+            Tools I reach for,<br />technologies I trust<span style={{ color: ACCENT.css }}>.</span>
+          </motion.h2>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={VIEWPORT}
+            variants={revealUp}
+            transition={{ delay: 0.15 }}
+            className="flex items-start gap-5 lg:max-w-xs lg:pt-2"
+          >
+            <div className="hidden sm:block relative w-px self-stretch flex-shrink-0" style={{ minHeight: '4.5rem' }}>
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 85%)' }} />
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full" style={{ background: ACCENT.css, boxShadow: `0 0 10px 2px ${ACCENT.css}` }} />
+            </div>
+            <p className="font-body text-white/50 text-sm leading-relaxed">
+              A curated arsenal of languages, frameworks, databases and tools I use to build secure, scalable and impactful digital solutions.
+            </p>
+          </motion.div>
+        </div>
 
         {/* Bento: primary category full-width, rest in a 3-up row */}
         <div className="flex flex-col gap-6">
@@ -129,6 +240,38 @@ export default function Skills() {
           </div>
         </div>
       </div>
+
+      {/* Flowing energy at the very bottom — the same delicate, diagonal
+          crossing threads used in the Hero → About transition, so the two
+          feel like one continuous visual language. Kept low-opacity and
+          confined to a thin band so it stays a closing accent, not a
+          competing scene. */}
+      <svg aria-hidden="true" className="absolute bottom-0 left-0 w-full h-[160px] pointer-events-none" viewBox="0 0 1000 160" preserveAspectRatio="none">
+        {[
+          { d: 'M0,70 C100,80 200,62 300,74 C400,86 500,64 600,84 C700,104 800,88 900,104 C950,112 980,120 1000,132', o: 0.28, w: 0.8, dur: 15, bob: 5 },
+          { d: 'M0,128 C100,116 200,126 300,116 C400,106 500,121 600,101 C700,81 800,93 900,77 C950,69 980,61 1000,50', o: 0.18, w: 0.65, dur: 19, bob: 4 },
+          { d: 'M0,86 C150,94 250,77 380,88 C500,98 600,80 720,91 C820,101 900,85 1000,98', o: 0.12, w: 0.55, dur: 23, bob: 3 },
+        ].map((w, i) => (
+          <motion.path
+            key={i}
+            d={w.d}
+            fill="none"
+            stroke="rgba(196,166,255,1)"
+            strokeOpacity={w.o}
+            strokeWidth={w.w}
+            strokeLinecap="round"
+            animate={reduceMotion ? undefined : { x: [0, 16, 0, -16, 0], y: [0, -w.bob, 0, w.bob * 0.5, 0] }}
+            transition={reduceMotion ? undefined : { duration: w.dur, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        ))}
+        {[
+          [60, 66, 1.1, 0.3], [150, 66, 1.6, 0.45], [310, 75, 1.2, 0.35],
+          [430, 70, 1.5, 0.4], [600, 75, 1.3, 0.35], [730, 68, 1.5, 0.4],
+          [900, 73, 1.4, 0.38], [960, 92, 1, 0.28],
+        ].map(([cx, cy, r, o], i) => (
+          <circle key={i} cx={cx} cy={cy} r={r} fill="rgba(196,181,253,1)" opacity={o} />
+        ))}
+      </svg>
     </section>
   )
 }

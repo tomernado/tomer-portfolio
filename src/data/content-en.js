@@ -17,6 +17,7 @@ export const aboutData = {
       description:
         "Delivered 20+ web apps (React, JS, HTML/CSS). Translated client requirements into scalable features, leveraging AI (Claude) to optimize workflows and code architecture. Architected databases and infrastructure via Supabase (SQL), implementing robust authentication, RBAC, and seamless API integrations (CRMs, payment gateways).",
       date: "2025 – Present",
+      tags: ["React", "Node.js", "AI", "Supabase"],
     },
     {
       id: 2,
@@ -25,6 +26,7 @@ export const aboutData = {
       description:
         "Managed end-to-end production of digital marketing content, translating client concepts into delivered final products.",
       date: "2023 – 2025",
+      tags: ["Content Strategy", "Client Relations", "Marketing"],
     },
     {
       id: 3,
@@ -33,6 +35,29 @@ export const aboutData = {
       description:
         "Led daily operations and staff coordination in a high-pressure environment. Responsible for real-time crisis resolution, shift management, and maintaining operational efficiency.",
       date: "2021 – 2023",
+      tags: ["Team Leadership", "Operations", "Crisis Management"],
+    },
+  ],
+  features: [
+    {
+      id: 1,
+      title: "Backend Engineering",
+      description: "Building robust APIs, databases and scalable server-side systems.",
+    },
+    {
+      id: 2,
+      title: "AI & LLM Engineering",
+      description: "Creating intelligent agents, RAG systems and AI-powered applications.",
+    },
+    {
+      id: 3,
+      title: "Software Architecture",
+      description: "Designing clean, maintainable and scalable architectures for complex systems.",
+    },
+    {
+      id: 4,
+      title: "Problem Solving",
+      description: "Strong analytical thinking and focus on delivering real-world impact.",
     },
   ],
 }
@@ -95,11 +120,35 @@ export const heroStrings = {
   coFounder: "Co-Founder",
   web4youDesc: "Designing & shipping production-grade web apps",
   seeMore: "See More",
+  viewProjects: "View Projects",
+  contactCta: "Contact Me",
+  eyebrow: "Hello, I'm",
+  roles: [
+    "AI Engineer",
+    "Full Stack Developer",
+    "Backend Developer",
+    "Software Architect",
+    "AI Solutions Builder",
+  ],
 }
 
 export const aboutStrings = {
   clickToSkip: "— click to skip",
   clickToSkipTitle: "click to skip",
+  eyebrow: "About Me",
+  heading1: "About",
+  heading2: "Me.",
+  moreAboutMe: "More About Me",
+  experienceEyebrow: "Experience",
+  journeyHeading1: "My",
+  journeyHeading2: "Journey.",
+  journeyDesc: "A timeline of my professional and academic journey so far.",
+  downloadCv: "Download CV",
+  viewGithub: "View GitHub",
+  statProjects: "Projects Built",
+  statTech: "Technologies Used",
+  statFocusValue: "CS Grad",
+  statFocusLabel: "AI & Full-Stack Focus",
 }
 
 export const contactStrings = {

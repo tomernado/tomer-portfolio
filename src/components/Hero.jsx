@@ -1,516 +1,775 @@
-import { useState, useEffect, useRef } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, useScroll, useAnimationFrame, useReducedMotion, useMotionTemplate } from 'framer-motion'
-import { useContent } from '../context/LanguageContext'
+import { useEffect, useRef, useState } from 'react'
 import {
-  Linkedin, Github, ChevronDown,
-  FileText, ArrowRight, ArrowUpRight,
-  Briefcase, Pause, Play,
-} from 'lucide-react'
-import CvModal from './CvModal'
+  motion, useMotionValue, useSpring, useTransform, useScroll, useReducedMotion,
+} from 'framer-motion'
+import { Github, Linkedin, MessageCircle, FileText, ArrowUpRight, Network, CalendarClock, ChefHat, TrendingUp, CheckCircle2 } from 'lucide-react'
+import { useContent } from '../context/LanguageContext'
+import { EASE_OUT, SPRING_SOFT, staggerContainer, revealUp } from '../motion'
 import MagneticButton from './MagneticButton'
+import SpotlightCard from './SpotlightCard'
 import Particles from './Particles'
-import { EASE_OUT, ACCENT } from '../motion'
+import PerspectiveFloor from './PerspectiveFloor'
+import EngineeringCore from './EngineeringCore'
+import OrbitSystem from './OrbitSystem'
+import CvModal from './CvModal'
 
-/* ── Variants ───────────────────────────────────────────────────── */
-const heroContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.25 } },
-}
-const fadeUp = {
-  hidden:  { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: EASE_OUT } },
-}
-const wordReveal = {
-  hidden:  { opacity: 0, y: 36, filter: 'blur(12px)' },
-  visible: (i) => ({
-    opacity: 1, y: 0, filter: 'blur(0px)',
-    transition: { duration: 0.9, ease: EASE_OUT, delay: 0.1 + i * 0.13 },
-  }),
-}
+/* Shared glass treatment for every social pill — one definition so all
+   four buttons stay visually identical. */
+const SOCIAL_BTN_CLASS = 'inline-flex items-center gap-2 pl-3.5 pr-4 py-2 rounded-full border border-white/10 bg-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/55 font-mono text-[12.5px] tracking-wide hover:text-white hover:bg-white/[0.08] hover:border-violet-300/25 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950'
 
-/* ── Typewriter ─────────────────────────────────────────────────── */
-const TITLES = ['Software Developer', 'AI Developer', 'Full-Stack Developer', 'Backend Developer']
+/* ── The living scene's floating cards — real projects, real stack,
+   styled as small premium product-UI widgets (icon badge, title,
+   subtitle, status row, mini interface preview, external-link
+   affordance) rather than decorative tiles. Positions/tilts are
+   deliberately irregular so the composition reads as scattered and
+   cinematic. ──────────────────────────────────────────────────────── */
+const SCENE_CARDS = [
+  {
+    key: 'socialorg', icon: Network, iconFrom: '#818cf8', iconTo: '#6366f1', rotate: -4,
+    tiltX: -16, tiltY: 12,
+    className: 'top-[-2%] left-[0%] w-[196px] sm:w-[214px]',
+    floatDur: 7.4, floatDelay: 0,
+    title: 'SocialOrg', sub: 'AI organizational automation', body: 'dashboard',
+    toolbarLabel: 'app.socialorg.io',
+  },
+  {
+    key: 'code', rotate: 2,
+    tiltX: -11, tiltY: -15,
+    className: 'top-[30%] right-[-8%] w-[206px] sm:w-[228px]',
+    floatDur: 9.2, floatDelay: 0.3,
+    title: 'agent.ts', body: 'code',
+  },
+  {
+    key: 'workshift', icon: CalendarClock, iconFrom: '#38bdf8', iconTo: '#0ea5e9', rotate: -2,
+    tiltX: -18, tiltY: 13,
+    className: 'bottom-[20%] left-[-9%] w-[172px] sm:w-[188px]',
+    floatDur: 8, floatDelay: 0.9,
+    title: 'WorkShift', sub: 'Smart shift scheduling', body: 'schedule',
+    toolbarLabel: 'workshift.app',
+  },
+  {
+    key: 'chef', icon: ChefHat, iconFrom: '#a5b4fc', iconTo: '#818cf8', rotate: 3,
+    tiltX: -13, tiltY: -11,
+    className: 'bottom-[-4%] right-[7%] w-[184px] sm:w-[200px]',
+    floatDur: 7.8, floatDelay: 1.3,
+    title: 'Chef Platform', sub: 'Private chef business', body: 'list',
+    toolbarLabel: 'admin.chefplatform.com',
+  },
+]
 
-function TypewriterTitle() {
-  const [text, setText]       = useState('')
-  const [titleIdx, setTitleIdx] = useState(0)
-  const [phase, setPhase]     = useState('typing')
-  const [blink, setBlink]     = useState(true)
+/* Three orbit rings — different radii, tilts and speeds/directions. */
+const CONNECTIONS = [
+  'M 106 84 Q 166 138 220 188',
+  'M 420 224 Q 374 234 328 250',
+  'M 96 372 Q 166 338 220 310',
+  'M 424 462 Q 368 416 328 360',
+]
 
-  useEffect(() => {
-    const title = TITLES[titleIdx]
-    if (phase === 'typing') {
-      if (text.length < title.length) {
-        const id = setTimeout(() => setText(title.slice(0, text.length + 1)), 88)
-        return () => clearTimeout(id)
-      } else {
-        const id = setTimeout(() => setPhase('deleting'), 1900)
-        return () => clearTimeout(id)
-      }
-    }
-    if (phase === 'deleting') {
-      if (text.length > 0) {
-        const id = setTimeout(() => setText(prev => prev.slice(0, -1)), 50)
-        return () => clearTimeout(id)
-      } else {
-        setTitleIdx(i => (i + 1) % TITLES.length)
-        setPhase('typing')
-      }
-    }
-  }, [text, phase, titleIdx])
+/* Anchor glows at each connection line's card-end and core-end, so the
+   lines read as plugged into both rather than floating dashes. */
+const CONNECTION_ANCHORS = [
+  [106, 84], [220, 188], [420, 224], [328, 250],
+  [96, 372], [220, 310], [424, 462], [328, 360],
+]
 
-  useEffect(() => {
-    const iv = setInterval(() => setBlink(b => !b), 530)
-    return () => clearInterval(iv)
-  }, [])
+/* Small traveling points of light scattered through the scene, distinct
+   from the connection-line pulses and the full-hero background field. */
+const LIGHT_PARTICLES = [
+  { top: '6%', left: '40%', size: 3, dur: 9, delay: 0, color: '196,181,253' },
+  { top: '58%', left: '86%', size: 2, dur: 11, delay: 1.5, color: '168,85,247' },
+  { top: '80%', left: '18%', size: 2.5, dur: 8, delay: 0.7, color: '216,180,254' },
+  { top: '18%', left: '92%', size: 2, dur: 12, delay: 2.2, color: '196,181,253' },
+  { top: '46%', left: '6%', size: 2, dur: 10, delay: 1, color: '216,180,254' },
+]
 
+/* Small fixed twinkling stars scattered across the whole background,
+   distinct from the drifting Particles layer — pure opacity flicker, no
+   movement, for extra cinematic dust. */
+const STARS = Array.from({ length: 22 }, (_, i) => ({
+  id: i,
+  left: (i * 37 + 11) % 100,
+  top: (i * 53 + 7) % 100,
+  size: 1 + ((i * 7) % 3) * 0.5,
+  dur: 3 + ((i * 5) % 6),
+  delay: (i * 0.6) % 5,
+  maxOp: 0.35 + ((i * 3) % 5) * 0.09,
+}))
+
+function FloatingLightParticles({ reduceMotion }) {
+  if (reduceMotion) return null
   return (
-    <div className="flex items-center gap-3" dir="ltr">
-      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: ACCENT.css, boxShadow: `0 0 8px rgba(${ACCENT.rgb},0.8)` }} />
-      <span className="font-mono font-medium text-sm sm:text-base text-white/70 tracking-wide" style={{ minWidth: 200 }}>
-        {text}
-      </span>
-      <span className="text-white/50 font-mono text-sm" style={{ opacity: blink ? 1 : 0, transition: 'opacity 0.1s' }}>|</span>
+    <>
+      {LIGHT_PARTICLES.map((p, i) => (
+        <motion.span
+          key={i}
+          className="absolute rounded-full pointer-events-none"
+          style={{ top: p.top, left: p.left, width: p.size, height: p.size, background: `rgb(${p.color})`, boxShadow: `0 0 6px 1px rgba(${p.color},0.7)` }}
+          animate={{ y: [0, -14, 0], x: [0, 6, 0], opacity: [0.15, 0.75, 0.15] }}
+          transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      ))}
+    </>
+  )
+}
+
+/* A small pulsing "live" indicator — reused across widget status rows
+   so the whole scene reads as one connected system, not four one-offs. */
+function LiveDot({ color = '#34d399', reduceMotion }) {
+  return (
+    <span className="relative flex w-1.5 h-1.5 flex-shrink-0">
+      {!reduceMotion && (
+        <span className="absolute inline-flex w-full h-full rounded-full animate-ping" style={{ background: color, opacity: 0.75 }} />
+      )}
+      <span className="relative inline-flex w-1.5 h-1.5 rounded-full" style={{ background: color }} />
+    </span>
+  )
+}
+
+/* Browser-style window chrome — traffic lights + a centered "url bar"
+   pill — so each card reads as a screenshot of a real running app
+   rather than a decorative tile. */
+function WindowChrome({ label }) {
+  return (
+    <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-white/[0.07]">
+      <div className="flex gap-1.5 flex-shrink-0">
+        <span className="w-[7px] h-[7px] rounded-full bg-[#ff5f57]/80" />
+        <span className="w-[7px] h-[7px] rounded-full bg-[#febc2e]/80" />
+        <span className="w-[7px] h-[7px] rounded-full bg-[#28c840]/80" />
+      </div>
+      <div className="flex-1 flex justify-center min-w-0">
+        <span className="px-2.5 py-[3px] rounded-full bg-white/[0.05] border border-white/[0.07] font-mono text-[8px] text-white/35 truncate max-w-full">
+          {label}
+        </span>
+      </div>
     </div>
   )
 }
 
-/* ── WhatsApp icon ──────────────────────────────────────────────── */
-const WA_ICON = (
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
-)
-
-const SOCIALS = (personalInfo) => [
-  { href: personalInfo.linkedin, label: 'LinkedIn', icon: <Linkedin size={15} /> },
-  { href: personalInfo.whatsapp, label: 'WhatsApp', icon: WA_ICON },
-  { href: personalInfo.github,   label: 'GitHub',   icon: <Github size={15} /> },
-]
-
-/* ── Vertical social rail — desktop only, elegant + minimal ─────── */
-function SocialRail({ personalInfo, onResumeClick }) {
-  const items = [...SOCIALS(personalInfo), { label: 'Resume', icon: <FileText size={15} />, onClick: onResumeClick }]
+/* Code-editor chrome — traffic lights + a file-tab strip, matching how
+   real editors present open files rather than a url bar. */
+function CodeChrome() {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -16 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.8, ease: EASE_OUT, delay: 1.3 }}
-      className="hidden lg:flex flex-col items-center gap-5 absolute left-8 xl:left-12 top-1/2 -translate-y-1/2 z-20"
+    <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-white/[0.07]">
+      <div className="flex gap-1.5 flex-shrink-0">
+        <span className="w-[7px] h-[7px] rounded-full bg-[#ff5f57]/80" />
+        <span className="w-[7px] h-[7px] rounded-full bg-[#febc2e]/80" />
+        <span className="w-[7px] h-[7px] rounded-full bg-[#28c840]/80" />
+      </div>
+      <div className="ml-1 flex items-center gap-0.5">
+        <span className="px-2 py-[3px] rounded-t-md bg-white/[0.07] border-t border-x border-white/[0.08] font-mono text-[8.5px] text-white/65">agent.ts</span>
+        <span className="px-2 py-[3px] font-mono text-[8.5px] text-white/25">index.ts</span>
+      </div>
+    </div>
+  )
+}
+
+/* Icon badge — a glossy gradient chip (inset top-highlight + a soft
+   glow matching its own color) rather than a flat colored square. */
+function CardIcon({ card }) {
+  return (
+    <span
+      className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+      style={{
+        background: `linear-gradient(135deg, ${card.iconFrom}, ${card.iconTo})`,
+        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.45), 0 4px 10px -2px ${card.iconFrom}66`,
+      }}
     >
-      <div className="w-px h-16 bg-gradient-to-b from-transparent to-white/20" />
-      {items.map((item, i) => {
-        const Tag = item.href ? MagneticButton : MagneticButton
-        return (
-          <Tag
-            key={i}
-            as={item.href ? 'a' : 'button'}
-            strength={0.5}
-            href={item.href}
-            onClick={item.onClick}
-            target={item.href ? '_blank' : undefined}
-            rel={item.href ? 'noopener noreferrer' : undefined}
-            aria-label={item.label}
-            title={item.label}
-            whileHover={{ color: ACCENT.css }}
-            className="text-white/45 hover:text-white transition-colors duration-200 cursor-pointer"
-          >
-            {item.icon}
-          </Tag>
-        )
-      })}
-      <div className="w-px h-16 bg-gradient-to-t from-transparent to-white/20" />
-      <span
-        className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/25"
-        style={{ writingMode: 'vertical-rl' }}
-      >
-        Connect
-      </span>
-    </motion.div>
+      <card.icon size={14} className="text-white" />
+    </span>
   )
 }
 
-/* ── Project preview strip ──────────────────────────────────────── */
-const STRIP_SPEED = 0.05
-
-function ProjectStrip() {
-  const { projects } = useContent()
-  const reduceMotion = useReducedMotion()
-  const doubled  = [...projects, ...projects]
-  const trackRef = useRef(null)
-  const x        = useMotionValue(0)
-  const paused   = useRef(false)
-  const started  = useRef(false)
-  const [isPaused, setIsPaused] = useState(false)
-
-  useEffect(() => {
-    const t = setTimeout(() => { started.current = true }, 700)
-    return () => clearTimeout(t)
-  }, [])
-
-  useEffect(() => { paused.current = isPaused }, [isPaused])
-
-  useAnimationFrame((_, delta) => {
-    if (reduceMotion || !started.current || paused.current || !trackRef.current) return
-    const half = trackRef.current.scrollWidth / 2
-    if (half <= 0) return
-    const step = STRIP_SPEED * Math.min(delta, 50)
-    const next = x.get() - step
-    x.set(next <= -half ? next + half : next)
-  })
-
-  const scrollToProjects = () =>
-    document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' })
-
+/* SocialOrg → a real analytics-dashboard widget: nav tabs, labeled
+   stat tiles with real numbers, and a proper bar chart with a baseline
+   — not three flat gradient rectangles. */
+function DashboardPreview() {
+  const bars = [42, 66, 48, 82, 60, 92, 70]
   return (
-    <motion.div variants={fadeUp} className="w-full mt-14 lg:mt-20">
-      <div className="flex items-center justify-between mb-4 px-0.5">
-        <div className="flex items-center gap-2">
-          <div className="w-0.5 h-3.5 rounded-full bg-white/25" />
-          <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/50">Featured Projects</p>
+    <div className="rounded-lg border border-white/[0.07] bg-white/[0.025] p-2.5">
+      <div className="flex items-center gap-3 mb-2.5 font-mono text-[8px] tracking-wide">
+        <span className="text-white/70 pb-1 border-b border-violet-400/60">Overview</span>
+        <span className="text-white/25">Teams</span>
+        <span className="text-white/25">Reports</span>
+      </div>
+      <div className="grid grid-cols-2 gap-1.5 mb-2.5">
+        <div className="rounded-md bg-white/[0.03] border border-white/[0.05] px-2 py-1.5">
+          <p className="font-mono text-[6.5px] tracking-wide text-white/35 mb-0.5">ACTIVE USERS</p>
+          <p className="font-display font-bold text-[13px] text-white leading-none">1,284</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsPaused(p => !p)}
-            aria-label={isPaused ? 'Play project scroll' : 'Pause project scroll'}
-            className="flex items-center justify-center w-6 h-6 rounded-full border border-white/10 text-white/50 hover:text-white/80 hover:border-white/25 transition-colors duration-200"
-          >
-            {isPaused ? <Play size={9} /> : <Pause size={9} />}
-          </button>
-          <button
-            onClick={scrollToProjects}
-            className="group flex items-center gap-1 font-mono text-[10px] text-white/45 hover:text-white transition-colors cursor-pointer"
-          >
-            View All
-            <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform duration-200" />
-          </button>
+        <div className="rounded-md bg-white/[0.03] border border-white/[0.05] px-2 py-1.5">
+          <p className="font-mono text-[6.5px] tracking-wide text-white/35 mb-0.5">AUTOMATIONS</p>
+          <p className="font-display font-bold text-[13px] text-white leading-none">94%</p>
         </div>
       </div>
-
-      <div
-        className="overflow-hidden w-full"
-        onMouseEnter={() => { paused.current = true }}
-        onMouseLeave={() => { paused.current = isPaused }}
-      >
-        <motion.div ref={trackRef} style={{ x, willChange: 'transform' }} className="flex gap-3 w-max">
-          {doubled.map((p, i) => (
-            <motion.button
-              key={`${p.id}-${i}`}
-              onClick={scrollToProjects}
-              whileHover={{ y: -4, borderColor: 'rgba(255,255,255,0.3)' }}
-              whileTap={{ scale: 0.97 }}
-              className="relative w-44 h-[116px] sm:w-52 sm:h-[136px] rounded-2xl overflow-hidden flex-shrink-0 group border border-white/10 cursor-pointer will-change-transform transition-colors duration-300"
-            >
-              {p.mediaType === 'video' ? (
-                <video src={p.media} muted autoPlay loop playsInline preload="metadata"
-                  className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
-              ) : (
-                <img src={p.media} alt={p.title}
-                  className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/30 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 px-2.5 pb-2 pt-5">
-                <p className="font-body text-[9px] sm:text-[10px] text-white/85 font-semibold leading-tight truncate text-left">{p.title}</p>
-              </div>
-            </motion.button>
-          ))}
-        </motion.div>
+      <div className="flex items-end gap-[3px] h-7 border-b border-white/[0.09] pb-0.5">
+        {bars.map((h, i) => (
+          <div key={i} className="flex-1 rounded-t-[2px] bg-gradient-to-t from-violet-400/75 to-purple-300/75" style={{ height: `${h}%` }} />
+        ))}
       </div>
-
-      <p className="sm:hidden text-center font-mono text-[8px] text-white/45 mt-2 tracking-widest uppercase">
-        tap a card to explore projects
-      </p>
-    </motion.div>
+    </div>
   )
 }
 
-/* ── Dominant portrait — tilt, glare, color, atmospheric glow ────── */
-function Portrait({ src, alt, mvX, mvY }) {
-  const reduceMotion = useReducedMotion()
-  const rotateX = useSpring(0, { stiffness: 140, damping: 16, mass: 0.6 })
-  const rotateY = useSpring(0, { stiffness: 140, damping: 16, mass: 0.6 })
-  const glareX  = useMotionValue(50)
-  const glareY  = useMotionValue(50)
-  const glareBg = useMotionTemplate`radial-gradient(280px circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.14), transparent 65%)`
+/* WorkShift → an actual weekly grid: day labels over two shift rows
+   with clearly filled vs. empty cells, instead of one abstract 4x2
+   block of on/off rectangles. */
+function SchedulePreview() {
+  const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const rowA = [1, 1, 0, 1, 1, 0, 0]
+  const rowB = [0, 1, 1, 0, 1, 1, 0]
+  return (
+    <div className="rounded-lg border border-white/[0.07] bg-white/[0.025] p-2.5">
+      <div className="grid grid-cols-7 gap-1 mb-1.5">
+        {days.map((d, i) => (
+          <span key={i} className="font-mono text-[7px] text-white/35 text-center">{d}</span>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1 mb-1">
+        {rowA.map((on, i) => (
+          <div key={i} className={on ? 'h-3.5 rounded-[3px] bg-gradient-to-b from-sky-400/75 to-sky-500/55' : 'h-3.5 rounded-[3px] bg-white/[0.04] border border-white/[0.06]'} />
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {rowB.map((on, i) => (
+          <div key={i} className={on ? 'h-3.5 rounded-[3px] bg-gradient-to-b from-sky-400/75 to-sky-500/55' : 'h-3.5 rounded-[3px] bg-white/[0.04] border border-white/[0.06]'} />
+        ))}
+      </div>
+    </div>
+  )
+}
 
-  // gentle counter-parallax vs the background layers
-  const px = useTransformSafe(mvX, -14)
-  const py = useTransformSafe(mvY, -10)
+/* Chef Platform → admin task rows with a real status badge per row,
+   instead of a plain bulleted list. */
+function ListPreview() {
+  const rows = ['Menu planning', 'Client orders', 'ML insights']
+  return (
+    <div className="rounded-lg border border-white/[0.07] bg-white/[0.025] p-2.5 flex flex-col gap-1.5">
+      {rows.map((label) => (
+        <div key={label} className="flex items-center gap-1.5 px-1.5 py-1 rounded-md bg-white/[0.02]">
+          <span className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(168,85,247,0.18)' }}>
+            <CheckCircle2 size={9} className="text-violet-300" />
+          </span>
+          <span className="font-body text-[10.5px] text-white/60 truncate">{label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
-  const onMove = (e) => {
-    if (reduceMotion) return
-    const rect = e.currentTarget.getBoundingClientRect()
-    const relX = (e.clientX - rect.left) / rect.width
-    const relY = (e.clientY - rect.top) / rect.height
-    rotateY.set((relX - 0.5) * 12)
-    rotateX.set(-(relY - 0.5) * 12)
-    glareX.set(relX * 100)
-    glareY.set(relY * 100)
+/* agent.ts → a real editor body: line numbers + a slightly richer
+   snippet, framed like an embedded code panel rather than loose text. */
+function CodeBody() {
+  const lines = [
+    <><span className="text-violet-300">const</span> agent = <span className="text-violet-300">new</span> RAGAgent({'{'}</>,
+    <>{'  '}model: <span className="text-emerald-300">'claude-4.5'</span>,</>,
+    <>{'  '}tools: [vectorSearch, db],</>,
+    <>{'  '}memory: <span className="text-sky-300">true</span></>,
+    <>{'}'}){'  '}<span className="text-white/30">// Node + Express</span></>,
+  ]
+  return (
+    <div className="rounded-lg border border-white/[0.07] bg-black/25 p-2.5">
+      <div className="font-mono text-[9.5px] leading-[1.7]">
+        {lines.map((line, i) => (
+          <div key={i} className="flex gap-2.5">
+            <span className="text-white/20 select-none w-3 text-right flex-shrink-0">{i + 1}</span>
+            <span className="whitespace-pre text-white/60">{line}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* Each widget carries exactly one functional status line — Live,
+   Deployed, a coverage metric, or a completion count — so the four
+   cards read as one consistent system rather than ad hoc decoration. */
+function CardBody({ card, reduceMotion }) {
+  if (card.body === 'code') {
+    return (
+      <>
+        <CodeChrome />
+        <CodeBody />
+        <div className="flex items-center gap-1.5 mt-2.5 pt-2 border-t border-white/[0.06]">
+          <LiveDot reduceMotion={reduceMotion} />
+          <span className="font-mono text-[10px] text-white/40">Deployed to production</span>
+        </div>
+      </>
+    )
   }
-  const onLeave = () => { rotateX.set(0); rotateY.set(0) }
+  return (
+    <>
+      <WindowChrome label={card.toolbarLabel} />
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <div className="flex items-center gap-2.5">
+          <CardIcon card={card} />
+          <span className="font-display font-bold text-[13px] text-white">{card.title}</span>
+        </div>
+        <ArrowUpRight size={13} className="text-white/30 flex-shrink-0 mt-0.5" />
+      </div>
+      {card.sub && <p className="font-body text-[11px] text-white/40 leading-snug mb-2.5">{card.sub}</p>}
+
+      {card.body === 'dashboard' && (
+        <>
+          <div className="flex items-center gap-1.5 mb-2">
+            <LiveDot reduceMotion={reduceMotion} />
+            <span className="font-mono text-[10px] text-white/40">Live</span>
+          </div>
+          <DashboardPreview />
+          <div className="flex items-center gap-1 mt-2 font-mono text-[10px] text-emerald-300/80">
+            <TrendingUp size={10} /> 94% automation rate
+          </div>
+        </>
+      )}
+
+      {card.body === 'schedule' && (
+        <>
+          <div className="flex items-center justify-between mb-1.5 font-mono text-[10px] text-white/40">
+            <span>Coverage</span><span className="text-sky-300">87%</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden mb-2.5">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-sky-400 to-sky-300"
+              initial={{ width: 0 }}
+              whileInView={{ width: '87%' }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.1, delay: 1, ease: EASE_OUT }}
+            />
+          </div>
+          <SchedulePreview />
+        </>
+      )}
+
+      {card.body === 'list' && (
+        <>
+          <ListPreview />
+          <div className="flex items-center gap-1.5 mt-2.5 font-mono text-[10px] text-violet-300/80">
+            <CheckCircle2 size={11} /> 3/3 tasks complete
+          </div>
+        </>
+      )}
+    </>
+  )
+}
+
+function SceneCard({ card, index, smx, smy, reduceMotion }) {
+  const depth = 10 + index * 4
+  const px = useTransform(smx, [-1, 1], [-depth, depth])
+  const py = useTransform(smy, [-1, 1], [-depth, depth])
+  // Perspective tilt: a fixed per-card base angle (so each window sits at
+  // its own oblique angle, like a pane of glass rather than a flat sticker)
+  // plus a small mouse-driven swing around that base for a holographic feel.
+  const tiltX = useTransform(smy, [-1, 1], [card.tiltX - 4, card.tiltX + 4])
+  const tiltY = useTransform(smx, [-1, 1], [card.tiltY - 4, card.tiltY + 4])
 
   return (
-    <motion.div style={{ x: px, y: py }} className="perspective-1000 relative">
-      <motion.div
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
-        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-        className="relative w-[min(82vw,340px)] sm:w-[380px] lg:w-[420px] aspect-[704/891] will-change-transform"
-      >
-        <div className="absolute inset-0 rounded-[32px] overflow-hidden border border-white/10">
-          <img
-            src={src} alt={alt}
-            className="w-full h-full object-cover object-top"
-            loading="eager" decoding="sync"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent" />
-          {!reduceMotion && (
-            <motion.div className="absolute inset-0 pointer-events-none" style={{ background: glareBg }} />
-          )}
-        </div>
-        {['top-0 left-0 border-t border-l rounded-tl-lg', 'top-0 right-0 border-t border-r rounded-tr-lg',
-          'bottom-0 left-0 border-b border-l rounded-bl-lg', 'bottom-0 right-0 border-b border-r rounded-br-lg']
-          .map((pos, i) => (
-            <span key={i} className={`absolute w-7 h-7 border-white/35 pointer-events-none ${pos}`} style={{ margin: -11 }} />
-          ))}
+    // Layer 1 (outer): fixed position + width, entrance reveal only.
+    <motion.div
+      className={`absolute ${card.className}`}
+      initial={{ opacity: 0, y: 40, scale: 0.92 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.8, delay: 0.7 + index * 0.13, ease: EASE_OUT }}
+    >
+      {/* Layer 2: mouse-parallax drift, driven entirely by external motion values. */}
+      <motion.div style={reduceMotion ? {} : { x: px, y: py }}>
+        {/* Layer 3: continuous float bob + static in-plane tilt + 3D
+            perspective tilt — every card has its own duration/delay/angle
+            (set in SCENE_CARDS) so none move or sit alike. */}
+        <motion.div
+          animate={reduceMotion ? undefined : { y: [0, -11, 0] }}
+          whileHover={reduceMotion ? undefined : { rotate: card.rotate * 1.8 }}
+          transition={reduceMotion ? undefined : { duration: card.floatDur, delay: card.floatDelay, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            rotate: card.rotate,
+            rotateX: reduceMotion ? card.tiltX : tiltX,
+            rotateY: reduceMotion ? card.tiltY : tiltY,
+            transformPerspective: 900,
+          }}
+        >
+          <SpotlightCard
+            className="w-full rounded-2xl border border-white/[0.15] backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.1),inset_0_0_30px_rgba(168,85,247,0.07),0_10px_16px_-4px_rgba(0,0,0,0.4),0_32px_65px_rgba(0,0,0,0.58)] hover:border-violet-400/50 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_0_0_42px_rgba(168,85,247,0.14),0_14px_22px_-4px_rgba(0,0,0,0.45),0_44px_90px_rgba(168,85,247,0.34)] hover:-translate-y-1 transition-[border-color,box-shadow,transform] duration-300 p-3.5"
+            style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(14,14,20,0.86) 42%)' }}
+          >
+            <CardBody card={card} reduceMotion={reduceMotion} />
+          </SpotlightCard>
+        </motion.div>
       </motion.div>
     </motion.div>
   )
 }
 
-/* Tiny helper so Portrait can stay a plain component but still react to
-   shared motion values passed from Hero without recreating springs per-render. */
-function useTransformSafe(mv, factor) {
-  return useTransform(mv, (v) => v * factor)
-}
-
-/* ── Main Hero ──────────────────────────────────────────────────── */
 export default function Hero() {
   const { personalInfo, ui, dir } = useContent()
-  const reduceMotion = useReducedMotion()
-  const nameWords = personalInfo.name.split(' ')
   const [cvOpen, setCvOpen] = useState(false)
+  const reduceMotion = useReducedMotion()
+
   const sectionRef = useRef(null)
 
-  const bioSnippet = personalInfo.aboutText.slice(0, 118).trimEnd() + '…'
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const smx = useSpring(mx, SPRING_SOFT)
+  const smy = useSpring(my, SPRING_SOFT)
 
-  // Shared pointer position (normalised -0.5..0.5) drives every depth layer
-  const mvX = useSpring(0, { stiffness: 40, damping: 20 })
-  const mvY = useSpring(0, { stiffness: 40, damping: 20 })
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 60])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.35])
+  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.97])
+  const sceneY = useTransform(scrollYProgress, [0, 1], [0, 90])
 
-  // Cursor-tracked colored light wash
-  const lightX = useSpring(50, { stiffness: 35, damping: 18 })
-  const lightY = useSpring(40, { stiffness: 35, damping: 18 })
-  const lightBg = useMotionTemplate`radial-gradient(650px circle at ${lightX}% ${lightY}%, rgba(${ACCENT.rgb},0.09), transparent 60%)`
-
-  const onSectionMove = (e) => {
-    if (reduceMotion || !sectionRef.current) return
-    const rect = sectionRef.current.getBoundingClientRect()
-    const relX = (e.clientX - rect.left) / rect.width
-    const relY = (e.clientY - rect.top) / rect.height
-    lightX.set(relX * 100)
-    lightY.set(relY * 100)
-    mvX.set(relX - 0.5)
-    mvY.set(relY - 0.5)
+  const handleMouseMove = (e) => {
+    if (reduceMotion) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    mx.set(((e.clientX - rect.left) / rect.width - 0.5) * 2)
+    my.set(((e.clientY - rect.top) / rect.height - 0.5) * 2)
   }
+  const handleMouseLeave = () => { mx.set(0); my.set(0) }
 
-  // Hero's own cross-section handoff: instead of just fading in and sitting
-  // static, it quietly recedes — softening and drifting up — as the reader
-  // scrolls it out of view, so About feels like it's arriving over Hero
-  // rather than simply appearing after it.
-  const { scrollYProgress: heroExit } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] })
-  const exitOpacity = useTransform(heroExit, [0, 0.6, 1], [1, 1, 0.4])
-  const exitScale   = useTransform(heroExit, [0, 0.6, 1], [1, 1, 0.95])
-  const exitY        = useTransform(heroExit, [0, 0.6, 1], [0, 0, -30])
-  const exitBlur     = useTransform(heroExit, [0, 0.6, 1], [0, 0, 3])
-  const exitFilter   = useMotionTemplate`blur(${exitBlur}px)`
+  const globeX = useTransform(smx, [-1, 1], [-10, 10])
+  const globeY = useTransform(smy, [-1, 1], [-10, 10])
+
+  const scrollTo = (id) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' })
+
+  /* Slow, elegant, endless role rotation — paused under reduced motion. */
+  const roles = ui.hero.roles
+  const [roleIndex, setRoleIndex] = useState(0)
+  useEffect(() => {
+    if (reduceMotion) return
+    const id = setInterval(() => setRoleIndex((i) => (i + 1) % roles.length), 2800)
+    return () => clearInterval(id)
+  }, [roles, reduceMotion])
 
   return (
     <section
-      ref={sectionRef}
-      onMouseMove={onSectionMove}
       id="hero"
-      className="relative min-h-screen flex items-center pt-24 px-5 pb-14 overflow-hidden"
+      ref={sectionRef}
+      dir={dir}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative min-h-[92vh] flex items-center overflow-hidden isolate px-6 pt-28 pb-16"
     >
-      {/* ── Layer 0: atmospheric colored glow behind everything ── */}
-      <motion.div
-        aria-hidden="true"
-        className="hidden md:block absolute rounded-full pointer-events-none will-change-transform"
-        style={{
-          width: 900, height: 900, right: '8%', top: '50%',
-          x: useTransformSafe(mvX, 26), y: useTransformSafe(mvY, 20),
-          translateY: '-50%',
-          background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.16) 0%, rgba(${ACCENT.rgb2},0.06) 40%, transparent 70%)`,
-          filter: 'blur(90px)',
-        }}
-        animate={reduceMotion ? undefined : { scale: [1, 1.08, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-      />
+      {/* ── Layer: BackgroundAtmosphere ─────────────────────────────── */}
+      <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="absolute inset-0 bg-[#04050A]" />
 
-      {/* ── Layer 1: ambient particles ── */}
-      <Particles count={14} />
+        {/* Left ambient — violet */}
+        <div
+          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full blur-[180px] opacity-30"
+          style={{ background: 'radial-gradient(circle, rgba(139,92,246,.22) 0%, rgba(139,92,246,.06) 40%, transparent 75%)' }}
+        />
 
-      {/* ── Layer 2: cursor-tracked light wash ── */}
-      {!reduceMotion && (
-        <motion.div aria-hidden="true" className="hidden md:block absolute inset-0 pointer-events-none" style={{ background: lightBg }} />
-      )}
+        {/* Right glow — purple */}
+        <div
+          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full blur-[180px] opacity-35"
+          style={{ background: 'radial-gradient(circle, rgba(168,85,247,.20) 0%, rgba(168,85,247,.05) 45%, transparent 75%)' }}
+        />
 
-      {/* ── Vertical social rail ── */}
-      <SocialRail personalInfo={personalInfo} onResumeClick={() => setCvOpen(true)} />
-
-      <motion.div
-        className="max-w-6xl mx-auto w-full relative lg:pl-16 xl:pl-20"
-        variants={heroContainer}
-        initial="hidden"
-        animate="visible"
-        style={reduceMotion ? undefined : { opacity: exitOpacity, scale: exitScale, y: exitY, filter: exitFilter }}
-      >
-        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-
-          {/* LEFT — content, in a faint glass panel (desktop only — mobile stays tight/unboxed) */}
-          <div
-            className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-start gap-5 min-w-0 w-full order-2 lg:order-1 rounded-[32px] lg:p-8 lg:-m-8 lg:border lg:border-white/[0.04] lg:bg-white/[0.012] lg:backdrop-blur-[2px]"
-            dir={dir}
-          >
-            <motion.p variants={fadeUp} className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/50" dir="ltr">
-              Software Engineer · Full-Stack &amp; AI
-            </motion.p>
-
-            {/* flex-nowrap from sm+ keeps the name's line-count stable across the
-                fallback→webfont swap, so that reflow can't cascade into a large
-                layout shift for anchor-scroll targets further down the page */}
-            <div className="flex flex-wrap sm:flex-nowrap justify-center lg:justify-start gap-x-3 sm:gap-x-4" dir={dir}>
-              {nameWords.map((word, i) => (
-                <motion.span
-                  key={i} custom={i}
-                  variants={wordReveal} initial="hidden" animate="visible"
-                  className="inline-block font-body font-extrabold leading-[1.05] text-shimmer will-change-transform tracking-tight whitespace-nowrap"
-                  style={{ fontSize: 'clamp(2.75rem, 6.4vw, 5rem)' }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </div>
-
-            <motion.div variants={fadeUp}><TypewriterTitle /></motion.div>
-
-            <motion.button
-              variants={fadeUp}
-              onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
-              className="group max-w-sm lg:max-w-md cursor-pointer text-center lg:text-start"
-              dir={dir}
-            >
-              <p className="font-body text-white/50 text-[15px] sm:text-base leading-[1.8]">
-                {bioSnippet}
-                <span className="inline-flex items-center gap-0.5 text-white/60 group-hover:text-white transition-colors font-mono text-[11px] ml-1.5">
-                  {ui.hero.readMore}
-                  <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
-                </span>
-              </p>
-            </motion.button>
-
-            {/* CTA — one dominant, one visually light */}
-            <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center lg:justify-start gap-5 mt-1" dir="ltr">
-              <MagneticButton
-                strength={0.3}
-                onClick={() => document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' })}
-                whileHover={{ boxShadow: `0 10px 40px rgba(${ACCENT.rgb},0.35)` }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-7 py-4 rounded-full bg-white text-black font-body font-semibold text-sm cursor-pointer"
-              >
-                View My Work
-                <ArrowUpRight size={16} />
-              </MagneticButton>
-              <MagneticButton
-                strength={0.25}
-                onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-                whileHover={{ gap: '0.6rem' }}
-                className="flex items-center gap-1.5 font-body font-medium text-sm text-white/60 hover:text-white cursor-pointer border-b border-transparent hover:border-white/30 pb-0.5 transition-colors"
-              >
-                Get In Touch
-                <ArrowRight size={14} />
-              </MagneticButton>
-            </motion.div>
-
-            {/* Social icons — mobile/tablet only (desktop uses the vertical rail) */}
-            <motion.div variants={fadeUp} className="flex lg:hidden items-center gap-3 mt-1" dir="ltr">
-              {SOCIALS(personalInfo).map((s) => (
-                <MagneticButton
-                  key={s.label} as="a" strength={0.4}
-                  href={s.href} target="_blank" rel="noopener noreferrer" title={s.label} aria-label={s.label}
-                  whileHover={{ borderColor: 'rgba(255,255,255,0.35)', backgroundColor: 'rgba(255,255,255,0.07)' }}
-                  whileTap={{ scale: 0.94 }}
-                  className="w-10 h-10 flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] text-white/75 hover:text-white transition-colors duration-200 cursor-pointer"
-                >
-                  {s.icon}
-                </MagneticButton>
-              ))}
-              <MagneticButton
-                as="button" strength={0.4} onClick={() => setCvOpen(true)} title="Resume" aria-label="Resume"
-                whileHover={{ borderColor: 'rgba(255,255,255,0.35)', backgroundColor: 'rgba(255,255,255,0.07)' }}
-                whileTap={{ scale: 0.94 }}
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] text-white/75 hover:text-white transition-colors duration-200 cursor-pointer"
-              >
-                <FileText size={16} />
-              </MagneticButton>
-            </motion.div>
-
-            {/* Web4You callout */}
-            <motion.div variants={fadeUp} dir="ltr" className="w-full max-w-sm lg:max-w-md mt-2">
-              <button
-                onClick={() => document.querySelector('#web4you')?.scrollIntoView({ behavior: 'smooth' })}
-                className="group w-full flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/8 hover:border-white/20 hover:bg-white/[0.03] transition-all duration-300 text-left cursor-pointer"
-              >
-                <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border border-white/12 bg-white/[0.04]">
-                  <Briefcase size={13} className="text-white/70" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-mono text-[8px] tracking-[0.2em] uppercase text-white/50 mb-0.5">{ui.hero.coFounder}</p>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                    <span className="font-body font-bold text-[13px] text-white leading-tight whitespace-nowrap">Web4You</span>
-                    <span className="hidden sm:block text-white/20 text-xs">·</span>
-                    <span className="font-body text-white/45 text-xs leading-snug truncate">{ui.hero.web4youDesc}</span>
-                  </div>
-                </div>
-                <span className="hidden sm:inline flex-shrink-0 font-mono text-[10px] tracking-widest uppercase text-white/45 group-hover:text-white/70 transition-colors duration-200">
-                  {ui.hero.seeMore}
-                </span>
-                <ArrowRight size={14} className="flex-shrink-0 text-white/45 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-200" />
-              </button>
-            </motion.div>
-          </div>
-
-          {/* RIGHT — dominant portrait. Mobile: bleeds to the screen edges
-              (negative margin cancels the section's own px-5) instead of
-              sitting as a shrunk copy of the desktop card. */}
-          <motion.div
-            className="flex-shrink-0 relative order-1 lg:order-2 will-change-transform -mx-5 sm:mx-0 w-[calc(100%+2.5rem)] sm:w-auto flex justify-center"
-            initial={{ opacity: 0, scale: 0.92, y: 24 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE_OUT, delay: 0.1 }}
-          >
-            <Portrait src={personalInfo.profileMedia} alt={personalInfo.name} mvX={mvX} mvY={mvY} />
-          </motion.div>
-        </div>
-
-        <ProjectStrip />
-
+        {/* Purple center glow — breathing, the dominant hue of the scene */}
         <motion.div
-          className="flex flex-col items-center gap-2 text-white/45 mt-10"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 0.8 }}
+          className="absolute right-[18%] top-[28%] h-[500px] w-[500px] rounded-full blur-[120px]"
+          style={{ background: 'radial-gradient(circle, rgba(147,51,234,.38) 0%, rgba(147,51,234,.08) 45%, transparent 75%)' }}
+          animate={reduceMotion ? {} : { scale: [1, 1.06, 1], opacity: [0.7, 1, 0.7] }}
+          transition={{ repeat: Infinity, duration: 9, ease: 'easeInOut' }}
+        />
+
+        {/* Bottom energy glow — the one place blue remains, as a
+            deliberately secondary accent beneath the purple-led scene. */}
+        <div
+          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full blur-[150px] opacity-20"
+          style={{ background: 'radial-gradient(circle, rgba(71,113,255,.16) 0%, rgba(71,113,255,.04) 55%, transparent 75%)' }}
+        />
+
+        {/* Faint nebula drift — a slow, very soft violet wash for extra
+            cinematic depth. */}
+        <motion.div
+          className="absolute left-[30%] top-[38%] w-[560px] h-[560px] rounded-full blur-[170px]"
+          style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%)' }}
+          animate={reduceMotion ? {} : { opacity: [0.5, 0.85, 0.5], scale: [1, 1.06, 1] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Stars — small fixed twinkling points, distinct from the drifting
+            Particles layer below, for extra cinematic dust/depth. */}
+        {!reduceMotion && (
+          <div className="absolute inset-0">
+            {STARS.map((s) => (
+              <motion.span
+                key={s.id}
+                className="absolute rounded-full bg-white"
+                style={{ left: `${s.left}%`, top: `${s.top}%`, width: s.size, height: s.size }}
+                animate={{ opacity: [0, s.maxOp, 0] }}
+                transition={{ duration: s.dur, repeat: Infinity, ease: 'easeInOut', delay: s.delay }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* ── Layer: PerspectiveFloor — converging arcs + spokes, fades into distance ── */}
+        <PerspectiveFloor className="absolute inset-x-[6%] bottom-[-8%] h-[46%]" />
+
+        {/* Atmospheric vignette */}
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(circle at center, transparent 40%, rgba(0,0,0,.35) 100%)' }}
+        />
+
+        {/* ── Layer: ParticleSystem ────────────────────────────────── */}
+        <Particles count={34} />
+
+        {/* Hero → About dissolve — kept quiet on purpose: Hero simply
+            gets darker toward its own bottom, with only a faint violet
+            undertone that itself fades to black, and only resolves to
+            About's white in a short, quick band right at the very edge.
+            No bright purple bloom, no separator line — the handoff should
+            read as almost invisible while scrolling. */}
+        <svg className="absolute bottom-0 left-0 w-full h-[280px]" viewBox="0 0 1000 280" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="heroDissolveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(10,6,16,0)" />
+              <stop offset="45%" stopColor="rgba(18,10,28,0.55)" />
+              <stop offset="70%" stopColor="rgba(28,16,42,0.85)" />
+              <stop offset="88%" stopColor="rgba(35,22,50,0.95)" />
+              <stop offset="97%" stopColor="#f8f7fb" />
+              <stop offset="100%" stopColor="#f8f7fb" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M0,44 Q500,148 1000,44 L1000,280 L0,280 Z"
+            fill="url(#heroDissolveGrad)"
+          />
+          {/* Fine diagonal threads of current, kept low in the band (well
+              clear of the content above) — each trends across the width at
+              a different slight angle so they cross one another, thin and
+              low-opacity for delicacy. A slow drift is the only motion. */}
+          {[
+            { d: 'M0,150 C100,160 200,142 300,154 C400,166 500,148 600,168 C700,188 800,172 900,188 C950,196 980,204 1000,216', o: 0.32, w: 0.8, dur: 15, bob: 5 },
+            { d: 'M0,238 C100,226 200,236 300,226 C400,216 500,231 600,211 C700,191 800,203 900,187 C950,179 980,171 1000,160', o: 0.2, w: 0.65, dur: 19, bob: 4 },
+            { d: 'M0,196 C150,204 250,187 380,198 C500,208 600,190 720,201 C820,211 900,195 1000,208', o: 0.13, w: 0.55, dur: 23, bob: 3 },
+          ].map((w, i) => (
+            <motion.path
+              key={i}
+              d={w.d}
+              fill="none"
+              stroke="rgba(196,166,255,1)"
+              strokeOpacity={w.o}
+              strokeWidth={w.w}
+              strokeLinecap="round"
+              animate={reduceMotion ? undefined : { x: [0, 16, 0, -16, 0], y: [0, -w.bob, 0, w.bob * 0.5, 0] }}
+              transition={reduceMotion ? undefined : { duration: w.dur, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          ))}
+          {[
+            [60, 196, 1.1, 0.35], [150, 196, 1.6, 0.55], [230, 216, 1, 0.3],
+            [310, 205, 1.3, 0.4], [390, 222, 1, 0.28], [430, 200, 1.6, 0.5],
+            [520, 218, 1.1, 0.32], [600, 205, 1.4, 0.45], [680, 224, 1, 0.28],
+            [730, 198, 1.6, 0.5], [810, 220, 1, 0.3], [900, 203, 1.5, 0.48],
+            [960, 222, 1, 0.3],
+          ].map(([cx, cy, r, o], i) => (
+            <circle key={i} cx={cx} cy={cy} r={r} fill="rgba(196,181,253,1)" opacity={o} />
+          ))}
+        </svg>
+      </div>
+
+      <div className="relative z-10 max-w-[1280px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-8 items-center">
+
+        {/* ── LEFT — identity first: name, role, pitch, CTAs ─────────── */}
+        <motion.div
+          style={reduceMotion ? {} : { y: contentY, opacity: contentOpacity, scale: contentScale }}
+          variants={staggerContainer(0.11, 0.05)}
+          initial="hidden"
+          animate="visible"
+          className={`lg:-mt-6 text-center ${dir === 'rtl' ? 'lg:text-right' : 'lg:text-left'}`}
         >
-          <span className="font-mono text-[10px] tracking-[0.3em] uppercase">{ui.hero.discoverWork}</span>
-          <motion.button
-            onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="text-white/45 hover:text-white transition-colors duration-200 will-change-transform"
-            aria-label="Scroll to About"
-          >
-            <ChevronDown size={20} />
-          </motion.button>
+          <motion.div variants={revealUp} className="flex items-center justify-center lg:justify-start gap-3.5 mb-6">
+            <div className="relative flex-shrink-0">
+              {/* Breathing purple glow ring behind the avatar */}
+              <motion.div
+                aria-hidden="true"
+                className="absolute -inset-2.5 rounded-full pointer-events-none"
+                style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.45) 0%, transparent 70%)', filter: 'blur(11px)' }}
+                animate={reduceMotion ? {} : { opacity: [0.5, 0.95, 0.5], scale: [1, 1.1, 1] }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+              />
+              <motion.span
+                className="relative block w-[66px] h-[66px] rounded-full overflow-hidden ring-1 ring-white/20"
+                style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.05), 0 8px 24px -4px rgba(168,85,247,0.45)' }}
+                animate={reduceMotion ? {} : { y: [0, -4, 0] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <img src={personalInfo.profileMedia} alt={personalInfo.name} loading="eager" className="w-full h-full object-cover object-top" />
+              </motion.span>
+            </div>
+            <span className="inline-flex items-center gap-2 font-mono text-sm text-white/55">
+              {ui.hero.eyebrow}
+              <motion.span
+                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                style={{ background: '#c084fc', boxShadow: '0 0 8px 2px rgba(192,132,252,0.8)' }}
+                animate={reduceMotion ? {} : { opacity: [0.4, 1, 0.4], scale: [0.85, 1.15, 0.85] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            </span>
+          </motion.div>
+
+          <motion.div variants={revealUp} className="relative mb-3">
+            {/* Very subtle glow accent behind the name — reads as ambient
+                light, not a text effect. */}
+            <div
+              aria-hidden="true"
+              className="absolute -inset-x-6 -inset-y-4 -z-10 pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse 65% 80% at 20% 50%, rgba(168,85,247,0.22), transparent 72%)', filter: 'blur(22px)' }}
+            />
+            <h1 className="font-display font-bold leading-[1.04] tracking-tight text-[2.75rem] sm:text-6xl lg:text-[4.25rem]">
+              {(() => {
+                const words = personalInfo.name.split(' ')
+                const last = words[words.length - 1]
+                const rest = words.slice(0, -1).join(' ')
+                return (
+                  <>
+                    <span className="text-white" style={{ textShadow: '0 2px 24px rgba(168,85,247,0.2)' }}>{rest ? `${rest} ` : ''}</span>
+                    <span
+                      className="bg-clip-text text-transparent"
+                      style={{ backgroundImage: 'linear-gradient(90deg, #ffffff 0%, #d8b4fe 55%, #a855f7 100%)', textShadow: '0 2px 30px rgba(168,85,247,0.35)' }}
+                    >
+                      {last}
+                    </span>
+                  </>
+                )
+              })()}
+            </h1>
+          </motion.div>
+
+          <motion.div variants={revealUp} className="relative h-[1.4em] overflow-hidden mb-9 flex items-center">
+            {roles.map((r, i) => (
+              <motion.span
+                key={r}
+                animate={{ opacity: i === roleIndex ? 1 : 0 }}
+                transition={{ duration: 0.7, ease: EASE_OUT }}
+                className="absolute inset-0 flex items-center justify-center lg:justify-start gap-2 font-mono text-[13px] font-bold tracking-[0.25em] uppercase text-violet-200"
+                style={{ textShadow: '0 0 18px rgba(196,181,253,0.3)' }}
+              >
+                <span className="w-3 h-px flex-shrink-0 bg-gradient-to-r from-violet-300 to-transparent" />
+                {r}
+              </motion.span>
+            ))}
+          </motion.div>
+
+          <motion.div variants={revealUp} className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-9">
+            <MagneticButton
+              as="button"
+              strength={0.3}
+              onClick={() => scrollTo('#projects')}
+              className="group relative inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-400 text-ink-950 font-display font-semibold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_8px_28px_rgba(168,85,247,0.4)] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_16px_42px_rgba(168,85,247,0.55)] transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
+            >
+              {ui.hero.viewProjects}
+              <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </MagneticButton>
+            <MagneticButton
+              as="button"
+              strength={0.3}
+              onClick={() => scrollTo('#contact')}
+              className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-xl text-white font-display font-semibold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:bg-white/[0.08] hover:border-violet-300/35 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.13),0_0_26px_rgba(168,85,247,0.18)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
+            >
+              {ui.hero.contactCta}
+              <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </MagneticButton>
+          </motion.div>
+
+          <motion.div variants={revealUp} dir="ltr" className="flex items-center justify-center lg:justify-start flex-wrap gap-3">
+            <MagneticButton as="a" strength={0.35} href={personalInfo.github} target="_blank" rel="noopener noreferrer" className={SOCIAL_BTN_CLASS}>
+              <Github size={14} /> GitHub
+            </MagneticButton>
+            <MagneticButton as="a" strength={0.35} href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className={SOCIAL_BTN_CLASS}>
+              <Linkedin size={14} /> LinkedIn
+            </MagneticButton>
+            <MagneticButton as="a" strength={0.35} href={personalInfo.whatsapp} target="_blank" rel="noopener noreferrer" className={SOCIAL_BTN_CLASS}>
+              <MessageCircle size={14} /> WhatsApp
+            </MagneticButton>
+            <MagneticButton as="button" strength={0.35} onClick={() => setCvOpen(true)} className={SOCIAL_BTN_CLASS}>
+              <FileText size={14} /> Resume
+            </MagneticButton>
+          </motion.div>
         </motion.div>
-      </motion.div>
+
+        {/* ── RIGHT — EngineeringScene ─────────────────────────────── */}
+        <motion.div
+          style={reduceMotion ? {} : { y: sceneY }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="relative"
+        >
+          <div className="relative w-full max-w-[460px] sm:max-w-[520px] lg:max-w-[560px] aspect-square mx-auto scale-[0.86] sm:scale-95 lg:scale-100 origin-center">
+
+            {/* Layer: FloatingLightParticles */}
+            <FloatingLightParticles reduceMotion={reduceMotion} />
+
+            {/* Layer: ConnectionLights — dashed link lines + traveling pulses */}
+            <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 560 560" aria-hidden="true">
+              <defs>
+                <linearGradient id="heroLineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="rgb(168,85,247)" stopOpacity="0" />
+                  <stop offset="50%" stopColor="rgb(196,181,253)" stopOpacity="0.85" />
+                  <stop offset="100%" stopColor="rgb(168,85,247)" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {CONNECTIONS.map((d, i) => (
+                <g key={i}>
+                  <motion.path
+                    d={d}
+                    fill="none"
+                    stroke="url(#heroLineGrad)"
+                    strokeWidth="1.15"
+                    strokeDasharray="4 7"
+                    initial={{ opacity: 0 }}
+                    animate={reduceMotion ? { opacity: 0.5 } : { opacity: [0.34, 0.65, 0.34], strokeDashoffset: [0, -110] }}
+                    transition={reduceMotion
+                      ? { duration: 0.6 }
+                      : { strokeDashoffset: { duration: 3.4, repeat: Infinity, ease: 'linear' }, opacity: { duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.3 } }}
+                  />
+                  {!reduceMotion && (
+                    <circle r="2.2" fill="rgb(216,180,254)" opacity="0.85">
+                      <animateMotion dur={`${4.5 + i * 0.6}s`} repeatCount="indefinite" path={d} begin={`${i * 0.7}s`} />
+                    </circle>
+                  )}
+                </g>
+              ))}
+
+              {/* Anchor glows — a soft point of light at every line's card-end
+                  and core-end, so connections read as plugged in rather than
+                  loose dashes crossing the scene. */}
+              {CONNECTION_ANCHORS.map(([ax, ay], i) => (
+                <motion.circle
+                  key={`anchor-${i}`}
+                  cx={ax} cy={ay} r="3"
+                  fill="rgb(196,181,253)"
+                  animate={reduceMotion ? { opacity: 0.45 } : { opacity: [0.25, 0.6, 0.25] }}
+                  transition={{ duration: 5 + (i % 3), repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }}
+                  style={{ filter: 'blur(1.5px)' }}
+                />
+              ))}
+            </svg>
+
+            {/* Layer: EnergyCore + OrbitRings */}
+            <motion.div
+              className="absolute left-1/2 top-1/2 w-[220px] h-[220px] -ml-[110px] -mt-[110px]"
+              style={reduceMotion ? {} : { x: globeX, y: globeY }}
+            >
+              <OrbitSystem />
+
+              {/* The core itself — its own reusable component (~20% larger than
+                  the old sphere; the 220px wrapper and rings above are
+                  untouched, so it simply sits bigger inside the same ring
+                  system with plenty of clearance to the innermost ring). */}
+              <EngineeringCore size={188} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+            </motion.div>
+
+            {/* Layer: Premium software widgets */}
+            {SCENE_CARDS.map((card, i) => (
+              <SceneCard key={card.key} card={card} index={i} smx={smx} smy={smy} reduceMotion={reduceMotion} />
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
 
       <CvModal isOpen={cvOpen} onClose={() => setCvOpen(false)} />
     </section>

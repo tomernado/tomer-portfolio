@@ -23,6 +23,7 @@ export const aboutData = {
       company: "Web4You",
       description: "פיתוח מקצה לקצה של 20+ אפליקציות ואתרים (React, JS, HTML/CSS). תרגום דרישות לקוחות לפיצ'רים מדרגיים תוך שימוש ב-AI לייעול ארכיטקטורת קוד. תכנון בסיסי נתונים ותשתית דרך Supabase, יישום אימות חזק, RBAC ואינטגרציות API לשערי תשלום ומערכות CRM.",
       date: "2025 – היום",
+      tags: ["React", "Node.js", "AI", "Supabase"],
     },
     {
       id: 2,
@@ -30,6 +31,7 @@ export const aboutData = {
       company: "פרילנס",
       description: "ניהול תהליך הפקת תוכן דיגיטלי מקצה לקצה עבור עסקים מגוונים, מתרגום קונספט הלקוח ועד מסירת המוצר הסופי.",
       date: "2023 – 2025",
+      tags: ["אסטרטגיית תוכן", "קשרי לקוחות", "שיווק"],
     },
     {
       id: 3,
@@ -37,6 +39,29 @@ export const aboutData = {
       company: "ניהול מסעדה",
       description: "ניהול תפעול שוטף ותיאום צוות בסביבה עתירת לחץ. אחראי על פתרון משברים בזמן אמת, ניהול משמרות ושמירה על יעילות תפעולית.",
       date: "2021 – 2023",
+      tags: ["ניהול צוות", "תפעול", "ניהול משברים"],
+    },
+  ],
+  features: [
+    {
+      id: 1,
+      title: "פיתוח Backend",
+      description: "בניית APIs חזקים, בסיסי נתונים ומערכות שרת סקיילביליות.",
+    },
+    {
+      id: 2,
+      title: "הנדסת AI ו-LLM",
+      description: "בניית סוכנים חכמים, מערכות RAG ואפליקציות מונעות בינה מלאכותית.",
+    },
+    {
+      id: 3,
+      title: "ארכיטקטורת תוכנה",
+      description: "עיצוב ארכיטקטורות נקיות, ברות-תחזוקה וסקיילביליות למערכות מורכבות.",
+    },
+    {
+      id: 4,
+      title: "פתרון בעיות",
+      description: "חשיבה אנליטית חזקה ומיקוד באספקת השפעה אמיתית בעולם.",
     },
   ],
 }
@@ -44,19 +69,19 @@ export const aboutData = {
 export const skills = [
   {
     category: "Languages",
-    items: ["C#", "Java", "JavaScript", "Python", "SQL", "C", "C++"],
+    items: ["Java", "C#", "JavaScript", "TypeScript", "Python", "SQL", "C", "C++"],
   },
   {
     category: "Architecture & Security",
-    items: ["OOP", "Design Patterns", "S-SDLC", "JWT & bcrypt", "RESTful APIs", "MVC", "Clean Code"],
+    items: ["OOP", "Design Patterns", "Clean Architecture", "REST APIs", "JWT", "Testing", "Secure Development"],
   },
   {
     category: "Frontend & Backend",
-    items: ["React.js", "Node.js & Express", "Tomcat & Servlets", "Material UI (MUI)", "Docker", "HTML/CSS"],
+    items: ["React", "TypeScript", "Node.js", "Express", "Next.js", "Vite", "REST APIs", "Docker", "Postman"],
   },
   {
     category: "Databases & Tools",
-    items: ["MySQL & MongoDB", "Git / GitHub", "Linux", "AI Coding Tools", "Vite"],
+    items: ["MySQL", "MongoDB", "Git", "Linux", "Docker", "AI Engineering"],
   },
 ];
 

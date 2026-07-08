@@ -64,7 +64,7 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled || menuOpen
-          ? 'bg-ink-950/90 backdrop-blur-xl border-b border-white/[0.07]'
+          ? 'bg-[#04050A]/90 backdrop-blur-xl border-b border-white/[0.07]'
           : 'bg-transparent border-b border-transparent'
       }`}
     >
