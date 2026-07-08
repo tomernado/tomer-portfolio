@@ -62,9 +62,15 @@ export default function Navbar() {
 
   return (
     <nav
+      // `backdrop-blur-xl` on a full-width `position: fixed` bar has to
+      // recompute on every scroll frame — one of the most reliable ways to
+      // crash Mobile Safari's compositor. Kept exactly as-is at md: and up
+      // (desktop is unchanged); mobile gets a near-opaque solid fill
+      // instead, which reads the same at 95%+ opacity without the
+      // per-frame blur recompute cost.
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled || menuOpen
-          ? 'bg-[#04050A]/90 backdrop-blur-xl border-b border-white/[0.07]'
+          ? 'bg-[#04050A]/95 md:bg-[#04050A]/90 md:backdrop-blur-xl border-b border-white/[0.07]'
           : 'bg-transparent border-b border-transparent'
       }`}
     >

@@ -227,7 +227,7 @@ export default function Contact() {
             whileInView="visible"
             viewport={VP_ONCE_20}
             variants={fadeUp}
-            className="rounded-3xl border border-white/10 bg-white/[0.025] backdrop-blur-xl p-6 sm:p-8"
+            className="rounded-3xl border border-white/10 bg-white/[0.06] md:bg-white/[0.025] md:backdrop-blur-xl p-6 sm:p-8"
             style={{ boxShadow: `0 24px 70px rgba(0,0,0,0.35), 0 0 0 1px rgba(${ACCENT.rgb},0.06)` }}
           >
             <div className="flex items-center gap-2.5 mb-6">

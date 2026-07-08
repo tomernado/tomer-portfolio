@@ -472,42 +472,51 @@ export default function Hero() {
       className="relative min-h-[92vh] flex items-center overflow-hidden isolate px-6 pt-28 pb-16"
     >
       {/* ── Layer: BackgroundAtmosphere ─────────────────────────────── */}
+      {/* Five large `filter: blur()` layers (120–180px radius, up to
+          1200px wide), mounted unconditionally from first paint, two of
+          them animating forever — this is the single heaviest GPU cost on
+          the page and the most likely cause of Mobile Safari crashing
+          during initial load. Desktop keeps the exact original blur radii
+          via `md:blur-[...]`; mobile gets a much smaller radius (same
+          color/shape/position, just cheaper to composite) and the two
+          animated ones stop looping so their blur is computed once
+          instead of every frame. */}
       <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute inset-0 bg-[#04050A]" />
 
         {/* Left ambient — violet */}
         <div
-          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full blur-[180px] opacity-30"
+          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full blur-[60px] md:blur-[180px] opacity-30"
           style={{ background: 'radial-gradient(circle, rgba(139,92,246,.22) 0%, rgba(139,92,246,.06) 40%, transparent 75%)' }}
         />
 
         {/* Right glow — purple */}
         <div
-          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full blur-[180px] opacity-35"
+          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full blur-[60px] md:blur-[180px] opacity-35"
           style={{ background: 'radial-gradient(circle, rgba(168,85,247,.20) 0%, rgba(168,85,247,.05) 45%, transparent 75%)' }}
         />
 
         {/* Purple center glow — breathing, the dominant hue of the scene */}
         <motion.div
-          className="absolute right-[18%] top-[28%] h-[500px] w-[500px] rounded-full blur-[120px]"
+          className="absolute right-[18%] top-[28%] h-[500px] w-[500px] rounded-full blur-[45px] md:blur-[120px]"
           style={{ background: 'radial-gradient(circle, rgba(147,51,234,.38) 0%, rgba(147,51,234,.08) 45%, transparent 75%)' }}
-          animate={reduceMotion ? {} : { scale: [1, 1.06, 1], opacity: [0.7, 1, 0.7] }}
+          animate={(reduceMotion || !showScene) ? {} : { scale: [1, 1.06, 1], opacity: [0.7, 1, 0.7] }}
           transition={{ repeat: Infinity, duration: 9, ease: 'easeInOut' }}
         />
 
         {/* Bottom energy glow — the one place blue remains, as a
             deliberately secondary accent beneath the purple-led scene. */}
         <div
-          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full blur-[150px] opacity-20"
+          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full blur-[55px] md:blur-[150px] opacity-20"
           style={{ background: 'radial-gradient(circle, rgba(71,113,255,.16) 0%, rgba(71,113,255,.04) 55%, transparent 75%)' }}
         />
 
         {/* Faint nebula drift — a slow, very soft violet wash for extra
             cinematic depth. */}
         <motion.div
-          className="absolute left-[30%] top-[38%] w-[560px] h-[560px] rounded-full blur-[170px]"
+          className="absolute left-[30%] top-[38%] w-[560px] h-[560px] rounded-full blur-[60px] md:blur-[170px]"
           style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%)' }}
-          animate={reduceMotion ? {} : { opacity: [0.5, 0.85, 0.5], scale: [1, 1.06, 1] }}
+          animate={(reduceMotion || !showScene) ? {} : { opacity: [0.5, 0.85, 0.5], scale: [1, 1.06, 1] }}
           transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
         />
 
@@ -527,8 +536,15 @@ export default function Hero() {
           </div>
         )}
 
-        {/* ── Layer: PerspectiveFloor — converging arcs + spokes, fades into distance ── */}
-        <PerspectiveFloor className="absolute inset-x-[6%] bottom-[-8%] h-[46%]" />
+        {/* ── Layer: PerspectiveFloor — converging arcs + spokes, fades into
+            distance. Desktop only: it combines a CSS mask, several SVG
+            blur filters and ~20 concurrent SMIL/Framer animations, all
+            mounted from first paint — exactly the combination (masks +
+            blur + GPU layers, present during initial load) that crashes
+            Mobile Safari's compositor. */}
+        {showScene && (
+          <PerspectiveFloor className="absolute inset-x-[6%] bottom-[-8%] h-[46%]" />
+        )}
 
         {/* Atmospheric vignette */}
         <div
@@ -690,7 +706,7 @@ export default function Hero() {
               as="button"
               strength={0.3}
               onClick={() => scrollTo('#contact')}
-              className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-xl text-white font-display font-semibold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:bg-white/[0.08] hover:border-violet-300/35 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.13),0_0_26px_rgba(168,85,247,0.18)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
+              className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/15 bg-white/[0.1] md:bg-white/[0.04] md:backdrop-blur-xl text-white font-display font-semibold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:bg-white/[0.08] hover:border-violet-300/35 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.13),0_0_26px_rgba(168,85,247,0.18)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
             >
               {ui.hero.contactCta}
               <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

@@ -12,6 +12,7 @@ import { useContent } from '../context/LanguageContext'
 import MagneticButton from './MagneticButton'
 import BorderBeam from './BorderBeam'
 import { headingReveal, revealUp, cardReveal, staggerContainer, VIEWPORT, ACCENT, EASE_OUT } from '../motion'
+import { useVideoAutoplayInView } from '../hooks/useVideoAutoplayInView'
 
 /* Bright section tone, matching About's "black cards on white" language —
    Projects sits between two other sections that already made this switch,
@@ -388,6 +389,7 @@ function FeaturedCarousel({ projects, onSelect, index, setIndex }) {
 /* ─── "Explore more" grid — the rest of the set, compact cards ───────── */
 function MiniProjectCard({ project, onClick }) {
   const { name, subtitle } = splitTitle(project.title)
+  const videoRef = useVideoAutoplayInView()
   return (
     <motion.button
       variants={cardReveal}
@@ -399,7 +401,7 @@ function MiniProjectCard({ project, onClick }) {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
       <div className="relative aspect-video overflow-hidden bg-ink-900">
         {project.mediaType === 'video' ? (
-          <video src={project.media} muted autoPlay loop playsInline preload="metadata" className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+          <video ref={videoRef} src={project.media} muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
         ) : (
           <img src={project.media} alt={project.title} className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
         )}

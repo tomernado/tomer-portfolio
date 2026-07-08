@@ -73,6 +73,12 @@ const assembleVariant = (i) => ({
 
 function SkillCard({ group, wide = false, index = 0 }) {
   const reduceMotion = useReducedMotion()
+  // `backdrop-blur-xl` stacked across every card is expensive to
+  // composite on Mobile Safari. Desktop keeps the exact original glass
+  // look; mobile swaps to a slightly more opaque solid fill instead of
+  // the (near-transparent without blur) original background, so the
+  // card still reads as a distinct surface without the per-card blur cost.
+  const isDesktop = useIsDesktop()
   // Mobile only (mobile-first: applied by default, reset at sm: where the
   // bento/grid layout takes over): a slight alternating horizontal offset
   // + overlap so the stack reads as layered cards rather than plain
@@ -94,8 +100,8 @@ function SkillCard({ group, wide = false, index = 0 }) {
       className={wide ? 'sm:col-span-2' : ''}
     >
       <SpotlightCard
-        className="overflow-hidden rounded-2xl border border-white/10 hover:border-white/20 backdrop-blur-xl transition-colors duration-300 h-full"
-        style={{ background: 'rgba(255,255,255,0.025)' }}
+        className={`overflow-hidden rounded-2xl border border-white/10 hover:border-white/20 ${isDesktop ? 'backdrop-blur-xl' : ''} transition-colors duration-300 h-full`}
+        style={{ background: isDesktop ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.05)' }}
       >
         <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)' }} />
 
