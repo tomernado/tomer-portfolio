@@ -441,15 +441,16 @@ export default function ProjectsGrid() {
   const [showAll, setShowAll] = useState(false)
 
   const featuredList = FEATURED_SET.map((id) => projects.find((p) => p.id === id)).filter(Boolean)
-  const activeProjectId = featuredList[activeIndex]?.id
-  // The grid below shows the rest of the curated set — never the project
-  // currently front-and-center in the carousel above. Collapsed, it's
-  // capped to a single row; "View All Projects" expands it in place to
-  // every project in the data.
+  // The grid below shows the rest of the curated set, minus the carousel's
+  // default front project — fixed, not tied to `activeIndex`, so the grid
+  // doesn't reshuffle (a card blinking in/out) every time the carousel
+  // auto-advances. Collapsed, it's capped to a single row; "View All
+  // Projects" expands it in place to every project in the data.
+  const defaultFeaturedId = featuredList[0]?.id
   const ONE_ROW_COUNT = 4
-  const curatedRest = featuredList.filter((p) => p.id !== activeProjectId)
+  const curatedRest = featuredList.filter((p) => p.id !== defaultFeaturedId)
   const gridProjects = showAll
-    ? projects.filter((p) => p.id !== activeProjectId)
+    ? projects.filter((p) => p.id !== defaultFeaturedId)
     : curatedRest.slice(0, ONE_ROW_COUNT)
 
   return (
