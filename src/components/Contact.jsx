@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Phone, Mail, Linkedin, Github, Download, Send } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
 import MagneticButton from './MagneticButton'
 import SectionMarker from './SectionMarker'
-import { VIEWPORT, EASE_OUT } from '../motion'
+import { VIEWPORT, EASE_OUT, ACCENT } from '../motion'
 
 /* Contact's own cross-section identity: a spotlight-style scale-up-from-
    center arrival — this is the closing act of the journey, so it should
@@ -26,7 +26,8 @@ function FieldLabel({ children, active }) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
             transition={{ duration: 0.2 }}
-            className="w-1 h-1 rounded-full bg-white"
+            className="w-1 h-1 rounded-full"
+            style={{ background: ACCENT.css }}
           />
         )}
       </AnimatePresence>
@@ -42,12 +43,13 @@ const WA_ICON = (
 
 const fadeUp = {
   hidden:  { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE_OUT } },
 }
 
 export default function Contact() {
   const { personalInfo, ui, dir } = useContent()
   const t = ui.contact
+  const reduceMotion = useReducedMotion()
 
   const SOCIAL = [
     {
@@ -101,13 +103,40 @@ export default function Contact() {
   const inputClass = (field) =>
     `w-full px-4 py-3.5 bg-white/[0.03] border rounded-xl text-white text-sm font-body placeholder-white/25 focus:outline-none transition-all duration-200 ${
       focus === field
-        ? 'border-white/40 bg-white/[0.06]'
+        ? 'border-[rgba(99,102,241,0.55)] bg-white/[0.06]'
         : 'border-white/10 hover:border-white/20'
     }`
 
+  const inputStyle = (field) =>
+    focus === field ? { boxShadow: `0 0 0 3px rgba(${ACCENT.rgb},0.14)` } : undefined
+
   return (
-    <section id="contact" className="relative py-24 px-5 border-t border-white/10" dir={dir}>
-      <div className="max-w-6xl mx-auto">
+    <section id="contact" className="relative py-28 sm:py-36 px-5 border-t border-white/10 overflow-hidden" dir={dir}>
+      {/* Base — same layered dark treatment as the sections before it, so
+          the closing act reads as the same room, just with the lights
+          brought down slightly. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-ink-950" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 60% 45% at 50% 100%, rgba(255,255,255,0.04) 0%, transparent 70%)' }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="absolute top-[-15%] left-[10%] w-[560px] h-[560px] rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.13) 0%, transparent 70%)`, filter: 'blur(70px)' }}
+        animate={reduceMotion ? undefined : { opacity: [0.45, 0.7, 0.45] }}
+        transition={reduceMotion ? undefined : { duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="absolute bottom-[-20%] right-[5%] w-[440px] h-[440px] rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb2},0.09) 0%, transparent 72%)`, filter: 'blur(70px)' }}
+        animate={reduceMotion ? undefined : { opacity: [0.3, 0.55, 0.3] }}
+        transition={reduceMotion ? undefined : { duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+      />
+
+      <div className="max-w-6xl mx-auto relative">
 
         <SectionMarker index="05" label={t.label} className="mb-14" />
 
@@ -141,7 +170,7 @@ export default function Contact() {
             </motion.div>
 
             {/* 5 social icon buttons */}
-            <motion.div variants={fadeUp} className="grid grid-cols-5 gap-3">
+            <motion.div variants={fadeUp} className="grid grid-cols-5 gap-2.5 sm:gap-3">
               {SOCIAL.map((s, i) => (
                 <MagneticButton
                   as="a"
@@ -152,8 +181,10 @@ export default function Contact() {
                   rel="noopener noreferrer"
                   title={s.label}
                   aria-label={s.label}
+                  whileHover={{ y: -2, boxShadow: `0 8px 24px -6px rgba(${ACCENT.rgb},0.35)` }}
                   whileTap={{ scale: 0.92 }}
-                  className={`flex items-center justify-center aspect-square rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-white/25 ${s.color} transition-colors duration-200`}
+                  transition={{ duration: 0.2 }}
+                  className={`flex items-center justify-center aspect-square rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-[rgba(99,102,241,0.35)] ${s.color} transition-colors duration-200`}
                 >
                   {s.icon}
                 </MagneticButton>
@@ -165,19 +196,24 @@ export default function Contact() {
               variants={fadeUp}
               href={personalInfo.cvPdf}
               download="Tomer_Cohen_Resume.pdf"
-              className="group flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl border border-white/15 bg-white/[0.025] hover:bg-white/[0.055] hover:border-white/30 text-white font-semibold font-body text-sm transition-all duration-200"
+              whileHover={{ y: -2 }}
+              transition={{ duration: 0.2 }}
+              className="group flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl border border-white/15 bg-white/[0.025] hover:bg-white/[0.055] hover:border-[rgba(99,102,241,0.4)] text-white font-semibold font-body text-sm transition-all duration-200"
             >
               <Download size={15} className="text-white/50 group-hover:text-white transition-colors duration-200" />
               {t.downloadCv}
             </motion.a>
           </motion.div>
 
-          {/* RIGHT — Contact form */}
+          {/* RIGHT — Contact form, in a glass panel for the same premium
+              depth as the cards used across the rest of the site. */}
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={fadeUp}
+            className="rounded-3xl border border-white/10 bg-white/[0.025] backdrop-blur-xl p-6 sm:p-8"
+            style={{ boxShadow: `0 24px 70px rgba(0,0,0,0.35), 0 0 0 1px rgba(${ACCENT.rgb},0.06)` }}
           >
             <div className="flex items-center gap-2.5 mb-6">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="#4ade80">
@@ -197,6 +233,7 @@ export default function Contact() {
                   placeholder={t.namePlaceholder}
                   required
                   className={inputClass('name')}
+                  style={inputStyle('name')}
                 />
               </motion.div>
 
@@ -210,6 +247,7 @@ export default function Contact() {
                   placeholder={t.phonePlaceholder}
                   required
                   className={inputClass('phone')}
+                  style={inputStyle('phone')}
                 />
               </motion.div>
 
@@ -223,6 +261,7 @@ export default function Contact() {
                   placeholder={t.msgPlaceholder}
                   required rows={5}
                   className={`${inputClass('message')} resize-none`}
+                  style={inputStyle('message')}
                 />
               </motion.div>
 
@@ -230,13 +269,14 @@ export default function Contact() {
                 as="button"
                 strength={0.15}
                 type="submit"
+                whileHover={{ scale: 1.015 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-semibold font-body text-sm text-white transition-all duration-200"
+                className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-semibold font-body text-sm text-white transition-shadow duration-300"
                 style={{
-                  background: sent
-                    ? 'linear-gradient(135deg,#22c55e,#16a34a)'
-                    : 'linear-gradient(135deg,#25d366,#128c7e)',
-                  boxShadow: sent ? '0 8px 32px rgba(34,197,94,0.3)' : '0 8px 32px rgba(37,211,102,0.3)',
+                  background: `linear-gradient(135deg, rgba(${ACCENT.rgb2},1), rgba(${ACCENT.rgb},1))`,
+                  boxShadow: sent
+                    ? `0 8px 32px rgba(${ACCENT.rgb},0.45)`
+                    : `0 8px 32px rgba(${ACCENT.rgb},0.3)`,
                 }}
               >
                 {sent ? (

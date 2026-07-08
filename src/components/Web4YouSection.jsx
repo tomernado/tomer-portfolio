@@ -3,15 +3,7 @@ import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, use
 import { ExternalLink, Globe, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
 import SectionMarker from './SectionMarker'
-import { ACCENT, VIEWPORT, EASE_OUT } from '../motion'
-
-/* Web4You's own cross-section identity: a left-to-right mask wipe on the
-   heading (distinct from About's settle, Skills' assemble, Projects'
-   converge) — pairs naturally with the sticky panel that follows. */
-const maskReveal = {
-  hidden:  { clipPath: 'inset(0 100% 0 0)' },
-  visible: { clipPath: 'inset(0 0% 0 0)', transition: { duration: 0.9, ease: EASE_OUT } },
-}
+import { ACCENT, VIEWPORT, revealUp, headingReveal } from '../motion'
 
 function StepRow({ step, index, active, onActivate, dir, stepRef }) {
   return (
@@ -31,9 +23,13 @@ function StepRow({ step, index, active, onActivate, dir, stepRef }) {
           x: active ? 0 : -4,
           filter: active ? 'blur(0px)' : 'blur(1.5px)',
         }}
+        whileHover={active ? undefined : { opacity: 0.68, filter: 'blur(0px)' }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
-        <span className={`font-mono text-xs tracking-widest flex-shrink-0 transition-colors duration-300 ${active ? 'text-white' : 'text-white/45'}`}>
+        <span
+          className="font-mono text-xs tracking-widest flex-shrink-0 transition-colors duration-300"
+          style={{ color: active ? ACCENT.css : 'rgba(255,255,255,0.45)' }}
+        >
           {step.number}
         </span>
         <div className="flex-1 min-w-0">
@@ -85,11 +81,14 @@ function MobileStepCarousel({ steps }) {
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: i * 0.05 }}
           >
-            <div className="rounded-2xl overflow-hidden bg-ink-900 relative h-[220px] border border-white/10 mb-4">
+            <div
+              className="rounded-2xl overflow-hidden bg-ink-900 relative h-[220px] border border-white/10 mb-4"
+              style={{ boxShadow: `0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(${ACCENT.rgb},0.06)` }}
+            >
               <img src={step.image} alt={step.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950/50 via-transparent to-transparent" />
             </div>
-            <p className="font-mono text-xs tracking-widest text-white/45 mb-1.5">{step.number}</p>
+            <p className="font-mono text-xs tracking-widest mb-1.5" style={{ color: active === i ? ACCENT.css : 'rgba(255,255,255,0.45)' }}>{step.number}</p>
             <h3 className="font-display font-semibold text-xl text-white tracking-tight mb-1.5">{step.title}</h3>
             <p className="font-body text-sm leading-relaxed text-white/55">{step.description}</p>
           </motion.div>
@@ -158,16 +157,37 @@ export default function Web4YouSection() {
   }, [activeIndex])
 
   return (
-    <section id="web4you" className="relative bg-ink-950 py-28 sm:py-36 px-5">
+    <section id="web4you" className="relative py-28 sm:py-36 px-5 overflow-hidden">
 
+      {/* Base — same layered dark treatment as Skills/Projects' dark
+          passages, so this section reads as part of one continuous
+          system rather than a flatter fill in between them. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-ink-950" />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute"
-        style={{
-          width: 700, height: 700, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)',
-          top: '-10%', right: '-20%',
-        }}
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%)' }}
+      />
+      {/* Soft purple ambient lighting, gently drifting for a slow sense of
+          depth — restrained so it reads as atmosphere, not a spotlight. */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute -top-24 -right-24 w-[620px] h-[620px] rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.14) 0%, transparent 70%)`, filter: 'blur(70px)' }}
+        animate={reduceMotion ? undefined : { opacity: [0.5, 0.8, 0.5], x: [0, -18, 0] }}
+        transition={reduceMotion ? undefined : { duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="absolute bottom-[-10%] -left-32 w-[480px] h-[480px] rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb2},0.08) 0%, transparent 72%)`, filter: 'blur(70px)' }}
+        animate={reduceMotion ? undefined : { opacity: [0.35, 0.6, 0.35], x: [0, 16, 0] }}
+        transition={reduceMotion ? undefined : { duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 85% 60% at 50% 40%, transparent 55%, rgba(0,0,0,0.3) 100%)' }}
       />
 
       <div className="max-w-6xl mx-auto relative">
@@ -177,19 +197,22 @@ export default function Web4YouSection() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-16">
           <motion.h2
             initial="hidden" whileInView="visible" viewport={VIEWPORT}
-            variants={maskReveal}
+            variants={headingReveal}
             className="font-display font-bold text-white tracking-tight"
             style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
           >
-            Web4You
+            Web4You<span style={{ color: ACCENT.css }}>.</span>
           </motion.h2>
           <motion.a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.03 }}
+            initial="hidden" whileInView="visible" viewport={VIEWPORT}
+            variants={revealUp}
+            whileHover={{ scale: 1.03, boxShadow: `0 8px 32px -6px rgba(${ACCENT.rgb},0.5)` }}
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-white/90 text-black rounded-full font-body font-semibold text-xs sm:text-sm transition-colors duration-200 w-fit"
+            style={{ boxShadow: '0 4px 20px -6px rgba(0,0,0,0.4)' }}
           >
             <Globe size={14} />
             {ui.web4you.ctaButton}
@@ -229,10 +252,18 @@ export default function Web4YouSection() {
               and fully readable for the whole time it's pinned — no matter
               how tall the left column's content ends up being. */}
           <div className="sticky top-0 h-screen flex items-center py-10">
-            <div className="w-full">
+            <div className="w-full relative">
+              {/* Ambient purple glow seated behind the panel — echoes the
+                  card glow used across Projects/Skills for one continuous
+                  "premium depth" language. */}
+              <div
+                aria-hidden="true"
+                className="absolute -inset-6 rounded-[2rem] pointer-events-none"
+                style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(${ACCENT.rgb},0.16) 0%, transparent 70%)`, filter: 'blur(30px)' }}
+              />
               <div
                 className="w-full rounded-2xl overflow-hidden bg-ink-900 relative h-[min(52vh,440px)] border border-white/10"
-                style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.6)' }}
+                style={{ boxShadow: `0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(${ACCENT.rgb},0.08)` }}
               >
                 <AnimatePresence mode="wait">
                   <motion.img
