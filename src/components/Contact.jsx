@@ -122,7 +122,7 @@ export default function Contact() {
     focus === field ? { boxShadow: `0 0 0 3px rgba(${ACCENT.rgb},0.14)` } : undefined
 
   return (
-    <section id="contact" className="relative py-28 sm:py-36 px-5 border-t border-white/10 overflow-hidden" dir={dir}>
+    <section id="contact" className="relative py-28 sm:py-36 px-5 overflow-hidden" dir={dir}>
       {/* Base — same layered dark treatment as the sections before it, so
           the closing act reads as the same room, just with the lights
           brought down slightly. */}

@@ -22,7 +22,7 @@ const VP_ONCE_40 = { once: true, amount: 0.4 }
 
 /* Shared glass treatment for every social pill — one definition so all
    four buttons stay visually identical. */
-const SOCIAL_BTN_CLASS = 'inline-flex items-center gap-2 pl-3.5 pr-4 py-2 rounded-full border border-white/10 bg-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/55 font-mono text-[12.5px] tracking-wide hover:text-white hover:bg-white/[0.08] hover:border-violet-300/25 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950'
+const SOCIAL_BTN_CLASS = 'inline-flex items-center gap-2 pl-3.5 pr-4 py-2 rounded-full border border-white/10 bg-black/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/55 font-mono text-[12.5px] tracking-wide hover:text-white hover:bg-black/45 hover:border-violet-300/25 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950'
 
 /* ── The living scene's floating cards — real projects, real stack,
    styled as small premium product-UI widgets (icon badge, title,
@@ -627,13 +627,13 @@ export default function Hero() {
               {/* Breathing purple glow ring behind the avatar */}
               <motion.div
                 aria-hidden="true"
-                className="absolute -inset-2.5 rounded-full pointer-events-none"
+                className="absolute -inset-2.5 lg:-inset-3 rounded-full pointer-events-none"
                 style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.45) 0%, transparent 70%)', filter: 'blur(11px)' }}
                 animate={reduceMotion ? {} : { opacity: [0.5, 0.95, 0.5], scale: [1, 1.1, 1] }}
                 transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
               />
               <motion.span
-                className="relative block w-[66px] h-[66px] rounded-full overflow-hidden ring-1 ring-white/20"
+                className="relative block w-[66px] h-[66px] lg:w-[92px] lg:h-[92px] rounded-full overflow-hidden ring-1 ring-white/20"
                 style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.05), 0 8px 24px -4px rgba(168,85,247,0.45)' }}
                 animate={reduceMotion ? {} : { y: [0, -4, 0] }}
                 transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
@@ -660,7 +660,7 @@ export default function Hero() {
               className="absolute -inset-x-6 -inset-y-4 -z-10 pointer-events-none"
               style={{ background: 'radial-gradient(ellipse 65% 80% at 20% 50%, rgba(168,85,247,0.22), transparent 72%)', filter: 'blur(22px)' }}
             />
-            <h1 className="font-display font-bold leading-[1.04] tracking-tight text-[2.75rem] sm:text-6xl lg:text-[4.25rem]">
+            <h1 className="font-display font-bold leading-[1.04] tracking-tight text-[2.75rem] sm:text-6xl lg:text-[5.5rem]">
               {(() => {
                 const words = personalInfo.name.split(' ')
                 const last = words[words.length - 1]
@@ -716,7 +716,7 @@ export default function Hero() {
             </MagneticButton>
           </motion.div>
 
-          <motion.div variants={revealUp} dir="ltr" className="flex items-center justify-center lg:justify-start flex-wrap gap-3">
+          <motion.div variants={revealUp} dir="ltr" className={`flex items-center justify-center flex-wrap gap-3 ${dir === 'rtl' ? 'lg:justify-end' : 'lg:justify-start'}`}>
             <MagneticButton as="a" strength={0.35} href={personalInfo.github} target="_blank" rel="noopener noreferrer" className={SOCIAL_BTN_CLASS}>
               <Github size={14} /> GitHub
             </MagneticButton>

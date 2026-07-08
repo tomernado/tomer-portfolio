@@ -240,7 +240,7 @@ function FeaturedCard({ project, i, delta, onSelect }) {
             <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent pointer-events-none lg:hidden" />
           </button>
 
-          <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-ink-950 min-h-[260px] lg:min-h-[420px]" dir="rtl">
+          <div className="p-5 sm:p-8 lg:p-12 flex flex-col justify-center bg-ink-950 min-h-[220px] lg:min-h-[420px]" dir="rtl">
             <h3 className="font-display font-bold text-white tracking-tight leading-[1.05] mb-2" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>
               {name}
             </h3>
@@ -330,7 +330,7 @@ function FeaturedCarousel({ projects, onSelect, index, setIndex }) {
     >
       <div className="max-w-6xl mx-auto relative">
       <div
-        className="relative h-[640px] lg:h-[460px] overflow-visible"
+        className="relative h-[530px] lg:h-[460px] overflow-visible"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
