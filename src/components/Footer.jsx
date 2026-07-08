@@ -5,7 +5,7 @@ import MagneticButton from './MagneticButton'
 export default function Footer() {
   const { personalInfo, ui } = useContent()
   return (
-    <footer className="relative py-10 px-5 border-t border-white/10">
+    <footer className="relative py-10 px-5 border-t border-white/10 bg-ink-950">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5">
 
         {/* Logo */}

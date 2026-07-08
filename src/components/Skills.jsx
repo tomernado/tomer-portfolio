@@ -12,6 +12,10 @@ import SpotlightCard from './SpotlightCard'
 import SectionMarker from './SectionMarker'
 import Particles from './Particles'
 import { ACCENT, headingReveal, revealUp, VIEWPORT, EASE_OUT } from '../motion'
+import { useIsDesktop } from '../hooks/useIsDesktop'
+
+// Stable viewport-option object — see About.jsx for why this matters.
+const VP_ONCE_M50 = { once: true, margin: '-50px' }
 
 const TAB_FILES = {
   Languages: 'languages.ts',
@@ -125,7 +129,7 @@ function SkillCard({ group, wide = false, index = 0 }) {
             className="flex flex-wrap gap-2"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={VP_ONCE_M50}
             variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } } }}
           >
             {group.items.map((item) => {
@@ -160,6 +164,11 @@ function SkillCard({ group, wide = false, index = 0 }) {
 export default function Skills() {
   const [primary, ...rest] = skills
   const reduceMotion = useReducedMotion()
+  // Animated `filter: blur()` glow layers are expensive to composite —
+  // stacked across sections they're what caused Mobile Safari to
+  // repeatedly crash the page. Desktop only; mobile just skips them
+  // rather than rendering a static (still costly) blurred layer.
+  const isDesktop = useIsDesktop()
 
   return (
     <section id="skills" className="py-28 sm:py-36 px-5 relative overflow-hidden" dir="ltr">
@@ -175,20 +184,24 @@ export default function Skills() {
       {/* Soft purple ambient lighting — top-left and a faint echo on the
           right, both low-opacity so they read as atmosphere rather than
           a competing glow. */}
-      <motion.div
-        aria-hidden="true"
-        className="absolute -top-32 -left-32 w-[620px] h-[620px] rounded-full pointer-events-none"
-        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.16) 0%, transparent 70%)`, filter: 'blur(60px)' }}
-        animate={reduceMotion ? undefined : { opacity: [0.55, 0.85, 0.55] }}
-        transition={reduceMotion ? undefined : { duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        aria-hidden="true"
-        className="absolute top-[20%] -right-40 w-[480px] h-[480px] rounded-full pointer-events-none"
-        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.1) 0%, transparent 72%)`, filter: 'blur(60px)' }}
-        animate={reduceMotion ? undefined : { opacity: [0.4, 0.65, 0.4] }}
-        transition={reduceMotion ? undefined : { duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-      />
+      {isDesktop && (
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="absolute -top-32 -left-32 w-[620px] h-[620px] rounded-full pointer-events-none"
+            style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.16) 0%, transparent 70%)`, filter: 'blur(60px)' }}
+            animate={reduceMotion ? undefined : { opacity: [0.55, 0.85, 0.55] }}
+            transition={reduceMotion ? undefined : { duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="absolute top-[20%] -right-40 w-[480px] h-[480px] rounded-full pointer-events-none"
+            style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.1) 0%, transparent 72%)`, filter: 'blur(60px)' }}
+            animate={reduceMotion ? undefined : { opacity: [0.4, 0.65, 0.4] }}
+            transition={reduceMotion ? undefined : { duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+          />
+        </>
+      )}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"

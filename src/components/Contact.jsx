@@ -5,6 +5,13 @@ import { useContent } from '../context/LanguageContext'
 import MagneticButton from './MagneticButton'
 import SectionMarker from './SectionMarker'
 import { VIEWPORT, EASE_OUT, ACCENT } from '../motion'
+import { useIsDesktop } from '../hooks/useIsDesktop'
+
+// Stable viewport-option object — see About.jsx for why this matters:
+// Contact re-renders on every keystroke (form state), and a fresh inline
+// `viewport={{...}}` literal breaks whileInView's IntersectionObserver
+// subscription, leaving content stuck invisible.
+const VP_ONCE_20 = { once: true, amount: 0.2 }
 
 /* Contact's own cross-section identity: a spotlight-style scale-up-from-
    center arrival — this is the closing act of the journey, so it should
@@ -50,6 +57,10 @@ export default function Contact() {
   const { personalInfo, ui, dir } = useContent()
   const t = ui.contact
   const reduceMotion = useReducedMotion()
+  // Animated `filter: blur()` glow layers are expensive to composite —
+  // stacked across sections they're what caused Mobile Safari to
+  // repeatedly crash the page. Desktop only.
+  const isDesktop = useIsDesktop()
 
   const SOCIAL = [
     {
@@ -121,20 +132,24 @@ export default function Contact() {
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'radial-gradient(ellipse 60% 45% at 50% 100%, rgba(255,255,255,0.04) 0%, transparent 70%)' }}
       />
-      <motion.div
-        aria-hidden="true"
-        className="absolute top-[-15%] left-[10%] w-[560px] h-[560px] rounded-full pointer-events-none"
-        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.13) 0%, transparent 70%)`, filter: 'blur(70px)' }}
-        animate={reduceMotion ? undefined : { opacity: [0.45, 0.7, 0.45] }}
-        transition={reduceMotion ? undefined : { duration: 11, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        aria-hidden="true"
-        className="absolute bottom-[-20%] right-[5%] w-[440px] h-[440px] rounded-full pointer-events-none"
-        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb2},0.09) 0%, transparent 72%)`, filter: 'blur(70px)' }}
-        animate={reduceMotion ? undefined : { opacity: [0.3, 0.55, 0.3] }}
-        transition={reduceMotion ? undefined : { duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-      />
+      {isDesktop && (
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="absolute top-[-15%] left-[10%] w-[560px] h-[560px] rounded-full pointer-events-none"
+            style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.13) 0%, transparent 70%)`, filter: 'blur(70px)' }}
+            animate={reduceMotion ? undefined : { opacity: [0.45, 0.7, 0.45] }}
+            transition={reduceMotion ? undefined : { duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="absolute bottom-[-20%] right-[5%] w-[440px] h-[440px] rounded-full pointer-events-none"
+            style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb2},0.09) 0%, transparent 72%)`, filter: 'blur(70px)' }}
+            animate={reduceMotion ? undefined : { opacity: [0.3, 0.55, 0.3] }}
+            transition={reduceMotion ? undefined : { duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+          />
+        </>
+      )}
 
       <div className="max-w-6xl mx-auto relative">
 
@@ -155,7 +170,7 @@ export default function Contact() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={VP_ONCE_20}
             variants={{ visible: { transition: { staggerChildren: 0.09 } } }}
             className="flex flex-col gap-7"
           >
@@ -210,7 +225,7 @@ export default function Contact() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={VP_ONCE_20}
             variants={fadeUp}
             className="rounded-3xl border border-white/10 bg-white/[0.025] backdrop-blur-xl p-6 sm:p-8"
             style={{ boxShadow: `0 24px 70px rgba(0,0,0,0.35), 0 0 0 1px rgba(${ACCENT.rgb},0.06)` }}

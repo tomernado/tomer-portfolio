@@ -4,6 +4,11 @@ import { ExternalLink, Globe, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useContent } from '../context/LanguageContext'
 import SectionMarker from './SectionMarker'
 import { ACCENT, VIEWPORT, revealUp, headingReveal } from '../motion'
+import { useIsDesktop } from '../hooks/useIsDesktop'
+
+// Stable viewport-option object — see About.jsx for why this matters:
+// MobileStepCarousel re-renders on every scroll tick (active-index state).
+const VP_ONCE_40 = { once: true, amount: 0.4 }
 
 function StepRow({ step, index, active, onActivate, dir, stepRef }) {
   return (
@@ -78,7 +83,7 @@ function MobileStepCarousel({ steps }) {
             style={{ scrollSnapAlign: 'center' }}
             initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            viewport={{ once: true, amount: 0.4 }}
+            viewport={VP_ONCE_40}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: i * 0.05 }}
           >
             <div
@@ -127,6 +132,10 @@ export default function Web4YouSection() {
   const stepRefs = useRef([])
   const stepsContainerRef = useRef(null)
   const reduceMotion = useReducedMotion()
+  // Animated `filter: blur()` glow layers are expensive to composite —
+  // stacked across sections they're what caused Mobile Safari to
+  // repeatedly crash the page. Desktop only.
+  const isDesktop = useIsDesktop()
 
   // Preload all step images so they're ready before the user scrolls into view
   useEffect(() => {
@@ -157,38 +166,45 @@ export default function Web4YouSection() {
   }, [activeIndex])
 
   return (
-    <section id="web4you" className="relative py-28 sm:py-36 px-5 overflow-hidden">
+    <section id="web4you" className="relative py-28 sm:py-36 px-5">
 
-      {/* Base — same layered dark treatment as Skills/Projects' dark
-          passages, so this section reads as part of one continuous
-          system rather than a flatter fill in between them. */}
-      <div aria-hidden="true" className="absolute inset-0 bg-ink-950" />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%)' }}
-      />
-      {/* Soft purple ambient lighting, gently drifting for a slow sense of
-          depth — restrained so it reads as atmosphere, not a spotlight. */}
-      <motion.div
-        aria-hidden="true"
-        className="absolute -top-24 -right-24 w-[620px] h-[620px] rounded-full pointer-events-none"
-        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.14) 0%, transparent 70%)`, filter: 'blur(70px)' }}
-        animate={reduceMotion ? undefined : { opacity: [0.5, 0.8, 0.5], x: [0, -18, 0] }}
-        transition={reduceMotion ? undefined : { duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        aria-hidden="true"
-        className="absolute bottom-[-10%] -left-32 w-[480px] h-[480px] rounded-full pointer-events-none"
-        style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb2},0.08) 0%, transparent 72%)`, filter: 'blur(70px)' }}
-        animate={reduceMotion ? undefined : { opacity: [0.35, 0.6, 0.35], x: [0, 16, 0] }}
-        transition={reduceMotion ? undefined : { duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-      />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse 85% 60% at 50% 40%, transparent 55%, rgba(0,0,0,0.3) 100%)' }}
-      />
+      {/* Background layer lives in its own clipped, absolutely-positioned
+          box — kept OUT of the sticky panel's ancestor chain below, since
+          an `overflow-hidden` ancestor breaks `position: sticky` (it was
+          on the <section> itself here previously, which silently killed
+          the pinned-image scroll effect). */}
+      <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Base — same layered dark treatment as Skills/Projects' dark
+            passages, so this section reads as part of one continuous
+            system rather than a flatter fill in between them. */}
+        <div className="absolute inset-0 bg-ink-950" />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%)' }}
+        />
+        {/* Soft purple ambient lighting, gently drifting for a slow sense of
+            depth — restrained so it reads as atmosphere, not a spotlight. */}
+        {isDesktop && (
+          <>
+            <motion.div
+              className="absolute -top-24 -right-24 w-[620px] h-[620px] rounded-full"
+              style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb},0.14) 0%, transparent 70%)`, filter: 'blur(70px)' }}
+              animate={reduceMotion ? undefined : { opacity: [0.5, 0.8, 0.5], x: [0, -18, 0] }}
+              transition={reduceMotion ? undefined : { duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+              className="absolute bottom-[-10%] -left-32 w-[480px] h-[480px] rounded-full"
+              style={{ background: `radial-gradient(circle, rgba(${ACCENT.rgb2},0.08) 0%, transparent 72%)`, filter: 'blur(70px)' }}
+              animate={reduceMotion ? undefined : { opacity: [0.35, 0.6, 0.35], x: [0, 16, 0] }}
+              transition={reduceMotion ? undefined : { duration: 13, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+            />
+          </>
+        )}
+        <div
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse 85% 60% at 50% 40%, transparent 55%, rgba(0,0,0,0.3) 100%)' }}
+        />
+      </div>
 
       <div className="max-w-6xl mx-auto relative">
 

@@ -13,6 +13,13 @@ import EngineeringCore from './EngineeringCore'
 import OrbitSystem from './OrbitSystem'
 import CvModal from './CvModal'
 
+// Stable viewport-option objects — see About.jsx for why this matters:
+// Hero re-renders every 2.8s (role-text rotation), and a fresh inline
+// `viewport={{...}}` literal on that cadence breaks whileInView's
+// IntersectionObserver subscription, leaving content stuck invisible.
+const VP_ONCE = { once: true }
+const VP_ONCE_40 = { once: true, amount: 0.4 }
+
 /* Shared glass treatment for every social pill — one definition so all
    four buttons stay visually identical. */
 const SOCIAL_BTN_CLASS = 'inline-flex items-center gap-2 pl-3.5 pr-4 py-2 rounded-full border border-white/10 bg-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] text-white/55 font-mono text-[12.5px] tracking-wide hover:text-white hover:bg-white/[0.08] hover:border-violet-300/25 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950'
@@ -331,7 +338,7 @@ function CardBody({ card, reduceMotion }) {
               className="h-full rounded-full bg-gradient-to-r from-sky-400 to-sky-300"
               initial={{ width: 0 }}
               whileInView={{ width: '87%' }}
-              viewport={{ once: true }}
+              viewport={VP_ONCE}
               transition={{ duration: 1.1, delay: 1, ease: EASE_OUT }}
             />
           </div>
@@ -367,7 +374,7 @@ function SceneCard({ card, index, smx, smy, reduceMotion }) {
       className={`absolute ${card.className}`}
       initial={{ opacity: 0, y: 40, scale: 0.92 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.4 }}
+      viewport={VP_ONCE_40}
       transition={{ duration: 0.8, delay: 0.7 + index * 0.13, ease: EASE_OUT }}
     >
       {/* Layer 2: mouse-parallax drift, driven entirely by external motion values. */}

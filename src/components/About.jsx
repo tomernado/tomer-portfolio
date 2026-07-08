@@ -6,6 +6,15 @@ import CvModal from './CvModal'
 import SpotlightCard from './SpotlightCard'
 import { revealUp, cardReveal, staggerContainer, VIEWPORT, EASE_OUT } from '../motion'
 
+// Stable viewport-option objects — module scope so the reference never
+// changes across renders. A fresh inline `{...}` literal recreated on every
+// render silently breaks whileInView's IntersectionObserver subscription
+// whenever the parent re-renders on a timer/state change, leaving the
+// element stuck invisible (found the hard way in Web4You/Projects).
+const VP_ONCE = { once: true }
+const VP_ONCE_30 = { once: true, amount: 0.3 }
+const VP_ONCE_40 = { once: true, amount: 0.4 }
+
 // Local purple, matching the Hero's own Engineering Core palette exactly
 // (rather than the site-wide indigo ACCENT) so the Hero → About seam
 // reads as one continuous light source, not a handoff between palettes.
@@ -262,7 +271,7 @@ export default function About() {
                 ref={bioRef}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={VP_ONCE}
                 variants={blurRevealSm}
                 transition={{ delay: 0.1 }}
                 onClick={finish}
@@ -284,7 +293,7 @@ export default function About() {
               <motion.button
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={VP_ONCE}
                 variants={blurRevealSm}
                 transition={{ delay: 0.2 }}
                 onClick={() => setCvOpen(true)}
@@ -380,7 +389,7 @@ export default function About() {
                   key={exp.id}
                   initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
                   whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  viewport={{ once: true, amount: 0.3 }}
+                  viewport={VP_ONCE_30}
                   transition={{ duration: 0.55, delay: i * 0.1, ease: EASE_OUT }}
                   className={`relative ${i !== aboutData.experience.length - 1 ? 'pb-10 sm:pb-12' : ''}`}
                 >
@@ -465,7 +474,7 @@ function StatsRow({ ui, onEnter, statsInView }) {
       initial="hidden"
       whileInView="visible"
       onViewportEnter={onEnter}
-      viewport={{ once: true, amount: 0.4 }}
+      viewport={VP_ONCE_40}
       variants={staggerContainer(0.1, 0)}
       className="grid grid-cols-3 gap-3"
     >

@@ -517,7 +517,7 @@ export default function ProjectsGrid() {
             key={gridProjects.length}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={VIEWPORT}
             variants={staggerContainer(0.06, 0)}
             className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 mb-12"
           >
