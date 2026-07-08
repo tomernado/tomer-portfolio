@@ -403,6 +403,23 @@ export default function Hero() {
   const [cvOpen, setCvOpen] = useState(false)
   const reduceMotion = useReducedMotion()
 
+  // The floating-card/orbit/energy-core scene is a purely decorative,
+  // JS-animation-heavy subtree (dozens of concurrent framer-motion loops).
+  // It's already visually a desktop composition (the grid only splits into
+  // two columns at lg:), but without also skipping the *mount* on smaller
+  // screens those animations keep running off-screen and can seriously
+  // bog down weaker/mobile CPUs. Gate the actual render, not just layout,
+  // at the same lg: breakpoint the grid itself uses.
+  const [showScene, setShowScene] = useState(() =>
+    typeof window === 'undefined' ? true : window.matchMedia('(min-width: 1024px)').matches
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const onChange = (e) => setShowScene(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   const sectionRef = useRef(null)
 
   const mx = useMotionValue(0)
@@ -689,7 +706,13 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* ── RIGHT — EngineeringScene ─────────────────────────────── */}
+        {/* ── RIGHT — EngineeringScene ─────────────────────────────────
+            Only mounted at lg: and up — see the showScene comment above.
+            On mobile this whole subtree (orbit rings, energy core,
+            connection lines, floating cards, its own particle layer) is
+            skipped entirely, not just visually hidden, so none of its
+            ~30 concurrent animations run on weaker devices. ──────────── */}
+        {showScene && (
         <motion.div
           style={reduceMotion ? {} : { y: sceneY }}
           initial={{ opacity: 0 }}
@@ -768,6 +791,7 @@ export default function Hero() {
             ))}
           </div>
         </motion.div>
+        )}
       </div>
 
 
