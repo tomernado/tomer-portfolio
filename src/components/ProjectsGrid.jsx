@@ -1,24 +1,85 @@
-import { useState, useRef, useLayoutEffect, useEffect } from 'react'
-import { motion, AnimatePresence, useMotionValue, useSpring, useAnimationFrame, useReducedMotion } from 'framer-motion'
-import { Play, X, Github, Linkedin, ExternalLink, Globe, Pause } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import {
+  X, Github, Linkedin, ExternalLink, Globe, ChevronLeft, ChevronRight,
+  Sparkles, Zap, Cloud, Activity, Layers, FileSearch, Gamepad2, Languages,
+  ShoppingCart, Brain, ShieldCheck, Lock, Box, LayoutGrid, Network, Server,
+} from 'lucide-react'
+import { SiReact, SiNodedotjs, SiJavascript, SiDocker, SiMysql } from 'react-icons/si'
+import { DiJava } from 'react-icons/di'
+import { TbBrandCSharp } from 'react-icons/tb'
 import { useContent } from '../context/LanguageContext'
-import SpotlightCard from './SpotlightCard'
 import MagneticButton from './MagneticButton'
-import SectionMarker from './SectionMarker'
 import BorderBeam from './BorderBeam'
-import { headingReveal, revealUp, revealLeft, revealRight, VIEWPORT, ACCENT } from '../motion'
+import { headingReveal, revealUp, cardReveal, staggerContainer, VIEWPORT, ACCENT, EASE_OUT } from '../motion'
 
-/* ─── Card size configs ────────────────────────────────────────────── */
-const CARD_SIZES = [
-  { w: 'w-[320px]', h: 'h-[280px]', mediaH: 'h-44' },
-  { w: 'w-[400px]', h: 'h-[300px]', mediaH: 'h-48' },
-  { w: 'w-[350px]', h: 'h-[260px]', mediaH: 'h-40' },
-  { w: 'w-[420px]', h: 'h-[310px]', mediaH: 'h-48' },
-  { w: 'w-[360px]', h: 'h-[270px]', mediaH: 'h-44' },
-  { w: 'w-[390px]', h: 'h-[290px]', mediaH: 'h-44' },
-]
+/* Bright section tone, matching About's "black cards on white" language —
+   Projects sits between two other sections that already made this switch,
+   so it keeps the site's rhythm rather than reverting to a dark panel. */
+const BG_TOP = '#ffffff'
+const BG_MID = '#f8f7fb'
+const BG_LOW = '#f3f1f8'
+const CARD_DARK = '#0c0c10'
+const CARD_DARK_2 = '#08080b'
 
-/* ─── Modal variants ──────────────────────────────────────────────── */
+/* The handful of projects given the spotlight here — everything else in
+   the data stays reserved for the future full Projects page. */
+const FEATURED_SET = [8, 11, 10, 9, 7, 6]
+
+/* Tags are derived from each project's own description (see content.js) —
+   this just maps them to a recognizable mark. Concept tags without a real
+   logo fall back to a plain purple icon rather than a brand mark. */
+const TAG_ICON = {
+  React:               [SiReact, '#61DAFB'],
+  'Node.js':            [SiNodedotjs, '#5FA04E'],
+  JavaScript:          [SiJavascript, '#F7DF1E'],
+  Docker:              [SiDocker, '#2496ED'],
+  AI:                  [Sparkles, '#c4b5fd'],
+  Automation:          [Zap, '#c4b5fd'],
+  Cloud:               [Cloud, '#c4b5fd'],
+  'Real-Time':          [Activity, '#c4b5fd'],
+  'Full-Stack':         [Layers, '#c4b5fd'],
+  'Document Analysis':  [FileSearch, '#c4b5fd'],
+  Animation:           [Sparkles, '#c4b5fd'],
+  Game:                [Gamepad2, '#c4b5fd'],
+  RTL:                 [Languages, '#c4b5fd'],
+  'E-Commerce':         [ShoppingCart, '#c4b5fd'],
+  'Machine Learning':   [Brain, '#c4b5fd'],
+  MySQL:               [SiMysql, '#4479A1'],
+  JWT:                 [ShieldCheck, '#c4b5fd'],
+  Security:            [Lock, '#c4b5fd'],
+  'C#':                 [TbBrandCSharp, '#9b4f96'],
+  OOP:                 [Box, '#c4b5fd'],
+  'Design Patterns':    [LayoutGrid, '#c4b5fd'],
+  Java:                [DiJava, '#f89820'],
+  Networking:          [Network, '#c4b5fd'],
+  'Web Development':    [Globe, '#c4b5fd'],
+  'Client-Server':      [Server, '#c4b5fd'],
+  Games:               [Gamepad2, '#c4b5fd'],
+}
+
+/* Most project titles follow a "Name — Subtitle" convention; split it so
+   the subtitle can be styled as its own line, falling back gracefully
+   when a title doesn't use the pattern. */
+function splitTitle(title) {
+  const parts = title.split(' — ')
+  return parts.length === 2 ? { name: parts[0], subtitle: parts[1] } : { name: title, subtitle: null }
+}
+
+function TagPill({ tag, compact = false }) {
+  const [Icon, color] = TAG_ICON[tag] ?? [Sparkles, '#c4b5fd']
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.04] text-white/65 font-mono ${compact ? 'px-2 py-1 text-[9px]' : 'px-2.5 py-1 text-[10.5px]'}`}
+    >
+      <Icon size={compact ? 10 : 12} style={{ color, flexShrink: 0 }} />
+      {tag}
+    </span>
+  )
+}
+
+/* ─── Project modal — unchanged (still dark; it's a full-screen overlay,
+   not part of the section's own background) ──────────────────────────── */
 const backdropV = {
   hidden:  { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.22 } },
@@ -32,77 +93,6 @@ const modalV = {
               transition: { duration: 0.2, ease: 'easeIn' } },
 }
 
-/* ─── Single project card ─────────────────────────────────────────── */
-function ProjectCard({ project, sizeConfig, onClick, hidden }) {
-  const { ui } = useContent()
-  const reduceMotion = useReducedMotion()
-  const rotateX = useSpring(0, { stiffness: 220, damping: 18, mass: 0.5 })
-  const rotateY = useSpring(0, { stiffness: 220, damping: 18, mass: 0.5 })
-
-  const onMove = (e) => {
-    if (reduceMotion) return
-    const rect = e.currentTarget.getBoundingClientRect()
-    rotateY.set(((e.clientX - rect.left) / rect.width - 0.5) * 8)
-    rotateX.set(-((e.clientY - rect.top) / rect.height - 0.5) * 8)
-  }
-  const onLeave = () => { rotateX.set(0); rotateY.set(0) }
-
-  return (
-    <motion.button
-      onClick={onClick}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      tabIndex={hidden ? -1 : 0}
-      aria-hidden={hidden || undefined}
-      style={{ rotateX, rotateY, transformPerspective: 800 }}
-      whileHover={{ y: -6, borderColor: 'rgba(255,255,255,0.32)' }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.2 }}
-      className={`group relative flex-shrink-0 ${sizeConfig.w} ${sizeConfig.h} text-right overflow-hidden bg-ink-900 sm:bg-white/[0.035] sm:backdrop-blur-xl border border-white/10 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 will-change-transform`}
-    >
-      {/* Shimmer top edge */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent z-10" />
-
-      {/* Media */}
-      <div className={`relative ${sizeConfig.mediaH} overflow-hidden bg-ink-900`}>
-        {project.mediaType === 'video' ? (
-          <>
-            <video
-              src={project.media}
-              autoPlay loop muted playsInline
-              preload="metadata"
-              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-600"
-            />
-            <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 bg-black/70 backdrop-blur-sm rounded-full border border-white/10 z-10">
-              <Play size={8} fill="white" className="text-white" />
-              <span className="font-mono text-white text-[8px] tracking-widest font-bold">VIDEO</span>
-            </div>
-          </>
-        ) : (
-          <img src={project.media} alt={project.title}
-            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-600" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
-      </div>
-
-      {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-4">
-        <h3 className="font-body font-bold text-white text-sm leading-snug mb-1 transition-colors duration-200 line-clamp-1">
-          {project.title}
-        </h3>
-        <p className="font-body text-white/45 text-xs leading-relaxed line-clamp-2">
-          {project.description}
-        </p>
-        <div className="mt-2 flex items-center justify-start gap-1 text-white/60">
-          <ExternalLink size={10} />
-          <span className="font-mono text-[9px] tracking-widest uppercase">{ui.projects.cardCta}</span>
-        </div>
-      </div>
-    </motion.button>
-  )
-}
-
-/* ─── Project modal ───────────────────────────────────────────────── */
 function ProjectModal({ project, onClose }) {
   return (
     <AnimatePresence>
@@ -178,12 +168,14 @@ function ProjectModal({ project, onClose }) {
                         className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/15 text-white rounded-xl text-sm font-semibold font-body transition-colors duration-150">
                         <Github size={15} /> GitHub
                       </MagneticButton>
-                      <MagneticButton as="a" strength={0.2} href={project.linkedinPost} target="_blank" rel="noopener noreferrer"
-                        whileHover={{ borderColor: 'rgba(255,255,255,0.4)' }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/15 text-white rounded-xl text-sm font-semibold font-body transition-colors duration-150">
-                        <Linkedin size={15} /> LinkedIn Post
-                      </MagneticButton>
+                      {project.linkedinPost && (
+                        <MagneticButton as="a" strength={0.2} href={project.linkedinPost} target="_blank" rel="noopener noreferrer"
+                          whileHover={{ borderColor: 'rgba(255,255,255,0.4)' }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/15 text-white rounded-xl text-sm font-semibold font-body transition-colors duration-150">
+                          <Linkedin size={15} /> LinkedIn Post
+                        </MagneticButton>
+                      )}
                     </motion.div>
                   </div>
                 </div>
@@ -196,243 +188,234 @@ function ProjectModal({ project, onClose }) {
   )
 }
 
-/* ─── Seamless JS-driven marquee row ──────────────────────────────── */
-const SPEED  = 0.09   // px per ms
-const COPIES = 4      // repetitions — keeps the track wide enough on any screen
+/* ─── Featured carousel — a reliable, state-driven stack. Every card is
+   always mounted and absolutely centered; only its transform/opacity
+   change based on distance from the active index, animated by Framer
+   rather than raw scroll position (which proved fragile — scroll-snap
+   fighting live transform writes made it feel stuck / unresponsive).
+   Auto-advances on a timer, pauses on hover/touch, and can be driven by
+   the arrow buttons, the dots, or a swipe on mobile. ─────────────────── */
+const AUTO_ADVANCE_MS = 5000
 
-function MarqueeRow({ items, direction = 'left' }) {
-  const reduceMotion = useReducedMotion()
-  // Repeat items COPIES times so the track is always several viewports wide.
-  // Only the first copy stays reachable/announced; the rest are duplicates
-  // purely for the seamless loop and are hidden from keyboard/AT users.
-  const repeated = Array.from({ length: COPIES }, (_, copyIdx) =>
-    items.map((it) => ({ ...it, hidden: copyIdx > 0 }))
-  ).flat()
-
-  const trackRef = useRef(null)
-  const x        = useMotionValue(0)
-  const paused   = useRef(false)
-  const started  = useRef(false)
-  const [isPaused, setIsPaused] = useState(false)
-
-  useEffect(() => {
-    const t = setTimeout(() => { started.current = true }, 900)
-    return () => clearTimeout(t)
-  }, [])
-
-  useEffect(() => { paused.current = isPaused }, [isPaused])
-
-  // Touch drag state
-  const touchStartX  = useRef(null)
-  const touchStartY  = useRef(null)
-  const touchStartVal = useRef(0)
-  const isHorizontalSwipe = useRef(false)
-
-  // For 'right' direction start shifted left by one unit so motion is rightward
-  useLayoutEffect(() => {
-    if (!trackRef.current || direction !== 'right') return
-    x.set(-(trackRef.current.scrollWidth / COPIES))
-  }, [direction, x])
-
-  useAnimationFrame((_, delta) => {
-    if (reduceMotion || !started.current || paused.current || !trackRef.current) return
-    const unit = trackRef.current.scrollWidth / COPIES  // width of one set of items
-    if (unit <= 0) return
-    const step = SPEED * Math.min(delta, 50)
-    let next = x.get() + (direction === 'left' ? -step : step)
-    // Wrap to keep within [-unit, 0] — the seamless loop window
-    if (next <= -unit) next += unit
-    if (next > 0)      next -= unit
-    x.set(next)
-  })
-
-  const onTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX
-    touchStartY.current = e.touches[0].clientY
-    touchStartVal.current = x.get()
-    isHorizontalSwipe.current = false
-  }
-
-  const onTouchMove = (e) => {
-    if (touchStartX.current === null || !trackRef.current) return
-    const dx = e.touches[0].clientX - touchStartX.current
-    const dy = e.touches[0].clientY - touchStartY.current
-
-    if (!isHorizontalSwipe.current) {
-      if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return
-      isHorizontalSwipe.current = Math.abs(dx) > Math.abs(dy)
-      if (!isHorizontalSwipe.current) return
-    }
-
-    paused.current = true
-    const unit = trackRef.current.scrollWidth / COPIES
-    let next = touchStartVal.current + dx
-    while (next > 0)      next -= unit
-    while (next < -unit)  next += unit
-    x.set(next)
-  }
-
-  const onTouchEnd = () => {
-    if (isHorizontalSwipe.current) {
-      setTimeout(() => { paused.current = isPaused }, 700)
-    }
-    touchStartX.current = null
-    isHorizontalSwipe.current = false
-  }
+function FeaturedCard({ project, i, delta, onSelect }) {
+  const { ui } = useContent()
+  const { name, subtitle } = splitTitle(project.title)
+  const abs = Math.min(Math.abs(delta), 3)
+  const isFront = delta === 0
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsPaused(p => !p)}
-        aria-label={isPaused ? 'Play project carousel' : 'Pause project carousel'}
-        className="absolute -top-9 right-5 z-10 flex items-center justify-center w-6 h-6 rounded-full border border-white/10 text-white/50 hover:text-white/80 hover:border-white/25 transition-colors duration-200"
-      >
-        {isPaused ? <Play size={9} /> : <Pause size={9} />}
-      </button>
-      <div
-        className="overflow-hidden w-full"
-        onMouseEnter={() => { paused.current = true }}
-        onMouseLeave={() => { paused.current = isPaused }}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        style={{ touchAction: 'pan-y' }}
-      >
-        <motion.div
-          ref={trackRef}
-          style={{ x, willChange: 'transform' }}
-          className="flex gap-5 w-max py-2"
-        >
-          {repeated.map(({ project, size, onSelect, hidden }, i) => (
-            <ProjectCard
-              key={`${project.id}-${i}`}
-              project={project}
-              sizeConfig={size}
-              hidden={hidden}
-              onClick={() => onSelect(project)}
-            />
-          ))}
-        </motion.div>
-      </div>
-    </div>
+    <motion.div
+      className="absolute top-0 left-1/2 w-[90%] sm:w-[80%] lg:w-[70%] max-w-[760px]"
+      style={{ zIndex: 30 - Math.round(abs * 10), pointerEvents: abs > 2 ? 'none' : 'auto' }}
+      animate={{
+        x: `calc(-50% + ${delta * 42}%)`,
+        scale: 1 - abs * 0.13,
+        opacity: abs > 2.2 ? 0 : 1 - abs * 0.38,
+      }}
+      transition={{ type: 'spring', stiffness: 260, damping: 32, mass: 0.9 }}
+      dir="ltr"
+    >
+      <BorderBeam>
+        <div className="grid lg:grid-cols-2 gap-0 rounded-3xl overflow-hidden">
+          <button
+            onClick={() => isFront && onSelect(project)}
+            aria-label={`View details: ${name}`}
+            tabIndex={isFront ? 0 : -1}
+            className="relative aspect-video lg:aspect-auto overflow-hidden text-left"
+            style={{ cursor: isFront ? 'pointer' : 'default' }}
+          >
+            <span
+              className="absolute top-4 left-4 z-10 font-mono text-[11px] font-bold px-2.5 py-1 rounded-full text-white"
+              style={{ background: ACCENT.css }}
+            >
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            {project.mediaType === 'video' ? (
+              <video src={project.media} muted autoPlay={isFront} loop playsInline preload="metadata" className="w-full h-full object-cover" />
+            ) : (
+              <img src={project.media} alt={project.title} className="w-full h-full object-cover" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent pointer-events-none lg:hidden" />
+          </button>
+
+          <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-ink-950 min-h-[260px] lg:min-h-[420px]" dir="rtl">
+            <h3 className="font-display font-bold text-white tracking-tight leading-[1.05] mb-2" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.5rem)' }}>
+              {name}
+            </h3>
+            {subtitle && (
+              <p className="font-body font-semibold text-base mb-4" style={{ color: ACCENT.css }}>{subtitle}</p>
+            )}
+            <p className="font-body text-white/50 text-sm sm:text-base leading-relaxed mb-7 max-w-md">
+              {project.description}
+            </p>
+            {project.tags && (
+              <div className="flex flex-wrap gap-2 mb-8">
+                {project.tags.map((tag) => <TagPill key={tag} tag={tag} />)}
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-3">
+              {project.siteLink && (
+                <a
+                  href={project.siteLink} target="_blank" rel="noopener noreferrer"
+                  tabIndex={isFront ? 0 : -1}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-display font-semibold text-sm text-ink-950 transition-shadow duration-300 hover:shadow-lg"
+                  style={{ background: `linear-gradient(135deg, rgba(${ACCENT.rgb2},1), rgba(${ACCENT.rgb},1))` }}
+                >
+                  {ui.projects.liveDemo} <ExternalLink size={14} />
+                </a>
+              )}
+              <a
+                href={project.githubLink} target="_blank" rel="noopener noreferrer"
+                tabIndex={isFront ? 0 : -1}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/15 bg-white/[0.03] text-white font-display font-semibold text-sm hover:bg-white/[0.08] hover:border-white/25 transition-colors duration-200"
+              >
+                <Github size={14} /> GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+      </BorderBeam>
+    </motion.div>
   )
 }
 
-/* ─── Featured project spotlight ──────────────────────────────────────
-   Rotates through a curated set (Chef Platform → SocialOrg → WorkShift →
-   repeat) instead of pinning a single project forever. Pauses on hover;
-   respects reduced motion by simply not auto-advancing. ─────────────── */
-const FEATURED_ORDER = [10, 11, 8]
-const FEATURED_ROTATE_MS = 6000
-
-function FeaturedProject({ projects, onClick }) {
-  const { ui } = useContent()
+function FeaturedCarousel({ projects, onSelect, index, setIndex }) {
+  const list = FEATURED_SET.map((id) => projects.find((p) => p.id === id)).filter(Boolean)
   const reduceMotion = useReducedMotion()
-  const featuredList = FEATURED_ORDER
-    .map((id) => projects.find((p) => p.id === id))
-    .filter(Boolean)
-  const list = featuredList.length ? featuredList : projects.slice(0, 1)
+  const pausedRef = useRef(false)
+  const touchStartX = useRef(null)
 
-  const [index, setIndex] = useState(0)
-  const paused = useRef(false)
+  const go = (dir) => {
+    setIndex((i) => (i + dir + list.length) % list.length)
+  }
+
+  // Shortest signed distance from the active card, so the loop always
+  // wraps the short way around instead of spinning through every card.
+  const deltaFor = (i) => {
+    let d = i - index
+    if (d > list.length / 2) d -= list.length
+    if (d < -list.length / 2) d += list.length
+    return d
+  }
 
   useEffect(() => {
-    if (reduceMotion || list.length < 2) return
-    const t = setInterval(() => {
-      if (!paused.current) setIndex((i) => (i + 1) % list.length)
-    }, FEATURED_ROTATE_MS)
-    return () => clearInterval(t)
+    if (reduceMotion) return
+    const timer = setInterval(() => {
+      if (!pausedRef.current) go(1)
+    }, AUTO_ADVANCE_MS)
+    return () => clearInterval(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduceMotion, list.length])
 
-  const project = list[index]
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; pausedRef.current = true }
+  const onTouchEnd = (e) => {
+    if (touchStartX.current === null) return
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1)
+    touchStartX.current = null
+    setTimeout(() => { pausedRef.current = false }, 400)
+  }
 
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
       viewport={VIEWPORT}
-      variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
-      className="px-5 mb-16 sm:mb-20"
+      variants={revealUp}
+      className="mb-10"
+      onMouseEnter={() => { pausedRef.current = true }}
+      onMouseLeave={() => { pausedRef.current = false }}
     >
+      <div className="max-w-6xl mx-auto relative">
       <div
-        className="max-w-6xl mx-auto"
-        onMouseEnter={() => { paused.current = true }}
-        onMouseLeave={() => { paused.current = false }}
+        className="relative h-[640px] lg:h-[460px] overflow-visible"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       >
-        <BorderBeam>
-        <SpotlightCard
-          as="button"
-          onClick={() => onClick(project)}
-          radius={420}
-          className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center text-left w-full cursor-pointer rounded-3xl p-6 sm:p-8 lg:p-10"
+        {list.map((project, i) => (
+          <FeaturedCard
+            key={project.id}
+            project={project}
+            i={i}
+            delta={deltaFor(i)}
+            onSelect={onSelect}
+          />
+        ))}
+
+        {/* Clear, always-visible arrow nav — the primary way to move,
+            styled with the site's own purple accent rather than a subtle
+            glass button so it reads as an obvious control. Centered on
+            just this card-stack box, not the dots below it. */}
+        <button
+          onClick={() => go(-1)}
+          aria-label="Previous project"
+          className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-200 hover:scale-110 active:scale-95"
+          style={{ background: `linear-gradient(135deg, rgba(${ACCENT.rgb2},1), rgba(${ACCENT.rgb},1))` }}
         >
-          {/* Image converges from the left, text from the right — the same
-              opposing directions the two marquee rows below scroll in,
-              so the section's own motion identity is horizontal. */}
-          <motion.div
-            variants={revealLeft}
-            className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 group-hover:border-white/25 transition-colors duration-300 order-2 lg:order-1"
+          <ChevronLeft size={20} />
+        </button>
+        <button
+          onClick={() => go(1)}
+          aria-label="Next project"
+          className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-200 hover:scale-110 active:scale-95"
+          style={{ background: `linear-gradient(135deg, rgba(${ACCENT.rgb2},1), rgba(${ACCENT.rgb},1))` }}
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
+      {/* Dot pagination — a position readout you can also click to jump. */}
+      <div className="flex items-center justify-center gap-2 mt-7">
+        {list.map((p, i) => (
+          <button
+            key={p.id}
+            onClick={() => setIndex(i)}
+            aria-label={`Go to project ${i + 1}`}
+            className="p-1.5"
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, scale: 1.03, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, scale: 0.98, filter: 'blur(6px)' }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-0"
-              >
-                {project.mediaType === 'video' ? (
-                  <video key={project.id} src={project.media} muted autoPlay loop playsInline preload="metadata"
-                    className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500" />
-                ) : (
-                  <img src={project.media} alt={project.title}
-                    className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-500" />
-                )}
-              </motion.div>
-            </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-t from-ink-950/60 via-transparent to-transparent pointer-events-none" />
-          </motion.div>
-          <motion.div variants={revealRight} className="order-1 lg:order-2">
-            <div className="flex items-center gap-3 mb-4">
-              <p className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/50">Featured Project</p>
-              {list.length > 1 && (
-                <div className="flex items-center gap-1.5">
-                  {list.map((p, i) => (
-                    <span
-                      key={p.id}
-                      className="w-1.5 h-1.5 rounded-full transition-colors duration-300"
-                      style={{ background: i === index ? ACCENT.css : 'rgba(255,255,255,0.2)' }}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <h3 className="font-display font-bold text-white tracking-tight leading-[1.05] mb-4" style={{ fontSize: 'clamp(1.75rem, 3.2vw, 2.75rem)' }}>
-                  {project.title}
-                </h3>
-                <p className="font-body text-white/50 text-sm sm:text-base leading-relaxed mb-6 max-w-lg">
-                  {project.description}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-            <span className="inline-flex items-center gap-2 font-mono text-xs text-white/60 group-hover:text-white border-b border-white/20 group-hover:border-white/60 pb-1 transition-colors duration-200">
-              <ExternalLink size={12} />
-              {ui.projects.cardCta}
-            </span>
-          </motion.div>
-        </SpotlightCard>
-        </BorderBeam>
+            <span
+              className="block h-1.5 rounded-full transition-all duration-300"
+              style={{ background: i === index ? ACCENT.css : 'rgba(0,0,0,0.15)', width: i === index ? '1.1rem' : '0.375rem' }}
+            />
+          </button>
+        ))}
+      </div>
       </div>
     </motion.div>
+  )
+}
+
+/* ─── "Explore more" grid — the rest of the set, compact cards ───────── */
+function MiniProjectCard({ project, onClick }) {
+  const { name, subtitle } = splitTitle(project.title)
+  return (
+    <motion.button
+      variants={cardReveal}
+      onClick={onClick}
+      whileHover={{ y: -4 }}
+      className="group relative text-left rounded-xl overflow-hidden border border-white/[0.07] shadow-lg shadow-black/10 hover:border-white/[0.16] hover:shadow-xl hover:shadow-black/15 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+      style={{ background: `linear-gradient(180deg, ${CARD_DARK} 0%, ${CARD_DARK_2} 100%)` }}
+    >
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
+      <div className="relative aspect-video overflow-hidden bg-ink-900">
+        {project.mediaType === 'video' ? (
+          <video src={project.media} muted autoPlay loop playsInline preload="metadata" className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+        ) : (
+          <img src={project.media} alt={project.title} className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent" />
+      </div>
+      <div className="p-4">
+        <h4 className="font-body font-bold text-white text-sm mb-0.5 truncate">{name}</h4>
+        {subtitle && <p className="font-mono text-[10px] mb-2 truncate" style={{ color: ACCENT.css }}>{subtitle}</p>}
+        <p className="font-body text-white/45 text-xs leading-relaxed line-clamp-2 mb-3">{project.description}</p>
+        {project.tags && (
+          <div className="flex flex-wrap gap-1.5">
+            {project.tags.slice(0, 3).map((tag) => <TagPill key={tag} tag={tag} compact />)}
+          </div>
+        )}
+      </div>
+    </motion.button>
   )
 }
 
@@ -440,70 +423,126 @@ function FeaturedProject({ projects, onClick }) {
 export default function ProjectsGrid() {
   const { projects, ui } = useContent()
   const [selected, setSelected] = useState(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [showAll, setShowAll] = useState(false)
 
-  // The rotating spotlight above already covers these three, so the
-  // marquee rows show everything else — no duplicate cards.
-  const others = projects.filter((p) => !FEATURED_ORDER.includes(p.id))
-
-  const row1 = others.slice(0, 5).map((p, i) => ({
-    project: p,
-    size: CARD_SIZES[i % CARD_SIZES.length],
-    onSelect: setSelected,
-  }))
-  const row2 = others.slice(5).map((p, i) => ({
-    project: p,
-    size: CARD_SIZES[i + 3] ?? CARD_SIZES[3],
-    onSelect: setSelected,
-  }))
+  const featuredList = FEATURED_SET.map((id) => projects.find((p) => p.id === id)).filter(Boolean)
+  const activeProjectId = featuredList[activeIndex]?.id
+  // The grid below shows the rest of the curated set — never the project
+  // currently front-and-center in the carousel above. Collapsed, it's
+  // capped to a single row; "View All Projects" expands it in place to
+  // every project in the data.
+  const ONE_ROW_COUNT = 4
+  const curatedRest = featuredList.filter((p) => p.id !== activeProjectId)
+  const gridProjects = showAll
+    ? projects.filter((p) => p.id !== activeProjectId)
+    : curatedRest.slice(0, ONE_ROW_COUNT)
 
   return (
     <>
-      <section id="projects" className="py-28 sm:py-36 overflow-hidden">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1, margin: '-50px' }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}
-        >
-          {/* Section marker + heading */}
-          <div className="px-5 mb-16 max-w-6xl mx-auto">
-            <SectionMarker index="03" label="Portfolio" className="mb-8" />
+      <section
+        id="projects"
+        className="py-28 sm:py-36 px-5"
+        style={{ background: `linear-gradient(180deg, ${BG_TOP} 0%, ${BG_MID} 22%, ${BG_LOW} 100%)` }}
+      >
+        <div className="max-w-6xl mx-auto mb-16">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={VIEWPORT}
+            variants={revealUp}
+            className="flex items-center gap-3 mb-8"
+          >
+            <span className="font-mono text-black/35 text-xs flex-shrink-0">03</span>
+            <motion.div
+              className="h-px flex-1 origin-left"
+              style={{ background: 'rgba(0,0,0,0.1)' }}
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={VIEWPORT}
+              transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.1 }}
+            />
+            <span className="font-mono text-black/40 text-xs tracking-[0.3em] uppercase flex-shrink-0">
+              {ui.projects.eyebrow}
+            </span>
+          </motion.div>
+
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
             <motion.h2
               initial="hidden"
               whileInView="visible"
               viewport={VIEWPORT}
               variants={headingReveal}
-              className="font-display font-bold text-white tracking-tight"
+              className="font-display font-bold tracking-tight leading-[1.05]"
               style={{ fontSize: 'clamp(2rem, 4.2vw, 3.25rem)' }}
             >
-              {ui.projects.heading}
+              <span className="text-ink-950">{ui.projects.heading1}</span><br />
+              <span className="text-ink-950">{ui.projects.heading2.slice(0, -1)}</span>
+              <span style={{ color: ACCENT.css }}>{ui.projects.heading2.slice(-1)}</span>
             </motion.h2>
-            <motion.p
+
+            <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={VIEWPORT}
               variants={revealUp}
-              className="font-body text-white/50 text-sm mt-3"
+              transition={{ delay: 0.15 }}
+              className="flex items-start gap-5 lg:max-w-xs lg:pt-2"
             >
-              {ui.projects.subheading}
-            </motion.p>
+              <div className="hidden sm:block relative w-px self-stretch flex-shrink-0" style={{ minHeight: '4.5rem' }}>
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0) 85%)' }} />
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full" style={{ background: ACCENT.css, boxShadow: `0 0 10px 2px ${ACCENT.css}` }} />
+              </div>
+              <p className="font-body text-neutral-500 text-sm leading-relaxed">
+                {ui.projects.subheading}
+              </p>
+            </motion.div>
           </div>
+        </div>
 
-          <FeaturedProject projects={projects} onClick={setSelected} />
+        <FeaturedCarousel projects={projects} onSelect={setSelected} index={activeIndex} setIndex={setActiveIndex} />
 
-          {/* Carousel rows */}
-          <motion.div
-            className="flex flex-col gap-10"
-            variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.5 } } }}
+        <div className="max-w-6xl mx-auto px-0">
+          <motion.p
+            initial="hidden"
+            whileInView="visible"
+            viewport={VIEWPORT}
+            variants={revealUp}
+            className="font-mono text-[10px] tracking-[0.3em] uppercase text-black/35 mb-6"
           >
-            <div className="pl-5">
-              <MarqueeRow items={row1} direction="left" />
-            </div>
-            <div className="pr-5">
-              <MarqueeRow items={row2} direction="right" />
-            </div>
+            {ui.projects.exploreMore}
+          </motion.p>
+
+          <motion.div
+            key={gridProjects.length}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={staggerContainer(0.06, 0)}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 mb-12"
+          >
+            {gridProjects.map((p) => (
+              <MiniProjectCard key={p.id} project={p} onClick={() => setSelected(p)} />
+            ))}
           </motion.div>
-        </motion.div>
+
+          {!showAll && (
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={VIEWPORT}
+              variants={revealUp}
+              className="flex justify-center"
+            >
+              <button
+                onClick={() => setShowAll(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-black/12 bg-black/[0.02] text-ink-950 font-display font-semibold text-sm hover:bg-black/[0.05] hover:border-black/20 transition-colors duration-200"
+              >
+                {ui.projects.viewAll}
+              </button>
+            </motion.div>
+          )}
+        </div>
       </section>
 
       <ProjectModal project={selected} onClose={() => setSelected(null)} />

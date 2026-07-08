@@ -97,6 +97,7 @@ export const projects = [
       "https://www.linkedin.com/feed/update/urn:li:activity:7453001379230597120/",
     githubLink: "https://github.com/tomernado/WorkShift",
     siteLink: "https://workshift-ekq8.onrender.com",
+    tags: ["React", "Node.js", "Real-Time", "Full-Stack"],
   },
   {
     id: 1,
@@ -108,6 +109,7 @@ export const projects = [
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_cybersecurity-fullstack-reactjs-activity-7438883240985157632-4CzR",
     githubLink: "https://github.com/tomernado/CompterSecurity-Server",
+    tags: ["React", "MySQL", "JWT", "Security"],
   },
   {
     id: 11,
@@ -120,6 +122,7 @@ export const projects = [
       "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-softwareengineering-automation-ugcPost-7476927528452907008-PFR7/",
     githubLink: "https://github.com/tomernado/SocialOrg",
     siteLink: "https://social-org-git-master-tomernados-projects.vercel.app/",
+    tags: ["React", "AI", "Automation", "Cloud"],
   },
   {
     id: 2,
@@ -131,6 +134,7 @@ export const projects = [
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_softwareengineering-claudecode-ai-activity-7446866692426620929-1zcR?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFaQVuYB4TlPvjKcWTSihPNIMkLKQp8ySKE",
     githubLink: "https://github.com/tomernado/GTA-Game",
+    tags: ["C#", "OOP", "Design Patterns"],
   },
   {
     id: 9,
@@ -143,6 +147,7 @@ export const projects = [
       "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-architecture-react-activity-7468227901528924160-FIF0",
     githubLink: "https://github.com/tomernado/universal_interviewer",
     siteLink: "https://tomernado.github.io/universal_interviewer/dashboard.html",
+    tags: ["React", "AI", "Document Analysis"],
   },
   {
     id: 3,
@@ -154,6 +159,7 @@ export const projects = [
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_java-backend-oop-activity-7440003959379070977-4D6h",
     githubLink: "https://github.com/tomernado/four-in-row-server",
+    tags: ["Java", "JavaFX", "Networking"],
   },
   {
     id: 4,
@@ -165,6 +171,7 @@ export const projects = [
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_webdevelopment-ai-claude-share-7441776772855255040-aOY8",
     githubLink: "https://github.com/tomernado",
+    tags: ["React", "AI", "Web Development"],
   },
   {
     id: 5,
@@ -176,6 +183,7 @@ export const projects = [
     linkedinPost: "https://www.linkedin.com/posts/tomer-cohen-486457346_softwareengineering-csharp-react-activity-7436389412193804288-uL7j?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFaQVuYB4TlPvjKcWTSihPNIMkLKQp8ySKE",
     githubLink: "https://github.com/tomernado/tornadogames-main",
     siteLink: "https://tomernado.github.io/tornadogames-main/",
+    tags: ["JavaScript", "Client-Server", "Games"],
   },
   {
     id: 6,
@@ -187,6 +195,7 @@ export const projects = [
     linkedinPost: "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
     githubLink: "https://github.com/tomernado/san-quentin-xways",
     siteLink: "https://tomernado.github.io/san-quentin-xways/",
+    tags: ["JavaScript", "Animation", "Game"],
   },
   {
     id: 7,
@@ -198,6 +207,7 @@ export const projects = [
     linkedinPost: "https://www.linkedin.com/feed/update/urn:li:activity:7449086048011235328/",
     githubLink: "https://github.com/tomernado/DevStore",
     siteLink: "https://tomernado.github.io/DevStore/",
+    tags: ["React", "RTL", "E-Commerce"],
   },
   {
     id: 10,
@@ -209,6 +219,7 @@ export const projects = [
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-machinelearning-docker-activity-7466858872373342208-XTI7",
     githubLink: "https://github.com/tomernado/bens-playbook",
+    tags: ["Machine Learning", "Docker", "Full-Stack"],
   },
 ];
 

@@ -77,8 +77,13 @@ export const projectDescriptions = {
 }
 
 export const projectsSection = {
-  heading: "Projects",
-  subheading: "Click a card for details · Auto-scrolling",
+  eyebrow: "Featured Projects",
+  heading1: "Projects that",
+  heading2: "solve real problems.",
+  subheading: "A collection of selected projects that demonstrate my passion for building useful, scalable and beautiful solutions.",
+  exploreMore: "Explore More Projects",
+  viewAll: "View All Projects",
+  liveDemo: "Live Demo",
   cardCta: "Details",
 }
 
