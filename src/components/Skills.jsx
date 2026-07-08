@@ -11,6 +11,7 @@ import { skills } from '../data/content'
 import SpotlightCard from './SpotlightCard'
 import SectionMarker from './SectionMarker'
 import Particles from './Particles'
+import SectionDissolve from './SectionDissolve'
 import { ACCENT, headingReveal, revealUp, VIEWPORT, EASE_OUT } from '../motion'
 import { useIsDesktop } from '../hooks/useIsDesktop'
 
@@ -260,37 +261,12 @@ export default function Skills() {
         </div>
       </div>
 
-      {/* Flowing energy at the very bottom — the same delicate, diagonal
-          crossing threads used in the Hero → About transition, so the two
-          feel like one continuous visual language. Kept low-opacity and
-          confined to a thin band so it stays a closing accent, not a
-          competing scene. */}
-      <svg aria-hidden="true" className="absolute bottom-0 left-0 w-full h-[160px] pointer-events-none" viewBox="0 0 1000 160" preserveAspectRatio="none">
-        {[
-          { d: 'M0,70 C100,80 200,62 300,74 C400,86 500,64 600,84 C700,104 800,88 900,104 C950,112 980,120 1000,132', o: 0.28, w: 0.8, dur: 15, bob: 5 },
-          { d: 'M0,128 C100,116 200,126 300,116 C400,106 500,121 600,101 C700,81 800,93 900,77 C950,69 980,61 1000,50', o: 0.18, w: 0.65, dur: 19, bob: 4 },
-          { d: 'M0,86 C150,94 250,77 380,88 C500,98 600,80 720,91 C820,101 900,85 1000,98', o: 0.12, w: 0.55, dur: 23, bob: 3 },
-        ].map((w, i) => (
-          <motion.path
-            key={i}
-            d={w.d}
-            fill="none"
-            stroke="rgba(196,166,255,1)"
-            strokeOpacity={w.o}
-            strokeWidth={w.w}
-            strokeLinecap="round"
-            animate={reduceMotion ? undefined : { x: [0, 16, 0, -16, 0], y: [0, -w.bob, 0, w.bob * 0.5, 0] }}
-            transition={reduceMotion ? undefined : { duration: w.dur, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        ))}
-        {[
-          [60, 66, 1.1, 0.3], [150, 66, 1.6, 0.45], [310, 75, 1.2, 0.35],
-          [430, 70, 1.5, 0.4], [600, 75, 1.3, 0.35], [730, 68, 1.5, 0.4],
-          [900, 73, 1.4, 0.38], [960, 92, 1, 0.28],
-        ].map(([cx, cy, r, o], i) => (
-          <circle key={i} cx={cx} cy={cy} r={r} fill="rgba(196,181,253,1)" opacity={o} />
-        ))}
-      </svg>
+      {/* Soft dissolve into Projects' white surface, instead of a hard cut.
+          Replaces the old thread-only decoration (mobile-visible, no actual
+          color blend) with the same gradient+thread treatment used at every
+          other section seam — desktop gets the drifting threads, mobile
+          gets just the static gradient. */}
+      <SectionDissolve toColor="#ffffff" height={160} />
     </section>
   )
 }

@@ -4,6 +4,7 @@ import { Code2, Brain, Layers, Lightbulb, Github, Download, ArrowUpRight } from 
 import { useContent } from '../context/LanguageContext'
 import CvModal from './CvModal'
 import SpotlightCard from './SpotlightCard'
+import SectionDissolve from './SectionDissolve'
 import { revealUp, cardReveal, staggerContainer, VIEWPORT, EASE_OUT } from '../motion'
 
 // Stable viewport-option objects — module scope so the reference never
@@ -449,6 +450,9 @@ export default function About() {
           </div>
 
         </motion.div>
+
+        {/* Soft dissolve into Skills' dark surface, instead of a hard cut. */}
+        <SectionDissolve toColor="#04050A" />
       </section>
 
       <CvModal isOpen={cvOpen} onClose={() => setCvOpen(false)} />

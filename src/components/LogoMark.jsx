@@ -1,8 +1,13 @@
 import { motion } from 'framer-motion'
 import { useId } from 'react'
+import { useIsDesktop } from '../hooks/useIsDesktop'
 
 export default function LogoMark({ className = '', style = {}, nameClassName = '' }) {
   const base = useId().replace(/[^a-z0-9]/gi, '')
+  // The shimmer sweep is a nice-to-have flourish during the intro splash;
+  // on mobile it's not worth the extra compositing on top of everything
+  // else on first paint, so it just stays a clean, static dark mark there.
+  const isDesktop = useIsDesktop()
   const tG  = `${base}tG`
   const cG  = `${base}cG`
   const lG  = `${base}lG`
@@ -93,12 +98,14 @@ export default function LogoMark({ className = '', style = {}, nameClassName = '
         </text>
       </g>
 
-      {/* Shimmer sweep */}
-      <motion.rect x="-280" y="0" width="380" height="310"
-        fill={`url(#${shG})`}
-        animate={{ x: [-280, 840] }}
-        transition={{ duration: 2.6, repeat: Infinity, repeatDelay: 4.8, ease: [0.4, 0, 0.6, 1] }}
-      />
+      {/* Shimmer sweep — desktop only, see isDesktop comment above */}
+      {isDesktop && (
+        <motion.rect x="-280" y="0" width="380" height="310"
+          fill={`url(#${shG})`}
+          animate={{ x: [-280, 840] }}
+          transition={{ duration: 2.6, repeat: Infinity, repeatDelay: 4.8, ease: [0.4, 0, 0.6, 1] }}
+        />
+      )}
     </svg>
   )
 }

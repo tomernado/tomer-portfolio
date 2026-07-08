@@ -11,6 +11,7 @@ import { TbBrandCSharp } from 'react-icons/tb'
 import { useContent } from '../context/LanguageContext'
 import MagneticButton from './MagneticButton'
 import BorderBeam from './BorderBeam'
+import SectionDissolve from './SectionDissolve'
 import { headingReveal, revealUp, cardReveal, staggerContainer, VIEWPORT, ACCENT, EASE_OUT } from '../motion'
 import { useVideoAutoplayInView } from '../hooks/useVideoAutoplayInView'
 
@@ -444,7 +445,7 @@ export default function ProjectsGrid() {
     <>
       <section
         id="projects"
-        className="py-28 sm:py-36 px-5"
+        className="relative py-28 sm:py-36 px-5"
         style={{ background: `linear-gradient(180deg, ${BG_TOP} 0%, ${BG_MID} 22%, ${BG_LOW} 100%)` }}
       >
         <div className="max-w-6xl mx-auto mb-16">
@@ -545,6 +546,9 @@ export default function ProjectsGrid() {
             </motion.div>
           )}
         </div>
+
+        {/* Soft dissolve into Web4You's dark surface, instead of a hard cut. */}
+        <SectionDissolve toColor="#050505" height={160} />
       </section>
 
       <ProjectModal project={selected} onClose={() => setSelected(null)} />

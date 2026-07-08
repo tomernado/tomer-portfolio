@@ -579,8 +579,11 @@ export default function Hero() {
           {/* Fine diagonal threads of current, kept low in the band (well
               clear of the content above) — each trends across the width at
               a different slight angle so they cross one another, thin and
-              low-opacity for delicacy. A slow drift is the only motion. */}
-          {[
+              low-opacity for delicacy. A slow drift is the only motion.
+              Desktop only — this is the "fade" the crash reports pointed
+              at, so mobile now gets just the static gradient below with
+              none of these infinite animations layered on top. */}
+          {showScene && [
             { d: 'M0,150 C100,160 200,142 300,154 C400,166 500,148 600,168 C700,188 800,172 900,188 C950,196 980,204 1000,216', o: 0.32, w: 0.8, dur: 15, bob: 5 },
             { d: 'M0,238 C100,226 200,236 300,226 C400,216 500,231 600,211 C700,191 800,203 900,187 C950,179 980,171 1000,160', o: 0.2, w: 0.65, dur: 19, bob: 4 },
             { d: 'M0,196 C150,204 250,187 380,198 C500,208 600,190 720,201 C820,211 900,195 1000,208', o: 0.13, w: 0.55, dur: 23, bob: 3 },
