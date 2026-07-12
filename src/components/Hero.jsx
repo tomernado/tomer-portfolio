@@ -521,8 +521,12 @@ export default function Hero() {
         />
 
         {/* Stars — small fixed twinkling points, distinct from the drifting
-            Particles layer below, for extra cinematic dust/depth. */}
-        {!reduceMotion && (
+            Particles layer below, for extra cinematic dust/depth. 22
+            concurrent infinite-loop animations, present for Hero's whole
+            mounted lifetime (it's never unmounted once scrolled past) —
+            desktop only, adding to the ambient load right at the moment
+            it peaks during the Hero→About transition. */}
+        {!reduceMotion && showScene && (
           <div className="absolute inset-0">
             {STARS.map((s) => (
               <motion.span
@@ -615,8 +619,17 @@ export default function Hero() {
       <div className="relative z-10 max-w-[1280px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-8 items-center">
 
         {/* ── LEFT — identity first: name, role, pitch, CTAs ─────────── */}
+        {/* `contentY/contentOpacity/contentScale` are continuously
+            recalculated from raw scroll position and applied to this
+            entire column, for the whole time Hero is scrolling out of
+            view — a range that ends exactly at the Hero→About boundary,
+            the same zone where About's own continuous scroll-transform
+            (see About.jsx) is simultaneously active. Both running
+            concurrently, recalculated every scroll frame, is what
+            crashed real iPhones on repeated scrolling across that
+            specific seam. Desktop-only now; mobile content stays put. */}
         <motion.div
-          style={reduceMotion ? {} : { y: contentY, opacity: contentOpacity, scale: contentScale }}
+          style={(reduceMotion || !showScene) ? {} : { y: contentY, opacity: contentOpacity, scale: contentScale }}
           variants={staggerContainer(0.11, 0.05)}
           initial="hidden"
           animate="visible"

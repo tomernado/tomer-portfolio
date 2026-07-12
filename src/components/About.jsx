@@ -226,7 +226,18 @@ export default function About() {
 
         <motion.div
           className="max-w-6xl mx-auto relative"
-          style={reduceMotion ? undefined : { scale: enterScale, opacity: enterOpacity, filter: isDesktop ? enterBlur : undefined }}
+          // `enterScale`/`enterOpacity` are continuously recalculated from
+          // raw scroll position (useTransform on `enterProgress`) and
+          // applied to this section's *entire* content wrapper — every
+          // card, timeline entry, everything. Its scroll range ends
+          // exactly at the point Hero's own scroll-linked transform
+          // (below) also stops, i.e. both are actively recalculating
+          // every scroll frame specifically while crossing the Hero→About
+          // boundary — the one place repeated scrolling reliably crashed
+          // real iPhones even after the filter:blur() term was removed.
+          // Desktop keeps the full depth-settle; mobile content is simply
+          // visible with no continuous per-frame transform.
+          style={(reduceMotion || !isDesktop) ? undefined : { scale: enterScale, opacity: enterOpacity, filter: enterBlur }}
         >
 
           {/* ── True 2×2 grid, not nested columns — About/Journey (col 1)
