@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useMemo } from 'react'
 import {
   personalInfo as personalInfoHe,
   aboutData    as aboutDataHe,
@@ -178,40 +178,56 @@ export function useLang() {
 export function useContent() {
   const { lang } = useLang()
 
-  if (lang === 'he') {
-    return {
-      personalInfo: personalInfoHe,
-      aboutData:    aboutDataHe,
-      skills,
-      projects:     projectsHe,
-      web4youData:  web4youDataHe,
-      ui:           UI_HE,
-      dir:          'rtl',
+  // Memoized on `lang` alone — without this, the English branch below
+  // built a brand-new `projects` array and `web4youData` object (via
+  // .map()/spread) on *every* call, i.e. every render of *every*
+  // component that calls useContent(). Several components key a
+  // useEffect off these values (e.g. Web4YouSection's image-preload
+  // effect depends on `steps`), and components that re-render on scroll
+  // (Web4YouSection, ProjectsGrid) call useContent() on every one of
+  // those re-renders — so the unstable reference re-ran those effects
+  // on every scroll tick instead of once, repeatedly allocating new
+  // Image() objects and re-triggering decode/fetch. That's exactly the
+  // kind of accumulating per-scroll work that exhausts Mobile Safari
+  // over a session of scrolling back and forth. See CLAUDE.md — same
+  // root cause class as the unstable `viewport={{...}}` object bug,
+  // just manifesting as accumulating work instead of a stuck reveal.
+  return useMemo(() => {
+    if (lang === 'he') {
+      return {
+        personalInfo: personalInfoHe,
+        aboutData:    aboutDataHe,
+        skills,
+        projects:     projectsHe,
+        web4youData:  web4youDataHe,
+        ui:           UI_HE,
+        dir:          'rtl',
+      }
     }
-  }
 
-  // English: merge base (URLs/images) with translated text
-  const projectsEn = projectsHe.map(p => ({
-    ...p,
-    description: projectDescriptions[p.id] ?? p.description,
-  }))
+    // English: merge base (URLs/images) with translated text
+    const projectsEn = projectsHe.map(p => ({
+      ...p,
+      description: projectDescriptions[p.id] ?? p.description,
+    }))
 
-  const web4youDataEn = {
-    ...web4youDataHe,
-    steps: web4youDataHe.steps.map((step, i) => ({
-      ...step,
-      title:       web4youSteps[i]?.title       ?? step.title,
-      description: web4youSteps[i]?.description ?? step.description,
-    })),
-  }
+    const web4youDataEn = {
+      ...web4youDataHe,
+      steps: web4youDataHe.steps.map((step, i) => ({
+        ...step,
+        title:       web4youSteps[i]?.title       ?? step.title,
+        description: web4youSteps[i]?.description ?? step.description,
+      })),
+    }
 
-  return {
-    personalInfo: { ...personalInfoHe, ...personalInfoEn },
-    aboutData:    aboutDataEn,
-    skills,
-    projects:     projectsEn,
-    web4youData:  web4youDataEn,
-    ui:           UI_EN,
-    dir:          'ltr',
-  }
+    return {
+      personalInfo: { ...personalInfoHe, ...personalInfoEn },
+      aboutData:    aboutDataEn,
+      skills,
+      projects:     projectsEn,
+      web4youData:  web4youDataEn,
+      ui:           UI_EN,
+      dir:          'ltr',
+    }
+  }, [lang])
 }
