@@ -7,17 +7,28 @@ skip the rest.
 
 ## -1. Token efficiency is a first-class constraint
 
-Default to minimal context, minimal tool usage, minimal reasoning, direct
-implementation:
-- Read only the files required for the specific task — use the file map
-  in §1, don't scan the repo.
-- No broad/exploratory searches unless explicitly asked.
-- No proactive refactoring of unrelated code.
-- No Playwright/MCP/browser automation unless explicitly requested or
-  genuinely required to complete the task (e.g. verifying a crash fix) —
-  see §9 for what counts as "required."
-- No upfront implementation plans for small changes — implement directly.
-- If more context is genuinely needed, ask rather than exploring broadly.
+Default behavior:
+
+- Read only the files required for the current task.
+- Expand context only when a dependency or error clearly requires it.
+- Avoid broad or exploratory searches unless explicitly requested.
+- Do not proactively review or refactor unrelated parts of the codebase.
+- For small, localized changes, implement directly instead of producing
+  long implementation plans.
+- Avoid deep reasoning unless the task is architectural, investigative,
+  or explicitly requests analysis.
+- Assume unrelated parts of the project are correct unless evidence
+  suggests otherwise.
+- Do not proactively run Playwright, browser automation, MCP tools, or
+  other expensive operations. Use them only when:
+  - explicitly requested, or
+  - they are genuinely required to verify the requested change.
+- If completing a task would require reading many files or using
+  expensive tools, stop first and explain why before proceeding.
+- When additional context is needed, ask for permission before expanding
+  the scope.
+
+This is the default operating behavior for this repository.
 
 ## 0. The single most important rule
 
