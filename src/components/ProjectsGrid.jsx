@@ -97,6 +97,12 @@ const modalV = {
 }
 
 function ProjectModal({ project, onClose }) {
+  // Unconditional autoPlay here was never gated for mobile — reachable
+  // from a single tap on any video-type project card (carousel or grid),
+  // so it's a real crash path even with the carousel/grid videos already
+  // fixed. Desktop only; mobile gets the video paused (still has native
+  // `controls` so the user can play it manually).
+  const isDesktop = useIsDesktop()
   return (
     <AnimatePresence>
       {project && (
@@ -125,7 +131,7 @@ function ProjectModal({ project, onClose }) {
 
                   <div className="relative w-full aspect-video bg-ink-900 overflow-hidden">
                     {project.mediaType === 'video' ? (
-                      <video key={project.id} src={project.media} autoPlay loop muted playsInline controls
+                      <video key={project.id} src={project.media} autoPlay={isDesktop} loop muted playsInline controls
                         preload="metadata"
                         className="w-full h-full object-cover" />
                     ) : (
