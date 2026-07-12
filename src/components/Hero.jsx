@@ -484,22 +484,30 @@ export default function Hero() {
       <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute inset-0 bg-[#04050A]" />
 
-        {/* Left ambient — violet */}
+        {/* Left ambient — violet.
+            `filter: blur()` has to be re-rasterized at a higher effective
+            resolution whenever the visual viewport zooms (pinch/double-tap
+            zoom) — cost scales with pixel count, so it balloons under
+            zoom even at the already-reduced 45-60px mobile radius.
+            Reported crash trigger: pinch-zooming directly on Hero. Mobile
+            now uses a pure radial-gradient (extra stops for a soft edge,
+            no blur) instead — cheap to render at any zoom level; desktop
+            keeps the exact original blur unchanged. */}
         <div
-          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full blur-[60px] md:blur-[180px] opacity-30"
-          style={{ background: 'radial-gradient(circle, rgba(139,92,246,.22) 0%, rgba(139,92,246,.06) 40%, transparent 75%)' }}
+          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full md:blur-[180px] opacity-30"
+          style={{ background: 'radial-gradient(circle, rgba(139,92,246,.22) 0%, rgba(139,92,246,.13) 22%, rgba(139,92,246,.06) 40%, rgba(139,92,246,.02) 58%, transparent 75%)' }}
         />
 
         {/* Right glow — purple */}
         <div
-          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full blur-[60px] md:blur-[180px] opacity-35"
-          style={{ background: 'radial-gradient(circle, rgba(168,85,247,.20) 0%, rgba(168,85,247,.05) 45%, transparent 75%)' }}
+          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full md:blur-[180px] opacity-35"
+          style={{ background: 'radial-gradient(circle, rgba(168,85,247,.20) 0%, rgba(168,85,247,.12) 25%, rgba(168,85,247,.05) 45%, rgba(168,85,247,.02) 62%, transparent 75%)' }}
         />
 
         {/* Purple center glow — breathing, the dominant hue of the scene */}
         <motion.div
-          className="absolute right-[18%] top-[28%] h-[500px] w-[500px] rounded-full blur-[45px] md:blur-[120px]"
-          style={{ background: 'radial-gradient(circle, rgba(147,51,234,.38) 0%, rgba(147,51,234,.08) 45%, transparent 75%)' }}
+          className="absolute right-[18%] top-[28%] h-[500px] w-[500px] rounded-full md:blur-[120px]"
+          style={{ background: 'radial-gradient(circle, rgba(147,51,234,.38) 0%, rgba(147,51,234,.22) 25%, rgba(147,51,234,.08) 45%, rgba(147,51,234,.03) 62%, transparent 75%)' }}
           animate={(reduceMotion || !showScene) ? {} : { scale: [1, 1.06, 1], opacity: [0.7, 1, 0.7] }}
           transition={{ repeat: Infinity, duration: 9, ease: 'easeInOut' }}
         />
@@ -507,15 +515,15 @@ export default function Hero() {
         {/* Bottom energy glow — the one place blue remains, as a
             deliberately secondary accent beneath the purple-led scene. */}
         <div
-          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full blur-[55px] md:blur-[150px] opacity-20"
-          style={{ background: 'radial-gradient(circle, rgba(71,113,255,.16) 0%, rgba(71,113,255,.04) 55%, transparent 75%)' }}
+          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full md:blur-[150px] opacity-20"
+          style={{ background: 'radial-gradient(circle, rgba(71,113,255,.16) 0%, rgba(71,113,255,.09) 30%, rgba(71,113,255,.04) 55%, rgba(71,113,255,.015) 68%, transparent 75%)' }}
         />
 
         {/* Faint nebula drift — a slow, very soft violet wash for extra
             cinematic depth. */}
         <motion.div
-          className="absolute left-[30%] top-[38%] w-[560px] h-[560px] rounded-full blur-[60px] md:blur-[170px]"
-          style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%)' }}
+          className="absolute left-[30%] top-[38%] w-[560px] h-[560px] rounded-full md:blur-[170px]"
+          style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(168,85,247,0.06) 35%, rgba(168,85,247,0.02) 55%, transparent 70%)' }}
           animate={(reduceMotion || !showScene) ? {} : { opacity: [0.5, 0.85, 0.5], scale: [1, 1.06, 1] }}
           transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
         />
