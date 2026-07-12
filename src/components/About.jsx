@@ -5,6 +5,7 @@ import { useContent } from '../context/LanguageContext'
 import CvModal from './CvModal'
 import SpotlightCard from './SpotlightCard'
 import SectionDissolve from './SectionDissolve'
+import { useIsDesktop } from '../hooks/useIsDesktop'
 import { revealUp, cardReveal, staggerContainer, VIEWPORT, EASE_OUT } from '../motion'
 
 // Stable viewport-option objects — module scope so the reference never
@@ -162,6 +163,13 @@ export default function About() {
   const timelineRef = useRef(null)
   const sectionRef = useRef(null)
   const reduceMotion = useReducedMotion()
+  // `filter: blur()` continuously recalculated on every scroll pixel,
+  // applied to the whole section's content wrapper, is about as expensive
+  // an animation as a browser compositor can be asked to do — scrolling
+  // back and forth across this boundary a few times was enough to crash
+  // Mobile Safari. Desktop keeps the full depth-settle (scale+opacity+
+  // blur); mobile keeps the scale+opacity climb but drops the blur term.
+  const isDesktop = useIsDesktop()
 
   // About's own cross-section identity: it arrives with a quiet depth-settle
   // (scale/opacity/blur climb) rather than the blur Hero uses to leave —
@@ -218,7 +226,7 @@ export default function About() {
 
         <motion.div
           className="max-w-6xl mx-auto relative"
-          style={reduceMotion ? undefined : { scale: enterScale, opacity: enterOpacity, filter: enterBlur }}
+          style={reduceMotion ? undefined : { scale: enterScale, opacity: enterOpacity, filter: isDesktop ? enterBlur : undefined }}
         >
 
           {/* ── True 2×2 grid, not nested columns — About/Journey (col 1)
