@@ -431,11 +431,10 @@ export default function Hero() {
                  rather than a placed asset.
             No filter/blur on the image layer — cheap to composite. */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 [background-position:12%_62%] lg:[background-position:center_62%]"
           style={{
             backgroundImage: `url(${BG_URL})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center 62%',
             backgroundRepeat: 'no-repeat',
             opacity: 0.48,
           }}
