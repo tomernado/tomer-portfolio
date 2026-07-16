@@ -266,7 +266,7 @@ export default function Skills() {
           color blend) with the same gradient+thread treatment used at every
           other section seam — desktop gets the drifting threads, mobile
           gets just the static gradient. */}
-      <SectionDissolve toColor="#ffffff" height={160} />
+      <SectionDissolve toColor="#ffffff" height={200} />
     </section>
   )
 }

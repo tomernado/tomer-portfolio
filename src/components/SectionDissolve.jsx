@@ -1,25 +1,21 @@
 import { useId } from 'react'
 
 /**
- * Soft gradient "dissolve" at a section boundary — the same handoff
- * treatment Hero already uses into About, generalized so every section
- * seam gets the same quiet blend instead of a hard color cut. Sits
- * absolutely at the bottom of the section it's rendered in, fading from
- * transparent (revealing that section's own background) down to the
- * next section's color.
+ * Soft gradient dissolve at a section boundary. Sits absolutely at the
+ * bottom of the section it's placed in, fading to the next section's color.
  *
- * Plain static gradient only — no animated threads. They read as visible
- * stripes when crossing a light→dark blend (their fixed color doesn't
- * track the gradient underneath), so the smooth blend alone is both the
- * cleaner look and the lighter one for mobile.
+ * `accentColor` (optional): adds a soft radial glow at the base of the fade
+ * zone — useful on light→dark seams to hint at the dark section's ambient
+ * light bleeding upward, making the transition feel like one continuous
+ * environment rather than two stacked blocks.
  *
- * Keep it out of any `overflow-hidden` ancestor of a `position: sticky`
- * element (see Web4You) — it doesn't need one itself since it's sized to
- * stay within the section's own box.
+ * Keep out of any `overflow-hidden` ancestor of `position: sticky` elements
+ * (see Web4You) — SectionDissolve doesn't need clipping itself.
  */
-export default function SectionDissolve({ toColor, height = 140 }) {
+export default function SectionDissolve({ toColor, height = 160, accentColor }) {
   const uid = useId().replace(/[^a-z0-9]/gi, '')
-  const gradId = `dissolve${uid}`
+  const gradId  = `dissolve${uid}`
+  const glowId  = `glow${uid}`
 
   return (
     <svg
@@ -30,12 +26,30 @@ export default function SectionDissolve({ toColor, height = 140 }) {
       preserveAspectRatio="none"
     >
       <defs>
+        {/* S-curve: slow start, accelerates through the middle, full
+            coverage by the last 15% — avoids the abrupt "wall" of a
+            simple linear gradient. */}
         <linearGradient id={gradId} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={toColor} stopOpacity="0" />
-          <stop offset="70%" stopColor={toColor} stopOpacity="0.85" />
-          <stop offset="100%" stopColor={toColor} stopOpacity="1" />
+          <stop offset="0%"   stopColor={toColor} stopOpacity="0"    />
+          <stop offset="35%"  stopColor={toColor} stopOpacity="0.12" />
+          <stop offset="62%"  stopColor={toColor} stopOpacity="0.55" />
+          <stop offset="82%"  stopColor={toColor} stopOpacity="0.88" />
+          <stop offset="100%" stopColor={toColor} stopOpacity="1"    />
         </linearGradient>
+
+        {accentColor && (
+          /* Radial glow centred at the bottom edge — the "ambient light
+             from the next section seeping through the seam". */
+          <radialGradient id={glowId} cx="50%" cy="100%" r="65%" fx="50%" fy="100%">
+            <stop offset="0%"   stopColor={accentColor} stopOpacity="1"   />
+            <stop offset="100%" stopColor={accentColor} stopOpacity="0"   />
+          </radialGradient>
+        )}
       </defs>
+
+      {accentColor && (
+        <rect x="0" y="0" width="1000" height={height} fill={`url(#${glowId})`} />
+      )}
       <rect x="0" y="0" width="1000" height={height} fill={`url(#${gradId})`} />
     </svg>
   )

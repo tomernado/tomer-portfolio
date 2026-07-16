@@ -566,7 +566,7 @@ export default function ProjectsGrid() {
         </div>
 
         {/* Soft dissolve into Web4You's dark surface, instead of a hard cut. */}
-        <SectionDissolve toColor="#050505" height={160} />
+        <SectionDissolve toColor="#050505" height={220} accentColor="rgba(139,92,246,0.18)" />
       </section>
 
       <ProjectModal project={selected} onClose={() => setSelected(null)} />

@@ -436,7 +436,7 @@ export default function Hero() {
             backgroundImage: `url(${BG_URL})`,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.48,
+            opacity: 0.58,
           }}
         />
         <div
@@ -446,11 +446,9 @@ export default function Hero() {
               /* Top fade — covers the sky/circuit zone where headline sits;
                  clears quickly so the mountains and horizon show below */
               'linear-gradient(to bottom, #04050A 0%, rgba(4,5,10,0.72) 10%, rgba(4,5,10,0.15) 26%, transparent 38%)',
-              /* Bottom fade — thin band to meet the dissolve SVG cleanly */
-              'linear-gradient(to top, rgba(4,5,10,0.88) 0%, rgba(4,5,10,0.35) 14%, transparent 28%)',
-              /* Wide radial — keeps corners dark while letting mountains,
-                 horizon glow, and energy waves show through center */
-              'radial-gradient(ellipse 115% 105% at 50% 62%, transparent 32%, rgba(4,5,10,0.32) 58%, rgba(4,5,10,0.72) 80%, #04050A 96%)',
+              /* Wide radial — keeps far corners dark while letting the
+                 full mountain/horizon/grid show through the center+bottom */
+              'radial-gradient(ellipse 120% 110% at 50% 65%, transparent 38%, rgba(4,5,10,0.28) 62%, rgba(4,5,10,0.65) 82%, #04050A 97%)',
             ].join(', '),
           }}
         />
