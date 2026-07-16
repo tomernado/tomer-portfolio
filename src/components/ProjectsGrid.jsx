@@ -66,17 +66,17 @@ const TAG_ICON = {
 const miniCardDesktop = {
   hidden:  { opacity: 0, y: 20, scale: 0.97, filter: 'blur(3px)' },
   visible: { opacity: 1, y: 0,  scale: 1,    filter: 'blur(0px)',
-             transition: { duration: 0.6, ease: EASE_OUT } },
+             transition: { duration: 0.78, ease: EASE_OUT } },
 }
 // Mobile/tablet — plain fade+translate, no filter cost.
 const miniCardSimple = {
   hidden:  { opacity: 0, y: 14 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: EASE_OUT } },
 }
-// 100ms stagger so each card enters distinctly one at a time.
+// 130ms stagger — each card enters more intentionally, one at a time.
 const MINI_GRID_STAGGER = {
   hidden:  {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.06 } },
+  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.1 } },
 }
 
 /* Most project titles follow a "Name — Subtitle" convention; split it so
