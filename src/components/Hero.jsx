@@ -89,6 +89,9 @@ const LIGHT_PARTICLES = [
   { top: '46%', left: '6%', size: 2, dur: 10, delay: 1, color: '216,180,254' },
 ]
 
+/* Public-folder asset path — respects Vite's base in both dev and prod. */
+const BG_URL = import.meta.env.BASE_URL + 'img/BACKGROUND.png'
+
 /* Small fixed twinkling stars scattered across the whole background,
    distinct from the drifting Particles layer — pure opacity flicker, no
    movement, for extra cinematic dust. */
@@ -483,6 +486,41 @@ export default function Hero() {
           instead of every frame. */}
       <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute inset-0 bg-[#04050A]" />
+
+        {/* ── Layer: Background texture ─────────────────────────────────
+            Dark AI/tech landscape whose violet/blue/purple palette matches
+            Hero's accent scheme exactly. Two-layer approach:
+              1. The image itself at reduced opacity — lets the glowing
+                 horizon and energy waves show as atmospheric depth.
+              2. Gradient overlay that fades the image back into the dark
+                 base at the top (navbar/content zone), bottom (dissolve
+                 handoff), and sides — so it reads as part of the scene
+                 rather than a placed asset.
+            No filter/blur on the image layer — cheap to composite. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${BG_URL})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 55%',
+            backgroundRepeat: 'no-repeat',
+            opacity: 0.38,
+          }}
+        />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: [
+              /* Top fade — heavy, so the navbar/heading content stays readable */
+              'linear-gradient(to bottom, #04050A 0%, rgba(4,5,10,0.72) 12%, rgba(4,5,10,0.22) 28%, transparent 42%)',
+              /* Bottom fade — blends cleanly into the dissolve SVG below */
+              'linear-gradient(to top, rgba(4,5,10,0.92) 0%, rgba(4,5,10,0.45) 16%, transparent 34%)',
+              /* Radial edge vignette — transparent center, darkens sides so
+                 the image doesn't feel like a wallpaper with hard edges */
+              'radial-gradient(ellipse 105% 95% at 50% 52%, transparent 22%, rgba(4,5,10,0.42) 56%, rgba(4,5,10,0.80) 78%, #04050A 96%)',
+            ].join(', '),
+          }}
+        />
 
         {/* Left ambient — violet.
             `filter: blur()` has to be re-rasterized at a higher effective
