@@ -405,7 +405,7 @@ export default function Hero() {
       dir={dir}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-[92vh] flex items-center overflow-hidden isolate px-6 pt-28 pb-16"
+      className="relative min-h-screen flex items-center overflow-hidden isolate px-6 pt-28 pb-32 lg:pb-20"
     >
       {/* ── Layer: BackgroundAtmosphere ─────────────────────────────── */}
       {/* Five large `filter: blur()` layers (120–180px radius, up to
@@ -431,7 +431,7 @@ export default function Hero() {
                  rather than a placed asset.
             No filter/blur on the image layer — cheap to composite. */}
         <div
-          className="absolute inset-0 [background-position:12%_62%] lg:[background-position:center_62%]"
+          className="absolute inset-0 [background-position:12%_78%] lg:[background-position:center_62%]"
           style={{
             backgroundImage: `url(${BG_URL})`,
             backgroundSize: 'cover',
@@ -554,7 +554,7 @@ export default function Hero() {
               transition={reduceMotion ? undefined : { duration: w.dur, repeat: Infinity, ease: 'easeInOut' }}
             />
           ))}
-          {[
+          {showScene && [
             [60, 196, 1.1, 0.35], [150, 196, 1.6, 0.55], [230, 216, 1, 0.3],
             [310, 205, 1.3, 0.4], [390, 222, 1, 0.28], [430, 200, 1.6, 0.5],
             [520, 218, 1.1, 0.32], [600, 205, 1.4, 0.45], [680, 224, 1, 0.28],
