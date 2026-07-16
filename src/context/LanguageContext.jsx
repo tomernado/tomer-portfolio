@@ -56,6 +56,9 @@ const UI_HE = {
     statFocusValue:   'בוגר מדמ״ח',
     statFocusLabel:   'פוקוס AI ו-Full-Stack',
   },
+  skills: {
+    description: 'ארסנל מאורגן של שפות, פריימוורקים, מסדי נתונים וכלים שאני משתמש בהם לבניית פתרונות דיגיטליים מאובטחים, סקיילביליים ובעלי השפעה.',
+  },
   projects: {
     eyebrow:      'פרויקטים נבחרים',
     heading1:     'פרויקטים שפותרים',
@@ -121,6 +124,9 @@ const UI_EN = {
     statTech:         aboutStrings.statTech,
     statFocusValue:   aboutStrings.statFocusValue,
     statFocusLabel:   aboutStrings.statFocusLabel,
+  },
+  skills: {
+    description: 'A curated arsenal of languages, frameworks, databases and tools I use to build secure, scalable and impactful digital solutions.',
   },
   projects: {
     eyebrow:      projectsSection.eyebrow,

@@ -8,6 +8,7 @@ import { DiJava } from 'react-icons/di'
 import { TbBrandCSharp } from 'react-icons/tb'
 import { Database, Box, LayoutGrid, Layers, Cloud, ShieldCheck, CheckSquare, Lock, Sparkles } from 'lucide-react'
 import { skills } from '../data/content'
+import { useContent } from '../context/LanguageContext'
 import SpotlightCard from './SpotlightCard'
 import SectionMarker from './SectionMarker'
 import Particles from './Particles'
@@ -165,6 +166,7 @@ function SkillCard({ group, index = 0 }) {
 }
 
 export default function Skills() {
+  const { ui } = useContent()
   const reduceMotion = useReducedMotion()
   // Animated `filter: blur()` glow layers are expensive to composite —
   // stacked across sections they're what caused Mobile Safari to
@@ -251,7 +253,7 @@ export default function Skills() {
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full" style={{ background: ACCENT.css, boxShadow: `0 0 10px 2px ${ACCENT.css}` }} />
             </div>
             <p className="font-body text-white/50 text-sm leading-relaxed">
-              A curated arsenal of languages, frameworks, databases and tools I use to build secure, scalable and impactful digital solutions.
+              {ui.skills.description}
             </p>
           </motion.div>
         </div>
