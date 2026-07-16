@@ -445,7 +445,7 @@ export default function Hero() {
             background: [
               /* Top fade — covers the sky/circuit zone where headline sits;
                  clears quickly so the mountains and horizon show below */
-              'linear-gradient(to bottom, #04050A 0%, rgba(4,5,10,0.72) 10%, rgba(4,5,10,0.15) 26%, transparent 38%)',
+              'linear-gradient(to bottom, rgba(4,5,10,0.78) 0%, rgba(4,5,10,0.38) 8%, rgba(4,5,10,0.08) 18%, transparent 28%)',
               /* Wide radial — keeps far corners dark while letting the
                  full mountain/horizon/grid show through the center+bottom */
               'radial-gradient(ellipse 160% 90% at 50% 105%, transparent 30%, rgba(4,5,10,0.35) 60%, rgba(4,5,10,0.72) 82%, #04050A 97%)',
