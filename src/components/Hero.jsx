@@ -597,7 +597,7 @@ export default function Hero() {
                 transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
               />
               <motion.span
-                className="relative block w-[66px] h-[66px] lg:w-[92px] lg:h-[92px] rounded-full overflow-hidden ring-1 ring-white/20"
+                className="relative block w-[82px] h-[82px] lg:w-[92px] lg:h-[92px] rounded-full overflow-hidden ring-1 ring-white/20"
                 style={{ boxShadow: '0 0 0 1px rgba(255,255,255,0.05), 0 8px 24px -4px rgba(168,85,247,0.45)' }}
                 animate={reduceMotion ? {} : { y: [0, -4, 0] }}
                 transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
@@ -624,7 +624,7 @@ export default function Hero() {
               className="absolute -inset-x-6 -inset-y-4 -z-10 pointer-events-none"
               style={{ background: 'radial-gradient(ellipse 65% 80% at 20% 50%, rgba(168,85,247,0.22), transparent 72%)', filter: 'blur(22px)' }}
             />
-            <h1 className="font-display font-bold leading-[1.04] tracking-tight text-[2.75rem] sm:text-6xl lg:text-[5.5rem]">
+            <h1 className="font-display font-bold leading-[1.04] tracking-tight text-[3.25rem] sm:text-6xl lg:text-[5.5rem]">
               {(() => {
                 const words = personalInfo.name.split(' ')
                 const last = words[words.length - 1]
@@ -664,7 +664,7 @@ export default function Hero() {
               as="button"
               strength={0.3}
               onClick={() => scrollTo('#projects')}
-              className="group relative inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-400 text-ink-950 font-display font-semibold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_8px_28px_rgba(168,85,247,0.4)] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_16px_42px_rgba(168,85,247,0.55)] transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
+              className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-400 text-ink-950 font-display font-semibold text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_8px_28px_rgba(168,85,247,0.4)] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_16px_42px_rgba(168,85,247,0.55)] transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
             >
               {ui.hero.viewProjects}
               <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -673,7 +673,7 @@ export default function Hero() {
               as="button"
               strength={0.3}
               onClick={() => scrollTo('#contact')}
-              className="group inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/15 bg-white/[0.1] md:bg-white/[0.04] md:backdrop-blur-xl text-white font-display font-semibold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:bg-white/[0.08] hover:border-violet-300/35 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.13),0_0_26px_rgba(168,85,247,0.18)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
+              className="group inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/15 bg-white/[0.1] md:bg-white/[0.04] md:backdrop-blur-xl text-white font-display font-semibold text-base shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:bg-white/[0.08] hover:border-violet-300/35 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.13),0_0_26px_rgba(168,85,247,0.18)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
             >
               {ui.hero.contactCta}
               <ArrowUpRight size={16} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
