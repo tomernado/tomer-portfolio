@@ -206,6 +206,17 @@ export default function Web4YouSection() {
         />
       </div>
 
+      {/* Projects ends white; this dark section opens with a short white→dark
+          blend so the two backgrounds meet naturally. Fits within py-28. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 pointer-events-none"
+        style={{
+          height: 100,
+          background: 'linear-gradient(to bottom, #f3f1f8 0%, transparent 100%)',
+        }}
+      />
+
       <div className="max-w-6xl mx-auto relative">
 
         <SectionMarker index="04" label={ui.web4you.label} className="mb-8" />

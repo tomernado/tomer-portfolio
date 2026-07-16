@@ -470,8 +470,6 @@ export default function About() {
 
         </motion.div>
 
-        {/* Soft dissolve into Skills' dark surface, instead of a hard cut. */}
-        <SectionDissolve toColor="#04050A" height={220} accentColor="rgba(139,92,246,0.22)" />
       </section>
 
       <CvModal isOpen={cvOpen} onClose={() => setCvOpen(false)} />

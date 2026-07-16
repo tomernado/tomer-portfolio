@@ -466,6 +466,19 @@ export default function ProjectsGrid() {
         className="relative py-28 sm:py-36 px-5"
         style={{ background: `linear-gradient(180deg, ${BG_TOP} 0%, ${BG_MID} 22%, ${BG_LOW} 100%)` }}
       >
+        {/* The dark Skills section ends dark; let this light section open
+            with a very short dark→white blend so the two backgrounds meet
+            naturally rather than hard-cutting. Stays within py-28 padding
+            so content never overlaps the gradient zone. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 pointer-events-none"
+          style={{
+            height: 100,
+            background: 'linear-gradient(to bottom, #050505 0%, transparent 100%)',
+          }}
+        />
+
         <div className="max-w-6xl mx-auto mb-16">
           <motion.div
             initial="hidden"
@@ -565,8 +578,6 @@ export default function ProjectsGrid() {
           )}
         </div>
 
-        {/* Soft dissolve into Web4You's dark surface, instead of a hard cut. */}
-        <SectionDissolve toColor="#050505" height={220} accentColor="rgba(139,92,246,0.18)" />
       </section>
 
       <ProjectModal project={selected} onClose={() => setSelected(null)} />

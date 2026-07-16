@@ -216,6 +216,17 @@ export default function Skills() {
       />
       <Particles count={22} />
 
+      {/* About ends white; this dark section opens with a short white→dark
+          blend so the two backgrounds meet naturally. Fits within py-28. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 pointer-events-none"
+        style={{
+          height: 100,
+          background: 'linear-gradient(to bottom, #f3f1f8 0%, transparent 100%)',
+        }}
+      />
+
       <div className="max-w-6xl mx-auto relative">
 
         <SectionMarker index="02" label="Skills & Technologies" className="mb-16" />
@@ -261,12 +272,6 @@ export default function Skills() {
         </div>
       </div>
 
-      {/* Soft dissolve into Projects' white surface, instead of a hard cut.
-          Replaces the old thread-only decoration (mobile-visible, no actual
-          color blend) with the same gradient+thread treatment used at every
-          other section seam — desktop gets the drifting threads, mobile
-          gets just the static gradient. */}
-      <SectionDissolve toColor="#ffffff" height={200} />
     </section>
   )
 }
