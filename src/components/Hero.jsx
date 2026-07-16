@@ -448,7 +448,7 @@ export default function Hero() {
               'linear-gradient(to bottom, #04050A 0%, rgba(4,5,10,0.72) 10%, rgba(4,5,10,0.15) 26%, transparent 38%)',
               /* Wide radial — keeps far corners dark while letting the
                  full mountain/horizon/grid show through the center+bottom */
-              'radial-gradient(ellipse 120% 110% at 50% 65%, transparent 38%, rgba(4,5,10,0.28) 62%, rgba(4,5,10,0.65) 82%, #04050A 97%)',
+              'radial-gradient(ellipse 160% 90% at 50% 105%, transparent 30%, rgba(4,5,10,0.35) 60%, rgba(4,5,10,0.72) 82%, #04050A 97%)',
             ].join(', '),
           }}
         />
