@@ -26,34 +26,40 @@ const SPARKS = [
   { angle: 320, radius: 0.62, size: 1.6, dur: 8, delay: 1 },
 ]
 
-export default function EngineeringCore({ size = 188, className = 'relative' }) {
+// compact=true: skips the outermost heavy blur layers (corona, rays, sparks)
+// and makes the remaining bloom layers static. Used on mobile where the full
+// set of animated filter:blur() divs is too expensive to composite.
+export default function EngineeringCore({ size = 188, className = 'relative', compact = false }) {
   const reduceMotion = useReducedMotion()
 
   return (
     <div className={className} style={{ width: size, height: size }}>
       {/* Widest, softest ambient corona — sells "light source" before the
-          eye even reaches the shell. Kept modest so it doesn't compete
-          with the name on the opposite side of the Hero. */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{
-          inset: -size * 0.42,
-          background: `radial-gradient(circle, rgba(${CORE},0.11) 0%, transparent 70%)`,
-          filter: `blur(${(size * 0.24).toFixed(1)}px)`,
-        }}
-        animate={reduceMotion ? {} : { scale: [1, 1.07, 1], opacity: [0.5, 0.7, 0.5] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      {/* Outer bloom — soft violet/purple light spilling into the scene */}
+          eye even reaches the shell. Skipped in compact mode (largest blur,
+          most expensive layer on mobile). */}
+      {!compact && (
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            inset: -size * 0.42,
+            background: `radial-gradient(circle, rgba(${CORE},0.11) 0%, transparent 70%)`,
+            filter: `blur(${(size * 0.24).toFixed(1)}px)`,
+          }}
+          animate={reduceMotion ? {} : { scale: [1, 1.07, 1], opacity: [0.5, 0.7, 0.5] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
+      {/* Outer bloom — animated on desktop, static in compact/mobile mode */}
       <motion.div
         className="absolute rounded-full"
         style={{
           inset: -size * 0.3,
           background: `radial-gradient(circle, rgba(${CORE},0.24) 0%, transparent 68%)`,
           filter: `blur(${(size * 0.17).toFixed(1)}px)`,
+          ...(compact ? { opacity: 0.55 } : {}),
         }}
-        animate={reduceMotion ? {} : { scale: [1, 1.11, 1], opacity: [0.55, 0.8, 0.55] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut' }}
+        animate={(!compact && !reduceMotion) ? { scale: [1, 1.11, 1], opacity: [0.55, 0.8, 0.55] } : {}}
+        transition={(!compact && !reduceMotion) ? { duration: 6.5, repeat: Infinity, ease: 'easeInOut' } : {}}
       />
       <motion.div
         className="absolute rounded-full"
@@ -61,14 +67,14 @@ export default function EngineeringCore({ size = 188, className = 'relative' }) 
           inset: -size * 0.2,
           background: `radial-gradient(circle, rgba(${CORE_SOFT},0.17) 0%, transparent 70%)`,
           filter: `blur(${(size * 0.13).toFixed(1)}px)`,
+          ...(compact ? { opacity: 0.5 } : {}),
         }}
-        animate={reduceMotion ? {} : { scale: [1.06, 1, 1.06], opacity: [0.4, 0.65, 0.4] }}
-        transition={{ duration: 8.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        animate={(!compact && !reduceMotion) ? { scale: [1.06, 1, 1.06], opacity: [0.4, 0.65, 0.4] } : {}}
+        transition={(!compact && !reduceMotion) ? { duration: 8.5, repeat: Infinity, ease: 'easeInOut', delay: 1 } : {}}
       />
 
-      {/* Light rays — soft radiating beams, slowly rotating on their own
-          axis, distinct from the shell's rotation and the sweep below. */}
-      {!reduceMotion && (
+      {/* Light rays — desktop only, skipped in compact mode */}
+      {!compact && !reduceMotion && (
         <motion.div
           className="absolute rounded-full"
           style={{
@@ -186,9 +192,9 @@ export default function EngineeringCore({ size = 188, className = 'relative' }) 
           transition={{ duration: 70, repeat: Infinity, ease: 'linear' }}
         />
 
-        {/* Floating sparks — tiny points of light drifting near the surface,
-            each on its own independent path/timing. */}
-        {!reduceMotion && SPARKS.map((s, i) => {
+        {/* Floating sparks — skipped in compact mode to reduce concurrent
+            animations on mobile; desktop keeps all four. */}
+        {!compact && !reduceMotion && SPARKS.map((s, i) => {
           const rad = (s.angle * Math.PI) / 180
           const cx = 50 + Math.cos(rad) * s.radius * 50
           const cy = 50 + Math.sin(rad) * s.radius * 50

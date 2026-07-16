@@ -64,6 +64,17 @@ const SCENE_CARDS = [
   },
 ]
 
+/* Two cards shown in the mobile (< lg) lightweight scene.
+   Pick one "product UI" card and one "code" card for visual variety. */
+const MOBILE_SCENE_CARDS = [SCENE_CARDS[0], SCENE_CARDS[1]]
+
+/* Absolute positions within the mobile scene container (280–340px square).
+   Top-left and bottom-right so the Energy Core is framed between them. */
+const MOBILE_CARD_POS = [
+  'top-[4%] left-[0%] w-[48%]',
+  'bottom-[4%] right-[0%] w-[48%]',
+]
+
 /* Three orbit rings — different radii, tilts and speeds/directions. */
 const CONNECTIONS = [
   'M 106 84 Q 166 138 220 188',
@@ -291,6 +302,66 @@ function CardBody({ card, reduceMotion }) {
         </>
       )}
     </>
+  )
+}
+
+/* Simplified card body for the mobile scene — window chrome + identity
+   only, no preview widget. At ~135px card width the preview layouts are
+   too cramped; the chrome+icon+title reads as a premium product card. */
+function MobileCardBody({ card, reduceMotion }) {
+  if (card.body === 'code') {
+    return (
+      <>
+        <CodeChrome />
+        <div className="flex items-center gap-1.5 mt-1">
+          <LiveDot color="#34d399" reduceMotion={reduceMotion} />
+          <span className="font-mono text-[9px] text-white/40">Production</span>
+        </div>
+      </>
+    )
+  }
+  return (
+    <>
+      <WindowChrome label={card.toolbarLabel} />
+      <div className="flex items-center gap-2">
+        {card.icon && <CardIcon card={card} />}
+        <div className="min-w-0">
+          <span className="font-display font-bold text-[11px] text-white block truncate">{card.title}</span>
+          {card.sub && <span className="font-body text-[9px] text-white/40 block mt-0.5 leading-snug truncate">{card.sub}</span>}
+        </div>
+      </div>
+    </>
+  )
+}
+
+/* Lightweight card for mobile: float-bob only (no mouse parallax, no 3D
+   tilt). Background is purple-tinted to feel lit by the Energy Core. */
+function MobileSceneCard({ card, index }) {
+  const reduceMotion = useReducedMotion()
+  return (
+    <motion.div
+      className={`absolute ${MOBILE_CARD_POS[index]}`}
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.75, delay: 0.65 + index * 0.2, ease: EASE_OUT }}
+    >
+      <motion.div
+        animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
+        transition={{ duration: card.floatDur, delay: card.floatDelay, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ rotate: card.rotate * 0.5 }}
+      >
+        <SpotlightCard
+          className="w-full rounded-xl border p-2.5"
+          style={{
+            background: 'linear-gradient(160deg, rgba(148,85,247,0.08) 0%, rgba(18,10,28,0.90) 50%)',
+            borderColor: 'rgba(168,85,247,0.22)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.07), 0 8px 24px rgba(28,0,56,0.5)',
+          }}
+        >
+          <MobileCardBody card={card} reduceMotion={reduceMotion} />
+        </SpotlightCard>
+      </motion.div>
+    </motion.div>
   )
 }
 
@@ -694,12 +765,13 @@ export default function Hero() {
         </motion.div>
 
         {/* ── RIGHT — EngineeringScene ─────────────────────────────────
-            Only mounted at lg: and up — see the showScene comment above.
-            On mobile this whole subtree (orbit rings, energy core,
-            connection lines, floating cards, its own particle layer) is
-            skipped entirely, not just visually hidden, so none of its
-            ~30 concurrent animations run on weaker devices. ──────────── */}
-        {showScene && (
+            Full desktop scene at lg:+; lightweight mobile scene below that.
+            Previously the mobile subtree was entirely unmounted to avoid
+            ~30 concurrent blur/filter animations crashing Mobile Safari —
+            now a compact version (fewer layers, static blooms, no orbit
+            rings) runs on mobile with the same visual character at a much
+            lower GPU cost. ──────────────────────────────────────────────── */}
+        {showScene ? (
         <motion.div
           style={reduceMotion ? {} : { y: sceneY }}
           initial={{ opacity: 0 }}
@@ -757,6 +829,26 @@ export default function Hero() {
               <SceneCard key={card.key} card={card} index={i} smx={smx} smy={smy} reduceMotion={reduceMotion} />
             ))}
           </div>
+        </motion.div>
+        ) : (
+        /* Mobile/tablet: compact Energy Core + 2 floating cards.
+           No orbit rings, no connection lines, no mouse parallax.
+           Cards use a purple-tinted glass finish so they read as lit
+           by the core rather than floating in a separate layer. */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="relative w-full max-w-[280px] sm:max-w-[340px] aspect-square mx-auto"
+        >
+          <EngineeringCore
+            size={112}
+            compact
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          />
+          {MOBILE_SCENE_CARDS.map((card, i) => (
+            <MobileSceneCard key={card.key} card={card} index={i} />
+          ))}
         </motion.div>
         )}
       </div>
