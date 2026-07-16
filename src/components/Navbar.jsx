@@ -35,26 +35,23 @@ export default function Navbar() {
   const { lang, setLang } = useLang()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30)
-    window.addEventListener('scroll', onScroll)
+    // A section becomes active the moment its top crosses 40% down the
+    // viewport. We keep the last one that passed — no IntersectionObserver
+    // dead zones at section boundaries (the old IO approach had a ~20vh gap
+    // between Hero and About where neither registered as active).
+    const onScroll = () => {
+      setScrolled(window.scrollY > 30)
+      const trigger = window.innerHeight * 0.4
+      let active = navLinks[0].id
+      for (const { id } of navLinks) {
+        const el = document.getElementById(id)
+        if (el && el.getBoundingClientRect().top <= trigger) active = id
+      }
+      setActiveSection(active)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter(e => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-        if (visible.length > 0) setActiveSection(visible[0].target.id)
-      },
-      { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.25, 0.5] }
-    )
-    navLinks.forEach(({ id }) => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    })
-    return () => observer.disconnect()
   }, [])
 
   // Close the mobile menu whenever the active section changes (i.e. after a nav)
