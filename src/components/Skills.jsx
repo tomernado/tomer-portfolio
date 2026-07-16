@@ -11,7 +11,6 @@ import { skills } from '../data/content'
 import SpotlightCard from './SpotlightCard'
 import SectionMarker from './SectionMarker'
 import Particles from './Particles'
-import SectionDissolve from './SectionDissolve'
 import { ACCENT, headingReveal, revealUp, VIEWPORT, EASE_OUT } from '../motion'
 import { useIsDesktop } from '../hooks/useIsDesktop'
 
@@ -59,18 +58,34 @@ const ITEM_ICON = {
 }
 
 const badgeItem = {
-  hidden:  { opacity: 0, scale: 0.7, y: 8 },
-  visible: { opacity: 1, scale: 1,   y: 0, transition: { duration: 0.32, ease: 'backOut' } },
+  hidden:  { opacity: 0, y: 5, scale: 0.9 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.28, ease: EASE_OUT } },
 }
 
-/* Skills' own cross-section identity: cards "assemble" into place with a
-   faint alternating tilt, rather than the plain scale/blur other sections
-   use — reads as this section's own signature while still scroll-triggered
-   like everywhere else. */
-const assembleVariant = (i) => ({
-  hidden:  { opacity: 0, y: 34, scale: 0.94, rotate: i % 2 === 0 ? -2.5 : 2.5 },
-  visible: { opacity: 1, y: 0, scale: 1, rotate: 0, transition: { duration: 0.7, ease: EASE_OUT, delay: i * 0.06 } },
-})
+// Desktop: subtle blur-focus + translate, GPU-composited. Blur is cheap
+// here because it's a one-shot entrance, not a continuous scroll-linked
+// filter (see CLAUDE.md §6.2 for why scroll-linked blur is forbidden).
+const cardEnterDesktop = {
+  hidden:  { opacity: 0, y: 24, scale: 0.97, filter: 'blur(4px)' },
+  visible: { opacity: 1, y: 0,  scale: 1,    filter: 'blur(0px)',
+             transition: { duration: 0.65, ease: EASE_OUT } },
+}
+// Mobile/tablet: plain fade+translate, no filter cost.
+const cardEnterSimple = {
+  hidden:  { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
+}
+
+// Stagger the primary card then the three secondary cards as one group.
+const CARDS_STAGGER = {
+  hidden:   {},
+  visible:  { transition: { staggerChildren: 0.1, delayChildren: 0.12 } },
+}
+// Secondary cards stagger among themselves once the grid receives `visible`.
+const SECONDARY_STAGGER = {
+  hidden:  {},
+  visible: { transition: { staggerChildren: 0.1 } },
+}
 
 function SkillCard({ group, wide = false, index = 0 }) {
   const reduceMotion = useReducedMotion()
@@ -93,11 +108,8 @@ function SkillCard({ group, wide = false, index = 0 }) {
   return (
     <div className={mobileStagger}>
     <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={VIEWPORT}
-      variants={assembleVariant(index)}
-      whileHover={{ y: -4 }}
+      variants={isDesktop ? cardEnterDesktop : cardEnterSimple}
+      whileHover={isDesktop ? { y: -4 } : undefined}
       className={wide ? 'sm:col-span-2' : ''}
     >
       <SpotlightCard
@@ -261,15 +273,26 @@ export default function Skills() {
           </motion.div>
         </div>
 
-        {/* Bento: primary category full-width, rest in a 3-up row */}
-        <div className="flex flex-col gap-6">
+        {/* Bento: one stagger container drives the full grid so primary +
+            secondary cards cascade as a single choreographed sequence rather
+            than firing independently per scroll. */}
+        <motion.div
+          className="flex flex-col gap-6"
+          initial="hidden"
+          whileInView="visible"
+          viewport={VIEWPORT}
+          variants={CARDS_STAGGER}
+        >
           <SkillCard group={primary} wide index={0} />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-3 gap-6"
+            variants={SECONDARY_STAGGER}
+          >
             {rest.map((group, i) => (
               <SkillCard key={group.category} group={group} index={i + 1} />
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
 
     </section>
