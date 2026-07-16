@@ -95,7 +95,7 @@ const BG_URL = import.meta.env.BASE_URL + 'img/BACKGROUND.png'
 /* Small fixed twinkling stars scattered across the whole background,
    distinct from the drifting Particles layer — pure opacity flicker, no
    movement, for extra cinematic dust. */
-const STARS = Array.from({ length: 22 }, (_, i) => ({
+const STARS = Array.from({ length: 0 }, (_, i) => ({
   id: i,
   left: (i * 37 + 11) % 100,
   top: (i * 53 + 7) % 100,
@@ -504,20 +504,20 @@ export default function Hero() {
             backgroundSize: 'cover',
             backgroundPosition: 'center 55%',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.38,
+            opacity: 0.22,
           }}
         />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background: [
-              /* Top fade — heavy, so the navbar/heading content stays readable */
-              'linear-gradient(to bottom, #04050A 0%, rgba(4,5,10,0.72) 12%, rgba(4,5,10,0.22) 28%, transparent 42%)',
+              /* Top fade — extended so image only peeks through in lower half */
+              'linear-gradient(to bottom, #04050A 0%, rgba(4,5,10,0.85) 15%, rgba(4,5,10,0.38) 34%, transparent 50%)',
               /* Bottom fade — blends cleanly into the dissolve SVG below */
-              'linear-gradient(to top, rgba(4,5,10,0.92) 0%, rgba(4,5,10,0.45) 16%, transparent 34%)',
-              /* Radial edge vignette — transparent center, darkens sides so
-                 the image doesn't feel like a wallpaper with hard edges */
-              'radial-gradient(ellipse 105% 95% at 50% 52%, transparent 22%, rgba(4,5,10,0.42) 56%, rgba(4,5,10,0.80) 78%, #04050A 96%)',
+              'linear-gradient(to top, rgba(4,5,10,0.94) 0%, rgba(4,5,10,0.5) 18%, transparent 36%)',
+              /* Tighter radial vignette — only the central horizon glow
+                 shows through; the side energy waves are darkened out */
+              'radial-gradient(ellipse 88% 80% at 50% 58%, transparent 12%, rgba(4,5,10,0.55) 42%, rgba(4,5,10,0.88) 68%, #04050A 90%)',
             ].join(', '),
           }}
         />
@@ -532,13 +532,13 @@ export default function Hero() {
             no blur) instead — cheap to render at any zoom level; desktop
             keeps the exact original blur unchanged. */}
         <div
-          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full md:blur-[180px] opacity-30"
+          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full md:blur-[180px] opacity-15"
           style={{ background: 'radial-gradient(circle, rgba(139,92,246,.22) 0%, rgba(139,92,246,.13) 22%, rgba(139,92,246,.06) 40%, rgba(139,92,246,.02) 58%, transparent 75%)' }}
         />
 
         {/* Right glow — purple */}
         <div
-          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full md:blur-[180px] opacity-35"
+          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full md:blur-[180px] opacity-20"
           style={{ background: 'radial-gradient(circle, rgba(168,85,247,.20) 0%, rgba(168,85,247,.12) 25%, rgba(168,85,247,.05) 45%, rgba(168,85,247,.02) 62%, transparent 75%)' }}
         />
 
@@ -553,7 +553,7 @@ export default function Hero() {
         {/* Bottom energy glow — the one place blue remains, as a
             deliberately secondary accent beneath the purple-led scene. */}
         <div
-          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full md:blur-[150px] opacity-20"
+          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full md:blur-[150px] opacity-10"
           style={{ background: 'radial-gradient(circle, rgba(71,113,255,.16) 0%, rgba(71,113,255,.09) 30%, rgba(71,113,255,.04) 55%, rgba(71,113,255,.015) 68%, transparent 75%)' }}
         />
 
@@ -562,7 +562,7 @@ export default function Hero() {
         <motion.div
           className="absolute left-[30%] top-[38%] w-[560px] h-[560px] rounded-full md:blur-[170px]"
           style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(168,85,247,0.06) 35%, rgba(168,85,247,0.02) 55%, transparent 70%)' }}
-          animate={(reduceMotion || !showScene) ? {} : { opacity: [0.5, 0.85, 0.5], scale: [1, 1.06, 1] }}
+          animate={(reduceMotion || !showScene) ? {} : { opacity: [0.28, 0.48, 0.28], scale: [1, 1.04, 1] }}
           transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
         />
 
@@ -603,7 +603,7 @@ export default function Hero() {
         />
 
         {/* ── Layer: ParticleSystem ────────────────────────────────── */}
-        <Particles count={34} />
+        <Particles count={16} />
 
         {/* Hero → About dissolve — kept quiet on purpose: Hero simply
             gets darker toward its own bottom, with only a faint violet
