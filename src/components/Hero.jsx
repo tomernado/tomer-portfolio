@@ -502,22 +502,23 @@ export default function Hero() {
           style={{
             backgroundImage: `url(${BG_URL})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center 55%',
+            backgroundPosition: 'center 62%',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.22,
+            opacity: 0.48,
           }}
         />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background: [
-              /* Top fade — extended so image only peeks through in lower half */
-              'linear-gradient(to bottom, #04050A 0%, rgba(4,5,10,0.85) 15%, rgba(4,5,10,0.38) 34%, transparent 50%)',
-              /* Bottom fade — blends cleanly into the dissolve SVG below */
-              'linear-gradient(to top, rgba(4,5,10,0.94) 0%, rgba(4,5,10,0.5) 18%, transparent 36%)',
-              /* Tighter radial vignette — only the central horizon glow
-                 shows through; the side energy waves are darkened out */
-              'radial-gradient(ellipse 88% 80% at 50% 58%, transparent 12%, rgba(4,5,10,0.55) 42%, rgba(4,5,10,0.88) 68%, #04050A 90%)',
+              /* Top fade — covers the sky/circuit zone where headline sits;
+                 clears quickly so the mountains and horizon show below */
+              'linear-gradient(to bottom, #04050A 0%, rgba(4,5,10,0.72) 10%, rgba(4,5,10,0.15) 26%, transparent 38%)',
+              /* Bottom fade — thin band to meet the dissolve SVG cleanly */
+              'linear-gradient(to top, rgba(4,5,10,0.88) 0%, rgba(4,5,10,0.35) 14%, transparent 28%)',
+              /* Wide radial — keeps corners dark while letting mountains,
+                 horizon glow, and energy waves show through center */
+              'radial-gradient(ellipse 115% 105% at 50% 62%, transparent 32%, rgba(4,5,10,0.32) 58%, rgba(4,5,10,0.72) 80%, #04050A 96%)',
             ].join(', '),
           }}
         />
@@ -532,13 +533,13 @@ export default function Hero() {
             no blur) instead — cheap to render at any zoom level; desktop
             keeps the exact original blur unchanged. */}
         <div
-          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full md:blur-[180px] opacity-15"
+          className="absolute -left-[20%] top-[10%] h-[900px] w-[900px] rounded-full md:blur-[180px] opacity-25"
           style={{ background: 'radial-gradient(circle, rgba(139,92,246,.22) 0%, rgba(139,92,246,.13) 22%, rgba(139,92,246,.06) 40%, rgba(139,92,246,.02) 58%, transparent 75%)' }}
         />
 
         {/* Right glow — purple */}
         <div
-          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full md:blur-[180px] opacity-20"
+          className="absolute right-[-10%] top-[0%] h-[850px] w-[850px] rounded-full md:blur-[180px] opacity-28"
           style={{ background: 'radial-gradient(circle, rgba(168,85,247,.20) 0%, rgba(168,85,247,.12) 25%, rgba(168,85,247,.05) 45%, rgba(168,85,247,.02) 62%, transparent 75%)' }}
         />
 
@@ -553,7 +554,7 @@ export default function Hero() {
         {/* Bottom energy glow — the one place blue remains, as a
             deliberately secondary accent beneath the purple-led scene. */}
         <div
-          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full md:blur-[150px] opacity-10"
+          className="absolute bottom-[-250px] left-1/2 h-[700px] w-[1200px] -translate-x-1/2 rounded-full md:blur-[150px] opacity-18"
           style={{ background: 'radial-gradient(circle, rgba(71,113,255,.16) 0%, rgba(71,113,255,.09) 30%, rgba(71,113,255,.04) 55%, rgba(71,113,255,.015) 68%, transparent 75%)' }}
         />
 
