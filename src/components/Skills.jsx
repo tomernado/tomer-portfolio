@@ -62,55 +62,40 @@ const badgeItem = {
   visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.28, ease: EASE_OUT } },
 }
 
-// Desktop: subtle blur-focus + translate, GPU-composited. Blur is cheap
-// here because it's a one-shot entrance, not a continuous scroll-linked
-// filter (see CLAUDE.md §6.2 for why scroll-linked blur is forbidden).
-const cardEnterDesktop = {
-  hidden:  { opacity: 0, y: 24, scale: 0.97, filter: 'blur(4px)' },
-  visible: { opacity: 1, y: 0,  scale: 1,    filter: 'blur(0px)',
+// Desktop: alternating slide from left/right + blur-focus. Even-index cards
+// enter from the left, odd from the right — one by one as they scroll in.
+// Blur is a one-shot entrance (not scroll-linked) so it's safe on desktop.
+const cardEnterLeft = {
+  hidden:  { opacity: 0, x: -48, scale: 0.97, filter: 'blur(4px)' },
+  visible: { opacity: 1, x: 0,   scale: 1,    filter: 'blur(0px)',
              transition: { duration: 0.65, ease: EASE_OUT } },
 }
-// Mobile/tablet: plain fade+translate, no filter cost.
+const cardEnterRight = {
+  hidden:  { opacity: 0, x: 48, scale: 0.97, filter: 'blur(4px)' },
+  visible: { opacity: 1, x: 0,  scale: 1,    filter: 'blur(0px)',
+             transition: { duration: 0.65, ease: EASE_OUT } },
+}
+// Mobile/tablet: plain fade+y — no x-slide or filter cost.
 const cardEnterSimple = {
   hidden:  { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
 }
 
-// Stagger the primary card then the three secondary cards as one group.
+// 0.15s stagger so each card enters distinctly one at a time.
 const CARDS_STAGGER = {
-  hidden:   {},
-  visible:  { transition: { staggerChildren: 0.1, delayChildren: 0.12 } },
-}
-// Secondary cards stagger among themselves once the grid receives `visible`.
-const SECONDARY_STAGGER = {
   hidden:  {},
-  visible: { transition: { staggerChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } },
 }
 
-function SkillCard({ group, wide = false, index = 0 }) {
+function SkillCard({ group, index = 0 }) {
   const reduceMotion = useReducedMotion()
-  // `backdrop-blur-xl` stacked across every card is expensive to
-  // composite on Mobile Safari. Desktop keeps the exact original glass
-  // look; mobile swaps to a slightly more opaque solid fill instead of
-  // the (near-transparent without blur) original background, so the
-  // card still reads as a distinct surface without the per-card blur cost.
   const isDesktop = useIsDesktop()
-  // Mobile only (mobile-first: applied by default, reset at sm: where the
-  // bento/grid layout takes over): a slight alternating horizontal offset
-  // + overlap so the stack reads as layered cards rather than plain
-  // full-width rows. A plain CSS transform on a wrapper div, kept separate
-  // from the motion.div below so it never fights Framer's own transform.
-  const mobileStagger = index === 0
-    ? 'sm:mt-0'
-    : index % 2 === 1
-      ? '-mt-3 ml-4 mr-0 sm:m-0'
-      : '-mt-3 mr-4 ml-0 sm:m-0'
+  // Even index → slide from left; odd → slide from right.
+  const desktopVariant = index % 2 === 0 ? cardEnterLeft : cardEnterRight
   return (
-    <div className={mobileStagger}>
     <motion.div
-      variants={isDesktop ? cardEnterDesktop : cardEnterSimple}
+      variants={isDesktop ? desktopVariant : cardEnterSimple}
       whileHover={isDesktop ? { y: -4 } : undefined}
-      className={wide ? 'sm:col-span-2' : ''}
     >
       <SpotlightCard
         className={`overflow-hidden rounded-2xl border border-white/10 hover:border-white/20 ${isDesktop ? 'backdrop-blur-xl' : ''} transition-colors duration-300 h-full`}
@@ -176,12 +161,10 @@ function SkillCard({ group, wide = false, index = 0 }) {
         </div>
       </SpotlightCard>
     </motion.div>
-    </div>
   )
 }
 
 export default function Skills() {
-  const [primary, ...rest] = skills
   const reduceMotion = useReducedMotion()
   // Animated `filter: blur()` glow layers are expensive to composite —
   // stacked across sections they're what caused Mobile Safari to
@@ -276,22 +259,18 @@ export default function Skills() {
         {/* Bento: one stagger container drives the full grid so primary +
             secondary cards cascade as a single choreographed sequence rather
             than firing independently per scroll. */}
+        {/* 2×2 grid — all 4 cards equal size, staggered one at a time.
+            Even-index cards slide from left, odd from right. */}
         <motion.div
-          className="flex flex-col gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
           initial="hidden"
           whileInView="visible"
           viewport={VIEWPORT}
           variants={CARDS_STAGGER}
         >
-          <SkillCard group={primary} wide index={0} />
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-3 gap-6"
-            variants={SECONDARY_STAGGER}
-          >
-            {rest.map((group, i) => (
-              <SkillCard key={group.category} group={group} index={i + 1} />
-            ))}
-          </motion.div>
+          {skills.map((group, i) => (
+            <SkillCard key={group.category} group={group} index={i} />
+          ))}
         </motion.div>
       </div>
 
