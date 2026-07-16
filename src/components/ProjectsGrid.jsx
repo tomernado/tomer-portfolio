@@ -12,7 +12,7 @@ import { useContent } from '../context/LanguageContext'
 import MagneticButton from './MagneticButton'
 import BorderBeam from './BorderBeam'
 import SectionDissolve from './SectionDissolve'
-import { headingReveal, revealUp, cardReveal, staggerContainer, VIEWPORT, ACCENT, EASE_OUT } from '../motion'
+import { headingReveal, revealUp, VIEWPORT, ACCENT, EASE_OUT } from '../motion'
 import { useVideoAutoplayInView } from '../hooks/useVideoAutoplayInView'
 import { useIsDesktop } from '../hooks/useIsDesktop'
 
@@ -59,6 +59,24 @@ const TAG_ICON = {
   'Web Development':    [Globe, '#c4b5fd'],
   'Client-Server':      [Server, '#c4b5fd'],
   Games:               [Gamepad2, '#c4b5fd'],
+}
+
+// Desktop mini-card entrance — blur-to-focus + translate, consistent with
+// Skills cards. One-shot filter (not scroll-linked) so it's safe on desktop.
+const miniCardDesktop = {
+  hidden:  { opacity: 0, y: 20, scale: 0.97, filter: 'blur(3px)' },
+  visible: { opacity: 1, y: 0,  scale: 1,    filter: 'blur(0px)',
+             transition: { duration: 0.6, ease: EASE_OUT } },
+}
+// Mobile/tablet — plain fade+translate, no filter cost.
+const miniCardSimple = {
+  hidden:  { opacity: 0, y: 14 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
+}
+// 100ms stagger so each card enters distinctly one at a time.
+const MINI_GRID_STAGGER = {
+  hidden:  {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.06 } },
 }
 
 /* Most project titles follow a "Name — Subtitle" convention; split it so
@@ -410,10 +428,14 @@ function MiniProjectCard({ project, onClick }) {
   const videoRef = useVideoAutoplayInView(isDesktop)
   return (
     <motion.button
-      variants={cardReveal}
+      variants={isDesktop ? miniCardDesktop : miniCardSimple}
       onClick={onClick}
-      whileHover={{ y: -4 }}
-      className="group relative text-left rounded-xl overflow-hidden border border-white/[0.07] shadow-lg shadow-black/10 hover:border-white/[0.16] hover:shadow-xl hover:shadow-black/15 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+      whileHover={isDesktop ? {
+        y: -3,
+        boxShadow: `0 20px 40px -8px rgba(0,0,0,0.32), 0 0 0 1px rgba(255,255,255,0.1), 0 0 28px -6px rgba(${ACCENT.rgb},0.14)`,
+      } : undefined}
+      transition={{ duration: 0.22, ease: EASE_OUT }}
+      className="group relative text-left rounded-xl overflow-hidden border border-white/[0.07] shadow-lg shadow-black/10 hover:border-white/[0.14] transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
       style={{ background: `linear-gradient(180deg, ${CARD_DARK} 0%, ${CARD_DARK_2} 100%)` }}
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
@@ -552,7 +574,7 @@ export default function ProjectsGrid() {
             initial="hidden"
             whileInView="visible"
             viewport={VIEWPORT}
-            variants={staggerContainer(0.06, 0)}
+            variants={MINI_GRID_STAGGER}
             className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 mb-12"
           >
             {gridProjects.map((p) => (
