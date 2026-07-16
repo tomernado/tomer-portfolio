@@ -72,55 +72,8 @@ const CONNECTIONS = [
   'M 424 462 Q 368 416 328 360',
 ]
 
-/* Anchor glows at each connection line's card-end and core-end, so the
-   lines read as plugged into both rather than floating dashes. */
-const CONNECTION_ANCHORS = [
-  [106, 84], [220, 188], [420, 224], [328, 250],
-  [96, 372], [220, 310], [424, 462], [328, 360],
-]
-
-/* Small traveling points of light scattered through the scene, distinct
-   from the connection-line pulses and the full-hero background field. */
-const LIGHT_PARTICLES = [
-  { top: '6%', left: '40%', size: 3, dur: 9, delay: 0, color: '196,181,253' },
-  { top: '58%', left: '86%', size: 2, dur: 11, delay: 1.5, color: '168,85,247' },
-  { top: '80%', left: '18%', size: 2.5, dur: 8, delay: 0.7, color: '216,180,254' },
-  { top: '18%', left: '92%', size: 2, dur: 12, delay: 2.2, color: '196,181,253' },
-  { top: '46%', left: '6%', size: 2, dur: 10, delay: 1, color: '216,180,254' },
-]
-
 /* Public-folder asset path — respects Vite's base in both dev and prod. */
 const BG_URL = import.meta.env.BASE_URL + 'img/BACKGROUND.png'
-
-/* Small fixed twinkling stars scattered across the whole background,
-   distinct from the drifting Particles layer — pure opacity flicker, no
-   movement, for extra cinematic dust. */
-const STARS = Array.from({ length: 0 }, (_, i) => ({
-  id: i,
-  left: (i * 37 + 11) % 100,
-  top: (i * 53 + 7) % 100,
-  size: 1 + ((i * 7) % 3) * 0.5,
-  dur: 3 + ((i * 5) % 6),
-  delay: (i * 0.6) % 5,
-  maxOp: 0.35 + ((i * 3) % 5) * 0.09,
-}))
-
-function FloatingLightParticles({ reduceMotion }) {
-  if (reduceMotion) return null
-  return (
-    <>
-      {LIGHT_PARTICLES.map((p, i) => (
-        <motion.span
-          key={i}
-          className="absolute rounded-full pointer-events-none"
-          style={{ top: p.top, left: p.left, width: p.size, height: p.size, background: `rgb(${p.color})`, boxShadow: `0 0 6px 1px rgba(${p.color},0.7)` }}
-          animate={{ y: [0, -14, 0], x: [0, 6, 0], opacity: [0.15, 0.75, 0.15] }}
-          transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      ))}
-    </>
-  )
-}
 
 /* A small pulsing "live" indicator — reused across widget status rows
    so the whole scene reads as one connected system, not four one-offs. */
@@ -135,9 +88,6 @@ function LiveDot({ color = '#34d399', reduceMotion }) {
   )
 }
 
-/* Browser-style window chrome — traffic lights + a centered "url bar"
-   pill — so each card reads as a screenshot of a real running app
-   rather than a decorative tile. */
 function WindowChrome({ label }) {
   return (
     <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-white/[0.07]">
@@ -155,8 +105,6 @@ function WindowChrome({ label }) {
   )
 }
 
-/* Code-editor chrome — traffic lights + a file-tab strip, matching how
-   real editors present open files rather than a url bar. */
 function CodeChrome() {
   return (
     <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-white/[0.07]">
@@ -173,8 +121,6 @@ function CodeChrome() {
   )
 }
 
-/* Icon badge — a glossy gradient chip (inset top-highlight + a soft
-   glow matching its own color) rather than a flat colored square. */
 function CardIcon({ card }) {
   return (
     <span
@@ -189,9 +135,6 @@ function CardIcon({ card }) {
   )
 }
 
-/* SocialOrg → a real analytics-dashboard widget: nav tabs, labeled
-   stat tiles with real numbers, and a proper bar chart with a baseline
-   — not three flat gradient rectangles. */
 function DashboardPreview() {
   const bars = [42, 66, 48, 82, 60, 92, 70]
   return (
@@ -220,9 +163,6 @@ function DashboardPreview() {
   )
 }
 
-/* WorkShift → an actual weekly grid: day labels over two shift rows
-   with clearly filled vs. empty cells, instead of one abstract 4x2
-   block of on/off rectangles. */
 function SchedulePreview() {
   const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
   const rowA = [1, 1, 0, 1, 1, 0, 0]
@@ -248,8 +188,6 @@ function SchedulePreview() {
   )
 }
 
-/* Chef Platform → admin task rows with a real status badge per row,
-   instead of a plain bulleted list. */
 function ListPreview() {
   const rows = ['Menu planning', 'Client orders', 'ML insights']
   return (
@@ -266,8 +204,6 @@ function ListPreview() {
   )
 }
 
-/* agent.ts → a real editor body: line numbers + a slightly richer
-   snippet, framed like an embedded code panel rather than loose text. */
 function CodeBody() {
   const lines = [
     <><span className="text-violet-300">const</span> agent = <span className="text-violet-300">new</span> RAGAgent({'{'}</>,
@@ -290,9 +226,6 @@ function CodeBody() {
   )
 }
 
-/* Each widget carries exactly one functional status line — Live,
-   Deployed, a coverage metric, or a completion count — so the four
-   cards read as one consistent system rather than ad hoc decoration. */
 function CardBody({ card, reduceMotion }) {
   if (card.body === 'code') {
     return (
@@ -558,35 +491,6 @@ export default function Hero() {
           style={{ background: 'radial-gradient(circle, rgba(71,113,255,.16) 0%, rgba(71,113,255,.09) 30%, rgba(71,113,255,.04) 55%, rgba(71,113,255,.015) 68%, transparent 75%)' }}
         />
 
-        {/* Faint nebula drift — a slow, very soft violet wash for extra
-            cinematic depth. */}
-        <motion.div
-          className="absolute left-[30%] top-[38%] w-[560px] h-[560px] rounded-full md:blur-[170px]"
-          style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(168,85,247,0.06) 35%, rgba(168,85,247,0.02) 55%, transparent 70%)' }}
-          animate={(reduceMotion || !showScene) ? {} : { opacity: [0.28, 0.48, 0.28], scale: [1, 1.04, 1] }}
-          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        {/* Stars — small fixed twinkling points, distinct from the drifting
-            Particles layer below, for extra cinematic dust/depth. 22
-            concurrent infinite-loop animations, present for Hero's whole
-            mounted lifetime (it's never unmounted once scrolled past) —
-            desktop only, adding to the ambient load right at the moment
-            it peaks during the Hero→About transition. */}
-        {!reduceMotion && showScene && (
-          <div className="absolute inset-0">
-            {STARS.map((s) => (
-              <motion.span
-                key={s.id}
-                className="absolute rounded-full bg-white"
-                style={{ left: `${s.left}%`, top: `${s.top}%`, width: s.size, height: s.size }}
-                animate={{ opacity: [0, s.maxOp, 0] }}
-                transition={{ duration: s.dur, repeat: Infinity, ease: 'easeInOut', delay: s.delay }}
-              />
-            ))}
-          </div>
-        )}
-
         {/* ── Layer: PerspectiveFloor — converging arcs + spokes, fades into
             distance. Desktop only: it combines a CSS mask, several SVG
             blur filters and ~20 concurrent SMIL/Framer animations, all
@@ -808,9 +712,6 @@ export default function Hero() {
         >
           <div className="relative w-full max-w-[460px] sm:max-w-[520px] lg:max-w-[560px] aspect-square mx-auto scale-[0.86] sm:scale-95 lg:scale-100 origin-center">
 
-            {/* Layer: FloatingLightParticles */}
-            <FloatingLightParticles reduceMotion={reduceMotion} />
-
             {/* Layer: ConnectionLights — dashed link lines + traveling pulses */}
             <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" viewBox="0 0 560 560" aria-hidden="true">
               <defs>
@@ -842,19 +743,6 @@ export default function Hero() {
                 </g>
               ))}
 
-              {/* Anchor glows — a soft point of light at every line's card-end
-                  and core-end, so connections read as plugged in rather than
-                  loose dashes crossing the scene. */}
-              {CONNECTION_ANCHORS.map(([ax, ay], i) => (
-                <motion.circle
-                  key={`anchor-${i}`}
-                  cx={ax} cy={ay} r="3"
-                  fill="rgb(196,181,253)"
-                  animate={reduceMotion ? { opacity: 0.45 } : { opacity: [0.25, 0.6, 0.25] }}
-                  transition={{ duration: 5 + (i % 3), repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }}
-                  style={{ filter: 'blur(1.5px)' }}
-                />
-              ))}
             </svg>
 
             {/* Layer: EnergyCore + OrbitRings */}
@@ -864,10 +752,6 @@ export default function Hero() {
             >
               <OrbitSystem />
 
-              {/* The core itself — its own reusable component (~20% larger than
-                  the old sphere; the 220px wrapper and rings above are
-                  untouched, so it simply sits bigger inside the same ring
-                  system with plenty of clearance to the innermost ring). */}
               <EngineeringCore size={188} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
             </motion.div>
 
