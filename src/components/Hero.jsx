@@ -64,6 +64,16 @@ const SCENE_CARDS = [
   },
 ]
 
+/* Mobile card positions — mirrors the desktop quadrant layout (top-left,
+   mid-right, lower-left, bottom-right) so the energy core sits visually
+   centred among all four cards, matching the desktop scene proportions. */
+const MOBILE_CARD_POSITIONS = [
+  'top-[20%] left-[1%] w-[46%]',
+  'top-[20%] right-[1%] w-[46%]',
+  'bottom-[20%] left-[1%] w-[46%]',
+  'bottom-[20%] right-[1%] w-[46%]',
+]
+
 /* Three orbit rings — different radii, tilts and speeds/directions. */
 const CONNECTIONS = [
   'M 106 84 Q 166 138 220 188',
@@ -434,7 +444,7 @@ export default function Hero() {
       dir={dir}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-screen flex items-center overflow-hidden isolate px-6 pt-28 pb-32 lg:pb-20"
+      className="relative lg:min-h-screen flex items-center overflow-hidden isolate px-6 pt-28 pb-16 lg:pb-20"
     >
       {/* ── Layer: BackgroundAtmosphere ─────────────────────────────── */}
       {/* Five large `filter: blur()` layers (120–180px radius, up to
@@ -593,7 +603,7 @@ export default function Hero() {
         </svg>
       </div>
 
-      <div className="relative z-10 max-w-[1280px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-8 items-center">
+      <div className="relative z-10 max-w-[1280px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-center">
 
         {/* ── LEFT — identity first: name, role, pitch, CTAs ─────────── */}
         {/* `contentY/contentOpacity/contentScale` are continuously
@@ -722,11 +732,8 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* ── RIGHT — EngineeringScene (lg: and up only) ───────────────
-            On mobile the scene is an absolute overlay (see below, outside
-            the grid) so the cards float inside the hero environment
-            rather than stacking below the text as a separate block. */}
-        {showScene && (
+        {/* ── RIGHT — EngineeringScene on desktop, compact grid scene on mobile ── */}
+        {showScene ? (
         <motion.div
           style={reduceMotion ? {} : { y: sceneY }}
           initial={{ opacity: 0 }}
@@ -785,73 +792,55 @@ export default function Hero() {
             ))}
           </div>
         </motion.div>
-        )}
-      </div>
-
-      {/* ── Mobile/tablet scene — absolute overlay ──────────────────────
-          Lives outside the grid so the energy core and floating cards are
-          part of the hero's own space rather than a stacked block below
-          the text. z-[5] places it above the background layer (-z-10)
-          but below the text content (z-10), so cards appear to float IN
-          the scene. pointer-events-none keeps all text interaction intact.
-
-          Positions use `vh` units (relative to the viewport) so the layout
-          stays consistent across phone heights: the core always lands near
-          the viewport's lower-center, the four cards spread around it in
-          the same quadrant arrangement as the desktop scene. Cards that
-          geometrically overlap the text block show through behind it,
-          creating an atmospheric depth rather than a visual collision. */}
-      {!showScene && (
-        <div className="absolute inset-0 z-[5] pointer-events-none overflow-hidden" aria-hidden="true">
-          {/* Energy Core — lower-center of the hero viewport */}
+        ) : (
+        /* Mobile compact scene — in grid flow so it always sits below
+           the text/buttons. All 4 cards in quadrant positions around
+           a centred Energy Core, matching the desktop layout feel. */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="relative w-full max-w-[360px] sm:max-w-[420px] aspect-square mx-auto"
+        >
+          {SCENE_CARDS.map((card, i) => (
+            <motion.div
+              key={card.key}
+              className={`absolute ${MOBILE_CARD_POSITIONS[i]}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.65 + i * 0.18, ease: EASE_OUT }}
+            >
+              <motion.div
+                animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
+                transition={{ duration: card.floatDur, delay: card.floatDelay, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ rotate: card.rotate * 0.5 }}
+              >
+                <SpotlightCard
+                  className="w-full rounded-xl border p-2.5"
+                  style={{
+                    background: 'linear-gradient(160deg, rgba(148,85,247,0.08) 0%, rgba(18,10,28,0.90) 50%)',
+                    borderColor: 'rgba(168,85,247,0.22)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.07), 0 8px 24px rgba(28,0,56,0.5)',
+                  }}
+                >
+                  <MobileCardBody card={card} reduceMotion={reduceMotion} />
+                </SpotlightCard>
+              </motion.div>
+            </motion.div>
+          ))}
+          {/* Core rendered last — inset-0 + m-auto + explicit w/h centres
+              it reliably regardless of RTL / transform direction. */}
           <motion.div
-            className="absolute left-1/2 -translate-x-1/2"
-            style={{ bottom: '26vh' }}
+            className="absolute inset-0 m-auto w-[120px] h-[120px]"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.5, ease: EASE_OUT }}
           >
             <EngineeringCore size={120} compact className="relative" />
           </motion.div>
-
-          {/* Four project cards — same quadrant positions as desktop */}
-          {[
-            { key: 0, style: { top: '72vh', left:  '4%', width: '42%' } }, // SocialOrg — left
-            { key: 1, style: { top: '72vh', right: '4%', width: '44%' } }, // code — right
-            { key: 2, style: { top: '83vh', left:  '4%', width: '40%' } }, // WorkShift — lower-left
-            { key: 3, style: { top: '83vh', right: '4%', width: '42%' } }, // Chef — lower-right
-          ].map(({ key: i, style }) => {
-            const card = SCENE_CARDS[i]
-            return (
-              <motion.div
-                key={card.key}
-                className="absolute"
-                style={style}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.75, delay: 0.65 + i * 0.18, ease: EASE_OUT }}
-              >
-                <motion.div
-                  animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
-                  transition={{ duration: card.floatDur, delay: card.floatDelay, repeat: Infinity, ease: 'easeInOut' }}
-                  style={{ rotate: card.rotate * 0.5 }}
-                >
-                  <SpotlightCard
-                    className="w-full rounded-xl border p-2.5"
-                    style={{
-                      background: 'linear-gradient(160deg, rgba(148,85,247,0.08) 0%, rgba(18,10,28,0.90) 50%)',
-                      borderColor: 'rgba(168,85,247,0.22)',
-                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.07), 0 8px 24px rgba(28,0,56,0.5)',
-                    }}
-                  >
-                    <MobileCardBody card={card} reduceMotion={reduceMotion} />
-                  </SpotlightCard>
-                </motion.div>
-              </motion.div>
-            )
-          })}
-        </div>
-      )}
+        </motion.div>
+        )}
+      </div>
 
       <CvModal isOpen={cvOpen} onClose={() => setCvOpen(false)} />
     </section>
