@@ -17,7 +17,7 @@ export default function CvModal({ isOpen, onClose }) {
       role="dialog"
       aria-modal="true"
       aria-label="קורות חיים"
-      className={`fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 transition-all duration-300 ${
+      className={`fixed inset-0 z-50 flex items-start sm:items-center justify-center pt-16 sm:p-4 transition-all duration-300 ${
         isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
       }`}
     >
@@ -32,7 +32,7 @@ export default function CvModal({ isOpen, onClose }) {
         className={`relative w-full max-w-4xl bg-ink-900 border border-white/12 sm:rounded-2xl overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.8)] transition-all duration-300 flex flex-col ${
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
-        style={{ height: 'min(100dvh, 800px)' }}
+        style={{ height: 'min(calc(100dvh - 4rem), 800px)' }}
       >
         {/* Header */}
         <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-3 border-b border-white/10 bg-ink-900/80 backdrop-blur-sm">
