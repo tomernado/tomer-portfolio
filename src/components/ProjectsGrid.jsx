@@ -149,7 +149,7 @@ function ProjectModal({ project, onClose }) {
 
                   <div className="relative w-full aspect-video bg-ink-900 overflow-hidden">
                     {project.mediaType === 'video' ? (
-                      <video key={project.id} src={project.media} autoPlay={isDesktop} loop muted playsInline controls
+                      <video key={project.id} src={project.media} poster={project.mediaPoster} autoPlay={isDesktop} loop muted playsInline controls
                         preload="metadata"
                         className="w-full h-full object-cover" />
                     ) : (
@@ -229,12 +229,12 @@ function FeaturedCard({ project, i, delta, onSelect }) {
   const { name, subtitle } = splitTitle(project.title)
   const abs = Math.min(Math.abs(delta), 3)
   const isFront = delta === 0
-  // Autoplaying video decode is one of the most reliable ways to crash
-  // Mobile Safari, especially with several <video> elements mounted at
-  // once (all 6 carousel cards are always in the DOM). Desktop-only;
-  // mobile shows the video paused at whatever frame it loads to instead
-  // of looping.
+  // useVideoAutoplayInView(isFront): plays only while this specific card
+  // is the front card AND it is intersecting the viewport — safe on mobile
+  // because at most one card is "front" at a time, and the IntersectionObserver
+  // pauses it immediately when scrolled away.
   const isDesktop = useIsDesktop()
+  const featuredVideoRef = useVideoAutoplayInView(isFront)
 
   return (
     <motion.div
@@ -267,7 +267,7 @@ function FeaturedCard({ project, i, delta, onSelect }) {
               {String(i + 1).padStart(2, '0')}
             </span>
             {project.mediaType === 'video' ? (
-              <video src={project.media} muted autoPlay={isFront && isDesktop} loop playsInline preload="metadata" className="w-full h-full object-cover" />
+              <video ref={featuredVideoRef} src={project.media} poster={project.mediaPoster} muted loop playsInline preload="metadata" className="w-full h-full object-cover" />
             ) : (
               <img src={project.media} alt={project.title} className="w-full h-full object-cover" />
             )}
@@ -441,7 +441,7 @@ function MiniProjectCard({ project, onClick }) {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
       <div className="relative aspect-video overflow-hidden bg-ink-900">
         {project.mediaType === 'video' ? (
-          <video ref={videoRef} src={project.media} muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+          <video ref={videoRef} src={project.media} poster={project.mediaPoster} muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
         ) : (
           <img src={project.media} alt={project.title} className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
         )}

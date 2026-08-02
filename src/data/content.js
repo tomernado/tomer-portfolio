@@ -11,7 +11,7 @@ export const personalInfo = {
   profileMedia: `${base}img/Profile.jpeg`,
   cvPdf: `${base}Tomer_Cohen_Resume.pdf`,
   aboutText:
-    "מהנדס תוכנה המתמחה בפיתוח Full-Stack מאובטח וארכיטקטורת OOP מורכבת. בעל ניסיון מעשי בפיתוח אפליקציות מקצה לקצה דרך Web4You, תוך שימוש בכלי AI ובסיסי נתונים לייעול תהליכי פיתוח. בקיא במתודולוגיות S-SDLC ועקרונות אבטחת קוד (OWASP), עם דגש חזק על יעילות אלגוריתמית וסיבוכיות מערכות. סטודנט שנה ג' למדעי המחשב ב-HIT, המביא רקע בניהול תפעולי, אנרגיה חיובית וחשיבת צוות לאספקת פתרונות איכותיים תחת לחץ.",
+    "מהנדס תוכנה המתמחה בפיתוח Full-Stack, מערכות תוכנה מבוססות AI וארכיטקטורת תוכנה. בעל ניסיון בפיתוח אפליקציות מקצה לקצה, תרגום דרישות עסקיות לאפליקציות מדרגיות דרך פרויקטי לקוחות (Web4You). בסיס חזק בארכיטקטורת תוכנה, פיתוח Backend מדרגי ופתרון בעיות אלגוריתמי. סטודנט שנה ג' למדעי המחשב עם רקע מקצועי בניהול תפעולי, המביא חשיבת צוות ממוקדת במסירת פתרונות איכותיים.",
 };
 
 export const aboutData = {
@@ -105,6 +105,7 @@ export const projects = [
     description:
       "מערכת Full-Stack מאובטחת. יישום מתודולוגיות S-SDLC, הגנה מפני חולשות OWASP (כמו SQLi ו-XSS), אימות JWT חזק, והצפנת bcrypt מול מסד נתונים MySQL וממשק רספונסיבי ב-React.",
     media: `${base}img/SecWebReact.mp4`,
+    mediaPoster: `${base}img/SecWebReact_poster.jpg`,
     mediaType: "video",
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_cybersecurity-fullstack-reactjs-activity-7438883240985157632-4CzR",
@@ -117,6 +118,7 @@ export const projects = [
     description:
       "פלטפורמת Full-Stack לניהול ואוטומציה של תהליכים ארגוניים באמצעות AI. המערכת מייעלת תקשורת פנים-ארגונית, מנהלת משימות ומייצרת תובנות חכמות — עם ממשק רספונסיבי מלא ו-Deployment בענן.",
     media: `${base}img/SocialOrg.mp4`,
+    mediaPoster: `${base}img/SocialOrg_poster.jpg`,
     mediaType: "video",
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-softwareengineering-automation-ugcPost-7476927528452907008-PFR7/",
@@ -130,6 +132,7 @@ export const projects = [
     description:
       "תכנון ופיתוח מערכות מורכבות ב-C# המיישמות עקרונות OOP ו-Design Patterns ברמה גבוהה. יצירת ארכיטקטורה מונחית אירועים להפרדה מוחלטת בין הלוגיקה העסקית ל-UI.",
     media: `${base}img/OpenWOrldGame.mp4`,
+    mediaPoster: `${base}img/OpenWOrldGame_poster.jpg`,
     mediaType: "video",
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_softwareengineering-claudecode-ai-activity-7446866692426620929-1zcR?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFaQVuYB4TlPvjKcWTSihPNIMkLKQp8ySKE",
@@ -215,6 +218,7 @@ export const projects = [
     description:
       "פלטפורמת Full-Stack מותאמת אישית לשף פרטי — ניהול תפריטים, לקוחות והזמנות במקום אחד. שילוב Machine Learning לניתוח נתונים ותובנות עסקיות, עם Containerization ב-Docker לסביבת פרודקשן יציבה.",
     media: `${base}img/Recepies.mp4`,
+    mediaPoster: `${base}img/Recepies_poster.jpg`,
     mediaType: "video",
     linkedinPost:
       "https://www.linkedin.com/posts/tomer-cohen-486457346_ai-machinelearning-docker-activity-7466858872373342208-XTI7",
