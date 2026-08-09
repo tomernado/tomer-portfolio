@@ -27,7 +27,7 @@ const CARD_DARK_2 = '#08080b'
 
 /* The handful of projects given the spotlight here — everything else in
    the data stays reserved for the future full Projects page. */
-const FEATURED_SET = [12, 8, 11, 10, 7]
+const FEATURED_SET = [8, 11, 10, 12, 7]
 
 /* Tags are derived from each project's own description (see content.js) —
    this just maps them to a recognizable mark. Concept tags without a real
