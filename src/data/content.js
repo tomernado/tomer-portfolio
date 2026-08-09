@@ -87,6 +87,20 @@ export const skills = [
 
 export const projects = [
   {
+    id: 12,
+    title: "Karaoke Studio — Real-Time Karaoke Platform",
+    description:
+      "פלטפורמת קריוקי Full-Stack המאפשרת יצירת חדרי שירה בזמן אמת עם רשימת השמעה משותפת, סנכרון מילות שיר וניהול תורים בין משתתפים. נבנתה עם ארכיטקטורת קליינט-שרת מודרנית ו-Backend מדרגי לתמיכה בחיבורים מרובים במקביל.",
+    media: `${base}img/KaraokeStudio.mp4`,
+    mediaPoster: `${base}img/KaraokeStudio_poster.jpg`,
+    mediaType: "video",
+    linkedinPost:
+      "https://www.linkedin.com/posts/tomer-cohen-486457346_softwareengineering-fullstack-backend-ugcPost-7491065208732434432-ZF7y/?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFaQVuYB4TlPvjKcWTSihPNIMkLKQp8ySKE",
+    githubLink: "https://github.com/tomernado/karaoke-studio",
+    siteLink: "https://frontend-blond-nu-2dw9j9eppo.vercel.app/",
+    tags: ["React", "Node.js", "Real-Time", "Full-Stack"],
+  },
+  {
     id: 8,
     title: "WorkShift — Smart Shift Management",
     description:
